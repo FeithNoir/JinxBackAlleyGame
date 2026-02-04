@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
-import { MusicService } from './core/services/music.service';
+import { MusicService } from '@services/music.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +9,6 @@ import { MusicService } from './core/services/music.service';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  private musicService = inject(MusicService);
   title = 'JinxBackalleyGame';
-
-  constructor(private musicService: MusicService) { }
 }

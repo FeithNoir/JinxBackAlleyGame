@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { GameState } from '../interfaces/game-state.interface';
-import { DIALOGUE_DATA } from '../data/dialogues';
-import { DialogueNode } from '../interfaces/dialogue-node.interface';
-import { CharacterService } from './character.service';
-import { MiniGameService } from './mini-game.service';
-import { StorageService } from './storage.service';
-import { EventService } from './event.service';
+import { GameState } from '@interfaces/game-state.interface';
+import { DIALOGUE_DATA } from '@data/dialogues';
+import { DialogueNode } from '@interfaces/dialogue-node.interface';
+import { CharacterService } from '@services/character.service';
+import { MiniGameService } from '@services/mini-game.service';
+import { StorageService } from '@services/storage.service';
+import { EventService } from '@services/event.service';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
@@ -35,18 +35,18 @@ const INITIAL_GAME_STATE: GameState = {
   providedIn: 'root',
 })
 export class GameService {
+  private eventService = inject(EventService);
+  private characterService = inject(CharacterService);
+  private miniGameService = inject(MiniGameService);
+  private storageService = inject(StorageService);
+
   private gameState = new BehaviorSubject<GameState>(INITIAL_GAME_STATE);
   public gameState$: Observable<GameState> = this.gameState.asObservable();
 
   private isAskingName = new BehaviorSubject<boolean>(false);
   public isAskingName$ = this.isAskingName.asObservable();
 
-  constructor(
-    private eventService: EventService,
-    private characterService: CharacterService,
-    private miniGameService: MiniGameService,
-    private storageService: StorageService
-  ) {
+  constructor() {
     this.loadGame();
   }
 

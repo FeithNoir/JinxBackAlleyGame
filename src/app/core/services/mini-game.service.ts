@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CharacterService } from './character.service';
+import { CharacterService } from '@services/character.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MiniGameService {
+    private characterService = inject(CharacterService);
+
     private progress = new BehaviorSubject<number>(0);
     public progress$ = this.progress.asObservable();
 
@@ -16,8 +18,6 @@ export class MiniGameService {
     public timer$ = this.timer.asObservable();
 
     private timerInterval: any;
-
-    constructor(private characterService: CharacterService) { }
 
     public start(duration: number = 10): void {
         if (this.isActive.getValue()) return;

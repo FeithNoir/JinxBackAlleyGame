@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { MiniGameService } from '../../core/services/mini-game.service';
-import { CharacterService } from '../../core/services/character.service';
-import { EventService } from '../../core/services/event.service';
+import { MiniGameService } from '@services/mini-game.service';
+import { CharacterService } from '@services/character.service';
+import { EventService } from '@services/event.service';
 
 @Component({
   selector: 'app-mini-game',
@@ -13,16 +13,14 @@ import { EventService } from '../../core/services/event.service';
   styleUrl: './mini-game.component.css'
 })
 export class MiniGameComponent implements OnInit, OnDestroy {
+  private miniGameService = inject(MiniGameService);
+  private characterService = inject(CharacterService);
+  private eventService = inject(EventService);
+
   isActive = false;
   progress = 0;
   timer = 0;
   private subs = new Subscription();
-
-  constructor(
-    private miniGameService: MiniGameService,
-    private characterService: CharacterService,
-    private eventService: EventService
-  ) { }
 
   ngOnInit(): void {
     this.subs.add(

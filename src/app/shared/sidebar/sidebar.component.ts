@@ -1,18 +1,18 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../../core/services/game.service';
-import { CharacterService } from '../../core/services/character.service';
-import { GameState } from '../../core/interfaces/game-state.interface';
-import { DialogueNode } from '../../core/interfaces/dialogue-node.interface';
-import { CharacterProps } from '../../core/interfaces/character-props.interface';
-import { Subscription } from 'rxjs';
-import { DialoguesComponent } from '../dialogues/dialogues.component';
-import { OptionsComponent } from '../options/options.component';
-import { MiniGameService } from '../../core/services/mini-game.service';
-import { MusicService } from '../../core/services/music.service';
 import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { GameService } from '@services/game.service';
+import { CharacterService } from '@services/character.service';
+import { MiniGameService } from '@services/mini-game.service';
+import { MusicService } from '@services/music.service';
+import { GameState } from '@interfaces/game-state.interface';
+import { DialogueNode } from '@interfaces/dialogue-node.interface';
+import { CharacterProps } from '@interfaces/character-props.interface';
+import { DialoguesComponent } from '@shared/dialogues/dialogues.component';
+import { OptionsComponent } from '@shared/options/options.component';
 
 export interface ChatMessage {
   speaker: string;
@@ -28,6 +28,12 @@ export interface ChatMessage {
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
+  private gameService = inject(GameService);
+  private characterService = inject(CharacterService);
+  private miniGameService = inject(MiniGameService);
+  private musicService = inject(MusicService);
+  private router = inject(Router);
+
   @ViewChild('chatArea') private chatArea!: ElementRef;
 
   @Input() isCollapsed = false;
@@ -42,14 +48,6 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   isMobile = false;
 
   private subs = new Subscription();
-
-  constructor(
-    private gameService: GameService,
-    private characterService: CharacterService,
-    private miniGameService: MiniGameService,
-    private musicService: MusicService,
-    private router: Router
-  ) { }
 
   volume = 0.5;
   isMuted = false;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CharacterProps } from '../interfaces/character-props.interface';
+import { CharacterProps } from '@interfaces/character-props.interface';
 
 export const DEFAULT_JINX_PROPS: CharacterProps = {
     eyes: 'e-1',

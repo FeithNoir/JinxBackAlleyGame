@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CharacterService, DEFAULT_JINX_PROPS } from '../../core/services/character.service';
-import { CharacterComponent } from '../../shared/character/character.component';
-import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { Subscription } from 'rxjs';
-import { GameService } from '../../core/services/game.service';
-import { EventService } from '../../core/services/event.service';
-
-import { LoadingService } from '../../core/services/loading.service';
+import { CharacterService, DEFAULT_JINX_PROPS } from '@services/character.service';
+import { GameService } from '@services/game.service';
+import { EventService } from '@services/event.service';
+import { LoadingService } from '@services/loading.service';
+import { CharacterComponent } from '@shared/character/character.component';
+import { CharacterProps } from '@interfaces/character-props.interface';
 
 @Component({
   selector: 'app-arcade',
@@ -17,15 +16,13 @@ import { LoadingService } from '../../core/services/loading.service';
   styleUrl: './arcade.component.css'
 })
 export class ArcadeComponent implements OnInit, OnDestroy {
+  private characterService = inject(CharacterService);
+  private gameService = inject(GameService);
+  private eventService = inject(EventService);
+  private loadingService = inject(LoadingService);
+
   characterProps: CharacterProps | undefined;
   private subs = new Subscription();
-
-  constructor(
-    private characterService: CharacterService,
-    private gameService: GameService,
-    private eventService: EventService,
-    private loadingService: LoadingService
-  ) { }
 
   ngOnInit(): void {
     this.loadingService.show();

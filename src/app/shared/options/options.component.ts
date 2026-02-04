@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DialogueOption } from '../../core/interfaces/dialogue-node.interface';
+import { DialogueOption } from '@interfaces/dialogue-node.interface';
 
 @Component({
   selector: 'app-options',

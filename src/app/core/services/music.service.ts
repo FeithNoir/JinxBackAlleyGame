@@ -1,12 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { StorageService } from '@services/storage.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class MusicService implements OnDestroy {
+export class MusicService {
+    private router = inject(Router);
+    private storageService = inject(StorageService);
+
     private audio = new Audio();
     private currentTrack = new BehaviorSubject<string>('');
     public currentTrack$ = this.currentTrack.asObservable();
@@ -23,7 +27,7 @@ export class MusicService implements OnDestroy {
         arcade: 'music/arcade.mp3'
     };
 
-    constructor(private router: Router) {
+    constructor() {
         this.audio.loop = true;
         this.audio.volume = this.volume.value;
 

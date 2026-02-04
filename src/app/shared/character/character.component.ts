@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CharacterProps } from '../../core/interfaces/character-props.interface';
-import { CharacterService } from '../../core/services/character.service';
-import { EventService } from '../../core/services/event.service';
 import { Subscription } from 'rxjs';
-import { MiniGameComponent } from '../mini-game/mini-game.component';
+import { CharacterProps } from '@interfaces/character-props.interface';
+import { CharacterService } from '@services/character.service';
+import { EventService } from '@services/event.service';
+import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 
 @Component({
     selector: 'app-character',
@@ -15,6 +15,9 @@ import { MiniGameComponent } from '../mini-game/mini-game.component';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CharacterComponent implements OnInit, OnDestroy {
+    private characterService = inject(CharacterService);
+    private eventService = inject(EventService);
+
     @Input() characterProps: CharacterProps | undefined;
     @Input() isVibrating = false;
     @Input() isFlashing = false;
@@ -26,11 +29,6 @@ export class CharacterComponent implements OnInit, OnDestroy {
 
     reactionText = '';
     private subs = new Subscription();
-
-    constructor(
-        private characterService: CharacterService,
-        private eventService: EventService
-    ) { }
 
     ngOnInit(): void {
         this.subs.add(

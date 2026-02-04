@@ -1,14 +1,13 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GameService } from '../../core/services/game.service';
-import { EventService } from '../../core/services/event.service';
-import { GameState } from '../../core/interfaces/game-state.interface';
-import { DialogueNode } from '../../core/interfaces/dialogue-node.interface';
 import { Subscription } from 'rxjs';
-import { CharacterProps } from '../../core/interfaces/character-props.interface';
-import { CharacterComponent } from '../../shared/character/character.component';
-
-import { LoadingService } from '../../core/services/loading.service';
+import { GameService } from '@services/game.service';
+import { EventService } from '@services/event.service';
+import { LoadingService } from '@services/loading.service';
+import { GameState } from '@interfaces/game-state.interface';
+import { DialogueNode } from '@interfaces/dialogue-node.interface';
+import { CharacterProps } from '@interfaces/character-props.interface';
+import { CharacterComponent } from '@shared/character/character.component';
 
 @Component({
   selector: 'app-main',
@@ -18,6 +17,10 @@ import { LoadingService } from '../../core/services/loading.service';
   styleUrl: './main.component.css'
 })
 export class MainComponent implements OnInit, OnDestroy {
+  private gameService = inject(GameService);
+  private eventService = inject(EventService);
+  private loadingService = inject(LoadingService);
+
   gameState!: GameState;
   currentNode!: DialogueNode | undefined;
   characterProps: CharacterProps | undefined;
@@ -33,12 +36,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
   private gameStateSubscription!: Subscription;
   private eventsSubscription!: Subscription;
-
-  constructor(
-    private gameService: GameService,
-    private eventService: EventService,
-    private loadingService: LoadingService
-  ) { }
 
   ngOnInit(): void {
     this.loadingService.show();
