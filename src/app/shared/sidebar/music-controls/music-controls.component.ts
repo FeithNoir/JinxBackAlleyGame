@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-music-controls',
@@ -8,15 +8,15 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MusicControlsComponent {
-  @Input() volume: number = 0.5;
-  @Input() isMuted: boolean = false;
-  @Input() showVolumeSlider: boolean = false;
-  @Input() isMobile: boolean = false;
+  volume = input<number>(0.5);
+  isMuted = input<boolean>(false);
+  showVolumeSlider = input<boolean>(false);
+  isMobile = input<boolean>(false);
 
-  @Output() volumeChanged = new EventEmitter<number>();
-  @Output() muteToggled = new EventEmitter<void>();
-  @Output() sliderToggled = new EventEmitter<void>();
-  @Output() saveRequested = new EventEmitter<void>();
+  volumeChanged = output<number>();
+  muteToggled = output<void>();
+  sliderToggled = output<void>();
+  saveRequested = output<void>();
 
   onVolumeChange(event: Event): void {
     const value = parseFloat((event.target as HTMLInputElement).value);

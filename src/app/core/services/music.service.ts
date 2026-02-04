@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { StorageService } from '@services/storage.service';
@@ -12,14 +12,21 @@ export class MusicService {
     private storageService = inject(StorageService);
 
     private audio = new Audio();
-    private currentTrack = new BehaviorSubject<string>('');
-    public currentTrack$ = this.currentTrack.asObservable();
 
-    private volume = new BehaviorSubject<number>(0.5);
-    public volume$ = this.volume.asObservable();
+    // Signals
+    private currentTrackSignal = signal<string>('');
+    private volumeSignal = signal<number>(0.5);
+    private isMutedSignal = signal<boolean>(false);
 
-    private isMuted = new BehaviorSubject<boolean>(false);
-    public isMuted$ = this.isMuted.asObservable();
+    // Public Read-only Signals
+    public currentTrack = this.currentTrackSignal.asReadonly();
+    public volume = this.volumeSignal.asReadonly();
+    public isMuted = this.isMutedSignal.asReadonly();
+
+    // Compat Observables
+    public currentTrack$ = toObservable(this.currentTrackSignal);
+    public volume$ = toObservable(this.volumeSignal);
+    public isMuted$ = toObservable(this.isMutedSignal);
 
     private tracks: Record<string, string> = {
         title: 'music/title.mp3',
@@ -29,7 +36,7 @@ export class MusicService {
 
     constructor() {
         this.audio.loop = true;
-        this.audio.volume = this.volume.value;
+        this.audio.volume = this.volumeSignal();
 
         // Detect route changes to switch music
         this.router.events.pipe(
@@ -54,12 +61,12 @@ export class MusicService {
 
     public playTrack(trackKey: string): void {
         const source = this.tracks[trackKey];
-        if (!source || this.currentTrack.value === trackKey) return;
+        if (!source || this.currentTrackSignal() === trackKey) return;
 
         this.audio.pause();
         this.audio.src = source;
         this.audio.load();
-        this.currentTrack.next(trackKey);
+        this.currentTrackSignal.set(trackKey);
 
         // Play might be blocked by browser until user interaction
         this.audio.play().catch(err => console.warn('Audio playback blocked:', err));
@@ -67,16 +74,16 @@ export class MusicService {
 
     public setVolume(val: number): void {
         const clamped = Math.max(0, Math.min(1, val));
-        this.volume.next(clamped);
-        if (!this.isMuted.value) {
+        this.volumeSignal.set(clamped);
+        if (!this.isMutedSignal()) {
             this.audio.volume = clamped;
         }
     }
 
     public toggleMute(): void {
-        const muted = !this.isMuted.value;
-        this.isMuted.next(muted);
-        this.audio.volume = muted ? 0 : this.volume.value;
+        const muted = !this.isMutedSignal();
+        this.isMutedSignal.set(muted);
+        this.audio.volume = muted ? 0 : this.volumeSignal();
     }
 
     ngOnDestroy(): void {

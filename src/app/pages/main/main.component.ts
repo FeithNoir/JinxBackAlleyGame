@@ -1,12 +1,8 @@
-import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
+import { Component, OnInit, HostListener, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
 import { GameService } from '@services/game.service';
 import { EventService } from '@services/event.service';
 import { LoadingService } from '@services/loading.service';
-import { GameState } from '@interfaces/game-state.interface';
-import { DialogueNode } from '@interfaces/dialogue-node.interface';
-import { CharacterProps } from '@interfaces/character-props.interface';
 import { CharacterComponent } from '@shared/character/character.component';
 
 @Component({
@@ -14,50 +10,41 @@ import { CharacterComponent } from '@shared/character/character.component';
   standalone: true,
   imports: [CommonModule, CharacterComponent],
   templateUrl: './main.component.html',
-  styleUrl: './main.component.css'
+  styleUrl: './main.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit {
   private gameService = inject(GameService);
   private eventService = inject(EventService);
   private loadingService = inject(LoadingService);
 
-  gameState!: GameState;
-  currentNode!: DialogueNode | undefined;
-  characterProps: CharacterProps | undefined;
+  // Core signals from service
+  gameState = this.gameService.gameState;
 
-  // Effects states
-  isVibrating = false;
-  isFlashing = false;
-  isFlashlightMode = false;
+  // Derived state
+  currentNode = computed(() => this.gameService.getCurrentNode());
 
-  // Flashlight position
-  flashlightX = 0;
-  flashlightY = 0;
+  characterProps = computed(() => {
+    const node = this.currentNode();
+    if (node?.character) {
+      return this.gameState().characters[node.character];
+    }
+    return undefined;
+  });
 
-  private gameStateSubscription!: Subscription;
-  private eventsSubscription!: Subscription;
+  isFlashlightMode = computed(() => this.currentNode()?.sceneEffect === 'flashlight');
 
-  ngOnInit(): void {
-    this.loadingService.show();
-    this.gameService.loadInitialState();
+  // Effects states (Local Signals)
+  isVibrating = signal<boolean>(false);
+  isFlashing = signal<boolean>(false);
 
-    // Hide after state is loaded
-    this.loadingService.hide();
+  // Flashlight position (Local Signals)
+  flashlightX = signal<number>(0);
+  flashlightY = signal<number>(0);
 
-    this.gameStateSubscription = this.gameService.gameState$.subscribe(state => {
-      this.gameState = state;
-      this.currentNode = this.gameService.getCurrentNode();
-
-      if (this.currentNode) {
-        this.isFlashlightMode = this.currentNode.sceneEffect === 'flashlight';
-
-        if (this.currentNode.character) {
-          this.characterProps = this.gameState.characters[this.currentNode.character];
-        }
-      }
-    });
-
-    this.eventsSubscription = this.eventService.events$.subscribe(event => {
+  constructor() {
+    // Handle global events (Vibrate/Flash) via RxJS stream linked to effects
+    this.eventService.events$.subscribe(event => {
       if (event.type === 'VIBRATE') {
         this.triggerVibration();
       } else if (event.type === 'FLASH') {
@@ -66,45 +53,35 @@ export class MainComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnInit(): void {
+    this.loadingService.show();
+    this.gameService.loadInitialState();
+    this.loadingService.hide();
+  }
+
   onInteract(part: string): void {
     this.gameService.interactWith(part);
   }
 
   private triggerVibration(): void {
-    this.isVibrating = true;
-    setTimeout(() => this.isVibrating = false, 900);
+    this.isVibrating.set(true);
+    setTimeout(() => this.isVibrating.set(false), 900);
   }
 
   private triggerFlash(): void {
-    this.isFlashing = true;
-    setTimeout(() => this.isFlashing = false, 300);
-  }
-
-  onMouseMove(event: MouseEvent): void {
-    if (this.isFlashlightMode) {
-      const target = event.currentTarget as HTMLElement;
-      if (target) {
-        const rect = target.getBoundingClientRect();
-        this.flashlightX = event.clientX - rect.left;
-        this.flashlightY = event.clientY - rect.top;
-      }
-    }
+    this.isFlashing.set(true);
+    setTimeout(() => this.isFlashing.set(false), 300);
   }
 
   @HostListener('mousemove', ['$event'])
   handleMouseMove(event: MouseEvent) {
-    // Only handle if we are in flashlight mode or have other mouse movements to track
-    if (this.isFlashlightMode) {
-      this.onMouseMove(event);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.gameStateSubscription) {
-      this.gameStateSubscription.unsubscribe();
-    }
-    if (this.eventsSubscription) {
-      this.eventsSubscription.unsubscribe();
+    if (this.isFlashlightMode()) {
+      const target = event.currentTarget as HTMLElement;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        this.flashlightX.set(event.clientX - rect.left);
+        this.flashlightY.set(event.clientY - rect.top);
+      }
     }
   }
 }

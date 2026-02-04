@@ -1,13 +1,13 @@
-@if (isActive) {
+@if (isActive()) {
 <div class="mini-game-modal">
     <div class="mini-game-overlay" (click)="onInteractionClick()">
         <div class="click-catcher"></div>
     </div>
 
     <div class="mini-game-ui">
-        <div class="timer-badge">TIME: {{ timer }}s</div>
+        <div class="timer-badge">TIME: {{ timer() }}s</div>
         <div class="progress-bar-container">
-            <div class="progress-bar-fill" [style.width.%]="progress"></div>
+            <div class="progress-bar-fill" [style.width.%]="progress()"></div>
         </div>
         <div class="click-hint">CLICK ANYWHERE ON JINX FAST!</div>
     </div>

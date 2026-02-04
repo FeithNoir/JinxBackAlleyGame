@@ -1,9 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, input, output, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
 import { CharacterProps } from '@interfaces/character-props.interface';
-import { CharacterService } from '@services/character.service';
 import { EventService } from '@services/event.service';
+import { CharacterService } from '@services/character.service';
 import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 
 @Component({
@@ -14,35 +13,28 @@ import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
     styleUrl: './character.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CharacterComponent implements OnInit, OnDestroy {
-    private characterService = inject(CharacterService);
+export class CharacterComponent {
     private eventService = inject(EventService);
+    private characterService = inject(CharacterService);
 
-    @Input() characterProps: CharacterProps | undefined;
-    @Input() isVibrating = false;
-    @Input() isFlashing = false;
-    @Input() isFlashlightMode = false;
-    @Input() flashlightX = 0;
-    @Input() flashlightY = 0;
+    // Signal Inputs
+    characterProps = input.required<CharacterProps>();
+    isVibrating = input<boolean>(false);
+    isFlashing = input<boolean>(false);
+    isFlashlightMode = input<boolean>(false);
+    flashlightX = input<number>(0);
+    flashlightY = input<number>(0);
 
-    @Output() interact = new EventEmitter<string>();
+    interact = output<string>();
 
-    reactionText = '';
-    private subs = new Subscription();
+    // Linked Signals from Services
+    reactionText = this.characterService.reactionText;
 
-    ngOnInit(): void {
-        this.subs.add(
-            this.characterService.reactionText$.subscribe(text => {
-                this.reactionText = text;
-            })
-        );
-    }
+    // Computed signals
+    effects = computed(() => this.characterProps().effects || {});
 
-    ngOnDestroy(): void {
-        this.subs.unsubscribe();
-    }
-
-    onZoneClick(part: string): void {
-        this.interact.emit(part);
+    onZoneClick(zone: string): void {
+        this.interact.emit(zone);
+        this.eventService.vibrate(50); // Short vibration feedback
     }
 }

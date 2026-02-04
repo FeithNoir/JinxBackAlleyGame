@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CharacterService } from '@services/character.service';
 
 @Injectable({
@@ -8,30 +8,34 @@ import { CharacterService } from '@services/character.service';
 export class MiniGameService {
     private characterService = inject(CharacterService);
 
-    private progress = new BehaviorSubject<number>(0);
-    public progress$ = this.progress.asObservable();
+    // Signals
+    private progressSignal = signal<number>(0);
+    public progress = this.progressSignal.asReadonly();
+    public progress$ = toObservable(this.progressSignal);
 
-    private isActive = new BehaviorSubject<boolean>(false);
-    public isActive$ = this.isActive.asObservable();
+    private isActiveSignal = signal<boolean>(false);
+    public isActive = this.isActiveSignal.asReadonly();
+    public isActive$ = toObservable(this.isActiveSignal);
 
-    private timer = new BehaviorSubject<number>(0);
-    public timer$ = this.timer.asObservable();
+    private timerSignal = signal<number>(0);
+    public timer = this.timerSignal.asReadonly();
+    public timer$ = toObservable(this.timerSignal);
 
     private timerInterval: any;
 
     public start(duration: number = 10): void {
-        if (this.isActive.getValue()) return;
+        if (this.isActiveSignal()) return;
 
-        this.isActive.next(true);
-        this.progress.next(0);
-        this.timer.next(duration);
+        this.isActiveSignal.set(true);
+        this.progressSignal.set(0);
+        this.timerSignal.set(duration);
 
         this.timerInterval = setInterval(() => {
-            const currentTimer = this.timer.getValue();
+            const currentTimer = this.timerSignal();
             if (currentTimer <= 0) {
                 this.end(false);
             } else {
-                this.timer.next(currentTimer - 1);
+                this.timerSignal.set(currentTimer - 1);
             }
         }, 1000);
 
@@ -39,10 +43,10 @@ export class MiniGameService {
     }
 
     public increment(amount: number = 5): void {
-        if (!this.isActive.getValue()) return;
+        if (!this.isActiveSignal()) return;
 
-        const newProgress = Math.min(this.progress.getValue() + amount, 100);
-        this.progress.next(newProgress);
+        const newProgress = Math.min(this.progressSignal() + amount, 100);
+        this.progressSignal.set(newProgress);
         this.updateReaction();
 
         if (newProgress >= 100) {
@@ -51,7 +55,7 @@ export class MiniGameService {
     }
 
     private updateReaction(): void {
-        const p = this.progress.getValue();
+        const p = this.progressSignal();
         let reaction = '';
 
         if (p < 30) {
@@ -71,7 +75,7 @@ export class MiniGameService {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
-        this.isActive.next(false);
+        this.isActiveSignal.set(false);
 
         if (success) {
             this.characterService.showReaction("Uwah! You actually did it!", 5000);
@@ -81,9 +85,9 @@ export class MiniGameService {
     }
 
     public reset(): void {
-        this.isActive.next(false);
-        this.progress.next(0);
-        this.timer.next(0);
+        this.isActiveSignal.set(false);
+        this.progressSignal.set(0);
+        this.timerSignal.set(0);
         if (this.timerInterval) clearInterval(this.timerInterval);
     }
 }

@@ -1,21 +1,24 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
     providedIn: 'root'
 })
 export class LoadingService {
-    private isLoading = new BehaviorSubject<boolean>(false);
-    public isLoading$ = this.isLoading.asObservable();
+    private isLoadingSignal = signal<boolean>(false);
+
+    // Provide both signal and observable for transition
+    public isLoading = this.isLoadingSignal.asReadonly();
+    public isLoading$ = toObservable(this.isLoadingSignal);
 
     public show(): void {
-        this.isLoading.next(true);
+        this.isLoadingSignal.set(true);
     }
 
     public hide(): void {
         // Artificial small delay for smoother transition
         setTimeout(() => {
-            this.isLoading.next(false);
+            this.isLoadingSignal.set(false);
         }, 800);
     }
 }

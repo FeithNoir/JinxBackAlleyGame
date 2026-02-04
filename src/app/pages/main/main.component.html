@@ -1,18 +1,24 @@
-@if (currentNode) {
-<div class="game-screen" (mousemove)="onMouseMove($event)" [class.flashlight-active]="isFlashlightMode"
-  [class.scene-flash]="isFlashing">
-  <!-- Scene Effects Overlay (Flashlight) -->
-  @if (isFlashlightMode) {
-  <div class="flashlight-mask"
-    [style.background]="'radial-gradient(circle 180px at ' + flashlightX + 'px ' + flashlightY + 'px, transparent 0%, rgba(0,0,0,0.92) 100%)'">
+<main class="main-content" [class.flashlight-mode]="isFlashlightMode()" [class.vibrate]="isVibrating()"
+  (mousemove)="handleMouseMove($event)">
+
+  <div class="character-area">
+    @if (characterProps()) {
+    <app-character [characterProps]="characterProps()!" [isVibrating]="isVibrating()" [isFlashing]="isFlashing()"
+      [isFlashlightMode]="isFlashlightMode()" [flashlightX]="flashlightX()" [flashlightY]="flashlightY()"
+      (interact)="onInteract($event)">
+    </app-character>
+    }
+  </div>
+
+  <!-- Flashlight Overlay -->
+  @if (isFlashlightMode()) {
+  <div class="flashlight-overlay"
+    [style.background]="'radial-gradient(circle 150px at ' + flashlightX() + 'px ' + flashlightY() + 'px, transparent 0%, rgba(0,0,0,0.95) 100%)'">
   </div>
   }
 
-  <div class="character-area">
-    <app-character [characterProps]="characterProps" [isVibrating]="isVibrating" [isFlashing]="isFlashing"
-      [isFlashlightMode]="isFlashlightMode" [flashlightX]="flashlightX" [flashlightY]="flashlightY"
-      (interact)="onInteract($event)">
-    </app-character>
-  </div>
-</div>
-}
+  <!-- Screen Flash Effect -->
+  @if (isFlashing()) {
+  <div class="screen-flash"></div>
+  }
+</main>

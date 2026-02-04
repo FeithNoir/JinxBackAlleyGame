@@ -151,10 +151,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
   cursor: pointer;
   font-family: var(--font-ui);
   color: var(--c-light);
+  background: var(--c-dark);
   transition: color 0.1s;
   user-select: none;
 }
@@ -214,13 +214,11 @@
 .neo-accordion,
 .neo-sub-accordion {
   border: 3px solid #000;
-  background: var(--c-light);
-  margin-bottom: 1.2rem;
+  background: var(--c-dark);
   box-shadow: 4px 4px 0px #000;
 }
 
 .neo-sub-accordion {
-  margin-bottom: 0.8rem;
   box-shadow: 3px 3px 0px #000;
   border-width: 2px;
 }

@@ -1,8 +1,8 @@
-<div class="chat-area" [class.mobile-overlay]="isMobile">
+<div class="chat-area" [class.mobile-overlay]="isMobile()">
     <!-- Full History (Desktop Only) -->
-    @if (!isMobile) {
+    @if (!isMobile()) {
     <div>
-        @for (msg of dialogueHistory; track $index) {
+        @for (msg of dialogueHistory(); track $index) {
         <div class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
             @if (!msg.isPlayer) {
             <div class="speaker-label">{{ msg.speaker }}</div>
@@ -16,17 +16,17 @@
     }
 
     <!-- Jinx's Last Dialogue (Mobile Context) -->
-    @if (isMobile && currentNode) {
+    @if (isMobile() && currentNode()) {
     <div class="chat-bubble-wrapper">
-        <div class="speaker-label">{{ currentNode.character }}</div>
+        <div class="speaker-label">{{ currentNode()?.character }}</div>
         <div class="chat-bubble jinx-context">
-            {{ currentNode.text }}
+            {{ currentNode()?.text }}
         </div>
     </div>
     }
 
     <!-- Player Name Input Area -->
-    @if (isAskingName) {
+    @if (isAskingName()) {
     <div class="name-input-area">
         <input type="text" [(ngModel)]="tempPlayerName" placeholder="ENTER YOUR NAME..."
             (keyup.enter)="submitPlayerName()" class="neo-input">
@@ -35,17 +35,18 @@
     }
 
     <!-- Current Dialogue Interaction Area -->
-    @if (currentNode && !isAskingName) {
+    @if (currentNode() && !isAskingName()) {
     <div class="current-interaction">
-        <app-dialogues [speaker]="currentNode.character" [text]="''" (dialogueAdvance)="onDialogueAdvance()"
+        <app-dialogues [speaker]="currentNode()?.character || ''" [text]="''" (dialogueAdvance)="onDialogueAdvance()"
             class="hidden-trigger"></app-dialogues>
 
         <div class="controls-container">
-            @if (currentNode.options && currentNode.options.length > 0) {
-            <app-options [options]="currentNode.options" (optionSelected)="onOptionSelected($event)"></app-options>
+            @if (currentNode()?.options && (currentNode()?.options?.length || 0) > 0) {
+            <app-options [options]="currentNode()?.options || []"
+                (optionSelected)="onOptionSelected($event)"></app-options>
             }
 
-            @if ((!currentNode.options || currentNode.options.length === 0) && currentNode.nextNodeId) {
+            @if ((!currentNode()?.options || currentNode()?.options?.length === 0) && currentNode()?.nextNodeId) {
             <button class="next-btn" (click)="onDialogueAdvance()">
                 NEXT ➔
             </button>
@@ -55,7 +56,7 @@
             <button class="neo-btn-sm menu-btn-history" (click)="goToMenu()">RETURN TO MENU</button>
 
             <!-- Mobile Settings Toggle -->
-            @if (isMobile) {
+            @if (isMobile()) {
             <button class="neo-btn-sm settings-toggle-mobile" (click)="toggleSettings()">
                 ⚙️ SETTINGS
             </button>

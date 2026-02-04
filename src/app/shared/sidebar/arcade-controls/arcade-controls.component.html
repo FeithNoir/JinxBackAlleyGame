@@ -27,8 +27,8 @@
 
     <div class="control-group">
         <h3>Chaos Level</h3>
-        <input type="range" min="0" max="100" [value]="arcadeChaos" (input)="updateChaos($event)" class="neo-range">
-        <span class="chaos-value">{{ arcadeChaos }}%</span>
+        <input type="range" min="0" max="100" [value]="arcadeChaos()" (input)="updateChaos($event)" class="neo-range">
+        <span class="chaos-value">{{ arcadeChaos() }}%</span>
     </div>
 
     <!-- Categorized Controls (Accordions) -->

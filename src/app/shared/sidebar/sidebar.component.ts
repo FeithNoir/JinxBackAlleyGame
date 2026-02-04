@@ -1,18 +1,15 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, viewChild, ElementRef, AfterViewChecked, input, output, model, HostListener, inject, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { GameService } from '@services/game.service';
 import { CharacterService } from '@services/character.service';
 import { MiniGameService } from '@services/mini-game.service';
 import { MusicService } from '@services/music.service';
-import { GameState } from '@interfaces/game-state.interface';
-import { DialogueNode } from '@interfaces/dialogue-node.interface';
-import { CharacterProps } from '@interfaces/character-props.interface';
 import { ChaosMeterComponent } from './chaos-meter/chaos-meter.component';
 import { MusicControlsComponent } from './music-controls/music-controls.component';
 import { ChatAreaComponent, ChatMessage } from './chat-area/chat-area.component';
 import { ArcadeControlsComponent } from './arcade-controls/arcade-controls.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-sidebar',
@@ -21,83 +18,60 @@ import { ArcadeControlsComponent } from './arcade-controls/arcade-controls.compo
   styleUrl: './sidebar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class SidebarComponent implements OnInit, AfterViewChecked {
   private gameService = inject(GameService);
   private characterService = inject(CharacterService);
   private miniGameService = inject(MiniGameService);
   private musicService = inject(MusicService);
   private router = inject(Router);
 
-  @ViewChild('chatArea') private chatArea!: ElementRef;
+  // View Queries
+  chatAreaComp = viewChild<ChatAreaComponent>('chatAreaComp');
+  chatAreaEl = viewChild<ElementRef>('chatArea');
 
-  @Input() isCollapsed = false;
-  @Output() collapsedChange = new EventEmitter<boolean>();
+  // Inputs/Outputs
+  isCollapsed = model<boolean>(false);
 
-  isArcadeMode = false;
-  gameState!: GameState;
-  currentNode!: DialogueNode | undefined;
-  dialogueHistory: ChatMessage[] = [];
-  arcadeProps: CharacterProps | undefined;
-  arcadeChaos = 0;
-  isMobile = false;
+  // State Signals (Linking to service signals)
+  isArcadeMode = signal<boolean>(false);
+  isMobile = signal<boolean>(false);
+  showVolumeSlider = signal<boolean>(false);
 
-  private subs = new Subscription();
+  // Dialogue History (Local state, but could be globalized later)
+  dialogueHistory = signal<ChatMessage[]>([]);
 
-  volume = 0.5;
-  isMuted = false;
-  showVolumeSlider = false;
-  isAskingName = false;
+  // Computed / Readonly Signals from Services
+  gameState = this.gameService.gameState;
+  isAskingName = this.gameService.isAskingName;
+  arcadeProps = this.characterService.characterProps;
+  arcadeChaos = this.characterService.arcadeChaosLevel;
+  volume = this.musicService.volume;
+  isMuted = this.musicService.isMuted;
 
-  ngOnInit(): void {
+  currentNode = computed(() => this.gameService.getCurrentNode());
+
+  constructor() {
     this.checkMobile();
-
-    this.subs.add(
-      this.gameService.isAskingName$.subscribe(asking => this.isAskingName = asking)
-    );
-    this.subs.add(
-      this.musicService.volume$.subscribe(v => this.volume = v)
-    );
-    this.subs.add(
-      this.musicService.isMuted$.subscribe(m => this.isMuted = m)
-    );
-
-    // Detect route for arcade mode
     this.checkRoute(this.router.url);
-    this.subs.add(
-      this.router.events.pipe(
-        filter(event => event instanceof NavigationEnd)
-      ).subscribe((event: any) => {
-        this.checkRoute(event.urlAfterRedirects);
-      })
-    );
 
-    this.subs.add(
-      this.gameService.gameState$.subscribe(state => {
-        this.gameState = state;
-        const newNode = this.gameService.getCurrentNode();
+    // Track dialogue history
+    effect(() => {
+      const node = this.currentNode();
+      if (node) {
+        this.addToHistory(node.character, node.text);
+      }
+    });
 
-        if (newNode && newNode !== this.currentNode) {
-          this.currentNode = newNode;
-          this.addToHistory(newNode.character, newNode.text);
-        }
-      })
-    );
-
-    this.subs.add(
-      this.characterService.characterProps$.subscribe(props => {
-        this.arcadeProps = props;
-      })
-    );
-
-    this.subs.add(
-      this.characterService.arcadeChaosLevel$.subscribe(level => {
-        this.arcadeChaos = level;
-      })
-    );
+    // Handle navigation events
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.checkRoute(event.urlAfterRedirects);
+    });
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
+  ngOnInit(): void {
+    // Initialization logic handled by constructor/signals
   }
 
   ngAfterViewChecked(): void {
@@ -110,28 +84,33 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private checkMobile(): void {
-    this.isMobile = window.innerWidth <= 768;
+    this.isMobile.set(window.innerWidth <= 768);
   }
 
   private checkRoute(url: string): void {
-    this.isArcadeMode = url.includes('/arcade');
+    this.isArcadeMode.set(url.includes('/arcade'));
   }
 
   private addToHistory(speaker: string, text: string): void {
-    this.dialogueHistory.push({ speaker, text });
+    const history = this.dialogueHistory();
+    // Avoid duplicates if effect triggers multiple times for same node
+    const lastMsg = history[history.length - 1];
+    if (lastMsg?.speaker === speaker && lastMsg?.text === text) return;
+
+    this.dialogueHistory.update(h => [...h, { speaker, text }]);
   }
 
   private scrollToBottom(): void {
-    if (this.chatArea) {
+    const el = this.chatAreaEl();
+    if (el) {
       try {
-        this.chatArea.nativeElement.scrollTop = this.chatArea.nativeElement.scrollHeight;
+        el.nativeElement.scrollTop = el.nativeElement.scrollHeight;
       } catch (err) { }
     }
   }
 
   toggleSidebar(): void {
-    this.isCollapsed = !this.isCollapsed;
-    this.collapsedChange.emit(this.isCollapsed);
+    this.isCollapsed.update((v: boolean) => !v);
   }
 
   // Arcade Controls Handlers
@@ -140,15 +119,15 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onPresetApplied(data: { type: string, preset: string }): void {
-    this.characterService.applyPreset(data.type as 'outfit' | 'expression', data.preset);
+    this.characterService.applyPreset(data.type as any, data.preset);
   }
 
   onPropertyToggled(data: { key: string, value: string }): void {
-    this.characterService.toggleLayer(data.key as keyof CharacterProps, data.value);
+    this.characterService.toggleLayer(data.key as any, data.value);
   }
 
   onEffectToggled(data: { key: string, value: string }): void {
-    this.characterService.updateEffect(data.key as keyof Required<CharacterProps>['effects'], data.value);
+    this.characterService.updateEffect(data.key as any, data.value);
   }
 
   onMiniGameStarted(): void {
@@ -157,8 +136,9 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   // Chat Area Handlers
   onDialogueAdvanced(): void {
-    if (this.currentNode?.nextNodeId) {
-      this.gameService.selectOption(this.currentNode.nextNodeId);
+    const node = this.currentNode();
+    if (node?.nextNodeId) {
+      this.gameService.selectOption(node.nextNodeId);
     }
   }
 
@@ -180,7 +160,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onSliderToggled(): void {
-    this.showVolumeSlider = !this.showVolumeSlider;
+    this.showVolumeSlider.update(v => !v);
   }
 
   onSaveRequested(): void {
@@ -191,5 +171,4 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   goToMenu(): void {
     this.router.navigate(['/']);
   }
-
 }

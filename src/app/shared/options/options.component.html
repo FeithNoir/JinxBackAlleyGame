@@ -1,5 +1,5 @@
 <div class="options-container">
-  @for (option of options; track option.nextNodeId) {
+  @for (option of options(); track option.nextNodeId) {
   <button (click)="selectOption(option.nextNodeId)" class="option-button">
     {{ option.text }}
   </button>

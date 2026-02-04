@@ -1,23 +1,24 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CharacterProps } from '@interfaces/character-props.interface';
 
 @Component({
   selector: 'app-arcade-controls',
+  standalone: true,
   imports: [],
   templateUrl: './arcade-controls.component.html',
   styleUrl: './arcade-controls.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArcadeControlsComponent {
-  @Input() arcadeProps: CharacterProps | undefined;
-  @Input() arcadeChaos: number = 0;
+  arcadeProps = input<CharacterProps | undefined>(undefined);
+  arcadeChaos = input<number>(0);
 
-  @Output() chaosChanged = new EventEmitter<number>();
-  @Output() presetApplied = new EventEmitter<{ type: string, preset: string }>();
-  @Output() propertyToggled = new EventEmitter<{ key: string, value: string }>();
-  @Output() effectToggled = new EventEmitter<{ key: string, value: string }>();
-  @Output() miniGameStarted = new EventEmitter<void>();
-  @Output() menuRequested = new EventEmitter<void>();
+  chaosChanged = output<number>();
+  presetApplied = output<{ type: string, preset: string }>();
+  propertyToggled = output<{ key: string, value: string }>();
+  effectToggled = output<{ key: string, value: string }>();
+  miniGameStarted = output<void>();
+  menuRequested = output<void>();
 
   updateChaos(event: Event): void {
     const value = parseInt((event.target as HTMLInputElement).value);
@@ -37,13 +38,15 @@ export class ArcadeControlsComponent {
   }
 
   isToggled(key: string, value: string): boolean {
-    if (!this.arcadeProps) return false;
-    return (this.arcadeProps as any)[key] === value;
+    const props = this.arcadeProps();
+    if (!props) return false;
+    return (props as any)[key] === value;
   }
 
   isEffectToggled(key: string, value: string): boolean {
-    if (!this.arcadeProps?.effects) return false;
-    return (this.arcadeProps.effects as any)[key] === value;
+    const props = this.arcadeProps();
+    if (!props?.effects) return false;
+    return (props.effects as any)[key] === value;
   }
 
   startMiniGame(): void {

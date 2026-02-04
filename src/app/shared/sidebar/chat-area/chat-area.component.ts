@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
@@ -13,22 +13,23 @@ export interface ChatMessage {
 
 @Component({
   selector: 'app-chat-area',
+  standalone: true,
   imports: [CommonModule, FormsModule, DialoguesComponent, OptionsComponent],
   templateUrl: './chat-area.component.html',
   styleUrl: './chat-area.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatAreaComponent {
-  @Input() dialogueHistory: ChatMessage[] = [];
-  @Input() currentNode: DialogueNode | undefined;
-  @Input() isAskingName: boolean = false;
-  @Input() isMobile: boolean = false;
+  dialogueHistory = input<ChatMessage[]>([]);
+  currentNode = input<DialogueNode | undefined>(undefined);
+  isAskingName = input<boolean>(false);
+  isMobile = input<boolean>(false);
 
-  @Output() dialogueAdvanced = new EventEmitter<void>();
-  @Output() optionSelected = new EventEmitter<number>();
-  @Output() playerNameSubmitted = new EventEmitter<string>();
-  @Output() menuRequested = new EventEmitter<void>();
-  @Output() settingsToggled = new EventEmitter<void>();
+  dialogueAdvanced = output<void>();
+  optionSelected = output<number>();
+  playerNameSubmitted = output<string>();
+  menuRequested = output<void>();
+  settingsToggled = output<void>();
 
   tempPlayerName = '';
 

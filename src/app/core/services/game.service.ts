@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { GameState } from '@interfaces/game-state.interface';
 import { DIALOGUE_DATA } from '@data/dialogues';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
@@ -40,11 +40,14 @@ export class GameService {
   private miniGameService = inject(MiniGameService);
   private storageService = inject(StorageService);
 
-  private gameState = new BehaviorSubject<GameState>(INITIAL_GAME_STATE);
-  public gameState$: Observable<GameState> = this.gameState.asObservable();
+  // Signals
+  private gameStateSignal = signal<GameState>(INITIAL_GAME_STATE);
+  public gameState = this.gameStateSignal.asReadonly();
+  public gameState$ = toObservable(this.gameStateSignal);
 
-  private isAskingName = new BehaviorSubject<boolean>(false);
-  public isAskingName$ = this.isAskingName.asObservable();
+  private isAskingNameSignal = signal<boolean>(false);
+  public isAskingName = this.isAskingNameSignal.asReadonly();
+  public isAskingName$ = toObservable(this.isAskingNameSignal);
 
   constructor() {
     this.loadGame();
@@ -53,7 +56,7 @@ export class GameService {
   private async loadGame(): Promise<void> {
     const savedState = await this.storageService.load('gameState');
     if (savedState) {
-      this.gameState.next(savedState);
+      this.gameStateSignal.set(savedState);
       this.characterService.setProps(savedState.characters['jinx']);
     } else {
       this.loadInitialState();
@@ -61,7 +64,7 @@ export class GameService {
   }
 
   public async saveGame(): Promise<boolean> {
-    const success = await this.storageService.save('gameState', this.gameState.getValue());
+    const success = await this.storageService.save('gameState', this.gameStateSignal());
     if (!success) {
       console.warn('GameService: Failed to save game state');
     }
@@ -69,14 +72,14 @@ export class GameService {
   }
 
   public loadInitialState(): void {
-    this.gameState.next(INITIAL_GAME_STATE);
+    this.gameStateSignal.set(INITIAL_GAME_STATE);
     this.characterService.setProps(INITIAL_GAME_STATE.characters['jinx']);
     this.characterService.setMode('history');
     this.checkAndTriggerEffects(INITIAL_GAME_STATE.currentNodeId);
   }
 
   public getCurrentNode(): DialogueNode | undefined {
-    const currentState = this.gameState.getValue();
+    const currentState = this.gameStateSignal();
     const currentNodeId = currentState.currentNodeId;
     const node = DIALOGUE_DATA.find(n => n.id === currentNodeId);
 
@@ -103,7 +106,7 @@ export class GameService {
 
   public selectOption(nextNodeId: number | string): void {
     const numericId = typeof nextNodeId === 'string' ? parseInt(nextNodeId) : nextNodeId;
-    const currentState = this.gameState.getValue();
+    const currentState = this.gameStateSignal();
     const currentNode = DIALOGUE_DATA.find(node => node.id === currentState.currentNodeId);
     const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === numericId);
     const nextNode = DIALOGUE_DATA.find(node => node.id === numericId);
@@ -132,7 +135,7 @@ export class GameService {
         });
       }
 
-      this.gameState.next({
+      this.gameStateSignal.set({
         ...currentState,
         currentNodeId: numericId,
         chaosLevel: newChaosLevel,
@@ -148,18 +151,18 @@ export class GameService {
 
       // Check for name request
       if (nextNode.metadata?.type === 'NAME_REQUEST') {
-        this.isAskingName.next(true);
+        this.isAskingNameSignal.set(true);
       }
     }
   }
 
   public setPlayerName(name: string): void {
-    const currentState = this.gameState.getValue();
-    this.gameState.next({
+    const currentState = this.gameStateSignal();
+    this.gameStateSignal.set({
       ...currentState,
       playerName: name
     });
-    this.isAskingName.next(false);
+    this.isAskingNameSignal.set(false);
     this.saveGame();
 
     // Advance dialogue after setting name
@@ -184,7 +187,7 @@ export class GameService {
   }
 
   public interactWith(part: string): void {
-    const currentState = this.gameState.getValue();
+    const currentState = this.gameStateSignal();
     const chaos = currentState.chaosLevel;
 
     let mood = '';

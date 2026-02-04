@@ -1,12 +1,12 @@
-<aside class="sidebar-container" [class.collapsed]="isCollapsed">
+<aside class="sidebar-container" [class.collapsed]="isCollapsed()">
     <button class="toggle-btn" (click)="toggleSidebar()">
-        {{ isCollapsed ? '»' : '«' }}
+        {{ isCollapsed() ? '»' : '«' }}
     </button>
 
     <div class="sidebar-content">
         <!-- Arcade Mode Control Panel -->
-        @if (isArcadeMode && !isCollapsed) {
-        <app-arcade-controls [arcadeProps]="arcadeProps" [arcadeChaos]="arcadeChaos"
+        @if (isArcadeMode() && !isCollapsed()) {
+        <app-arcade-controls [arcadeProps]="arcadeProps()" [arcadeChaos]="arcadeChaos()"
             (chaosChanged)="onChaosChanged($event)" (presetApplied)="onPresetApplied($event)"
             (propertyToggled)="onPropertyToggled($event)" (effectToggled)="onEffectToggled($event)"
             (miniGameStarted)="onMiniGameStarted()" (menuRequested)="goToMenu()">
@@ -14,11 +14,11 @@
         }
 
         <!-- History Mode: Chaos Meter + Chat Area -->
-        @if (!isArcadeMode && !isCollapsed) {
-        <app-chaos-meter [chaosLevel]="gameState.chaosLevel"></app-chaos-meter>
+        @if (!isArcadeMode() && !isCollapsed()) {
+        <app-chaos-meter [chaosLevel]="gameState().chaosLevel"></app-chaos-meter>
 
-        <app-chat-area #chatArea [dialogueHistory]="dialogueHistory" [currentNode]="currentNode"
-            [isAskingName]="isAskingName" [isMobile]="isMobile" (dialogueAdvanced)="onDialogueAdvanced()"
+        <app-chat-area #chatAreaComp [dialogueHistory]="dialogueHistory()" [currentNode]="currentNode()"
+            [isAskingName]="isAskingName()" [isMobile]="isMobile()" (dialogueAdvanced)="onDialogueAdvanced()"
             (optionSelected)="onOptionSelected($event)" (playerNameSubmitted)="onPlayerNameSubmitted($event)"
             (menuRequested)="goToMenu()" (settingsToggled)="onSliderToggled()">
         </app-chat-area>
@@ -27,9 +27,9 @@
         <div class="spacer"></div>
 
         <!-- Music Controls + Save Button -->
-        @if (!isCollapsed || (isMobile && showVolumeSlider)) {
-        <app-music-controls [volume]="volume" [isMuted]="isMuted" [showVolumeSlider]="showVolumeSlider"
-            [isMobile]="isMobile" (volumeChanged)="onVolumeChanged($event)" (muteToggled)="onMuteToggled()"
+        @if (!isCollapsed() || (isMobile() && showVolumeSlider())) {
+        <app-music-controls [volume]="volume()" [isMuted]="isMuted()" [showVolumeSlider]="showVolumeSlider()"
+            [isMobile]="isMobile()" (volumeChanged)="onVolumeChanged($event)" (muteToggled)="onMuteToggled()"
             (sliderToggled)="onSliderToggled()" (saveRequested)="onSaveRequested()">
         </app-music-controls>
         }

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CharacterProps } from '@interfaces/character-props.interface';
 
 export const DEFAULT_JINX_PROPS: CharacterProps = {
@@ -58,42 +58,46 @@ export const EXPRESSION_PRESETS: Record<string, Partial<CharacterProps>> = {
     providedIn: 'root'
 })
 export class CharacterService {
-    private characterProps = new BehaviorSubject<CharacterProps>(DEFAULT_JINX_PROPS);
-    public characterProps$: Observable<CharacterProps> = this.characterProps.asObservable();
+    private characterPropsSignal = signal<CharacterProps>(DEFAULT_JINX_PROPS);
+    public characterProps = this.characterPropsSignal.asReadonly();
+    public characterProps$ = toObservable(this.characterPropsSignal);
 
-    private arcadeChaosLevel = new BehaviorSubject<number>(0);
-    public arcadeChaosLevel$ = this.arcadeChaosLevel.asObservable();
+    private arcadeChaosLevelSignal = signal<number>(0);
+    public arcadeChaosLevel = this.arcadeChaosLevelSignal.asReadonly();
+    public arcadeChaosLevel$ = toObservable(this.arcadeChaosLevelSignal);
 
-    private mode = new BehaviorSubject<'history' | 'arcade'>('history');
-    public mode$ = this.mode.asObservable();
+    private modeSignal = signal<'history' | 'arcade'>('history');
+    public mode = this.modeSignal.asReadonly();
+    public mode$ = toObservable(this.modeSignal);
 
-    private reactionText = new BehaviorSubject<string>('');
-    public reactionText$ = this.reactionText.asObservable();
+    private reactionTextSignal = signal<string>('');
+    public reactionText = this.reactionTextSignal.asReadonly();
+    public reactionText$ = toObservable(this.reactionTextSignal);
 
     constructor() { }
 
     public setMode(mode: 'history' | 'arcade'): void {
-        this.mode.next(mode);
+        this.modeSignal.set(mode);
     }
 
     public getMode(): 'history' | 'arcade' {
-        return this.mode.getValue();
+        return this.modeSignal();
     }
 
     public setArcadeChaosLevel(level: number): void {
         const capped = Math.min(Math.max(level, 0), 100);
-        this.arcadeChaosLevel.next(capped);
+        this.arcadeChaosLevelSignal.set(capped);
     }
 
     public getArcadeChaosLevel(): number {
-        return this.arcadeChaosLevel.getValue();
+        return this.arcadeChaosLevelSignal();
     }
 
     public showReaction(text: string, duration: number = 3000): void {
-        this.reactionText.next(text);
+        this.reactionTextSignal.set(text);
         setTimeout(() => {
-            if (this.reactionText.getValue() === text) {
-                this.reactionText.next('');
+            if (this.reactionTextSignal() === text) {
+                this.reactionTextSignal.set('');
             }
         }, duration);
     }
@@ -107,27 +111,28 @@ export class CharacterService {
     }
 
     public updateProps(newProps: Partial<CharacterProps>): void {
-        const current = this.characterProps.getValue();
-        this.characterProps.next({ ...current, ...newProps });
+        this.characterPropsSignal.update(current => ({ ...current, ...newProps }));
     }
 
     public updateEffect(key: keyof Required<CharacterProps>['effects'], value: string): void {
-        const current = this.characterProps.getValue();
-        const effects = { ...current.effects, [key]: value === current.effects?.[key] ? '' : value };
-        this.characterProps.next({ ...current, effects });
+        this.characterPropsSignal.update(current => {
+            const effects = { ...current.effects, [key]: value === current.effects?.[key] ? '' : value };
+            return { ...current, effects };
+        });
     }
 
     public toggleLayer(prop: keyof CharacterProps, value: string): void {
-        const current = this.characterProps.getValue();
-        const newValue = current[prop] === value ? '' : value;
-        this.characterProps.next({ ...current, [prop]: newValue });
+        this.characterPropsSignal.update(current => {
+            const newValue = (current as any)[prop] === value ? '' : value;
+            return { ...current, [prop]: newValue };
+        });
     }
 
     public setProps(props: CharacterProps): void {
-        this.characterProps.next(props);
+        this.characterPropsSignal.set(props);
     }
 
     public getProps(): CharacterProps {
-        return this.characterProps.getValue();
+        return this.characterPropsSignal();
     }
 }

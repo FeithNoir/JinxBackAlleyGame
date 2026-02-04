@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogueOption } from '@interfaces/dialogue-node.interface';
 
@@ -7,11 +7,12 @@ import { DialogueOption } from '@interfaces/dialogue-node.interface';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './options.component.html',
-  styleUrl: './options.component.css'
+  styleUrl: './options.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OptionsComponent {
-  @Input() options: DialogueOption[] = [];
-  @Output() optionSelected = new EventEmitter<number>();
+  options = input<DialogueOption[]>([]);
+  optionSelected = output<number>();
 
   selectOption(nextNodeId: number): void {
     this.optionSelected.emit(nextNodeId);

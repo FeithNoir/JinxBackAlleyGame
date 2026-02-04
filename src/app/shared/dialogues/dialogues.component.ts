@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,12 +6,13 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dialogues.component.html',
-  styleUrl: './dialogues.component.css'
+  styleUrl: './dialogues.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialoguesComponent {
-  @Input() speaker: string = '';
-  @Input() text: string = '';
-  @Output() dialogueAdvance = new EventEmitter<void>();
+  speaker = input<string>('');
+  text = input<string>('');
+  dialogueAdvance = output<void>();
 
   advanceDialogue(): void {
     this.dialogueAdvance.emit();
