@@ -8,6 +8,14 @@
         <div class="arcade-controls" *ngIf="isArcadeMode && !isCollapsed">
             <h2 class="arcade-title">ARCADE SETTINGS</h2>
 
+            <!-- Navigation -->
+            <div class="control-group navigation-group">
+                <h3>NAVIGATION</h3>
+                <div class="preset-buttons">
+                    <button class="neo-btn-sm menu-btn" (click)="goToMenu()">RETURN TO MENU</button>
+                </div>
+            </div>
+
             <!-- Quick Presets -->
             <div class="control-group presets-group">
                 <h3>QUICK PRESETS</h3>
@@ -198,11 +206,13 @@
         </div>
 
         <!-- Chat Area (History Only) -->
-        <div class="chat-area" #chatArea *ngIf="!isCollapsed && !isArcadeMode">
-            <div *ngFor="let msg of dialogueHistory" class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
-                <div class="speaker-label" *ngIf="!msg.isPlayer">{{ msg.speaker }}</div>
-                <div class="chat-bubble">
-                    {{ msg.text }}
+        <div class="chat-area" #chatArea *ngIf="!isCollapsed && !isArcadeMode" [class.mobile-overlay]="isMobile">
+            <div *ngIf="!isMobile">
+                <div *ngFor="let msg of dialogueHistory" class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
+                    <div class="speaker-label" *ngIf="!msg.isPlayer">{{ msg.speaker }}</div>
+                    <div class="chat-bubble">
+                        {{ msg.text }}
+                    </div>
                 </div>
             </div>
 

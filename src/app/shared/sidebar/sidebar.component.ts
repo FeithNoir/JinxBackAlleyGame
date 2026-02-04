@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../core/services/game.service';
 import { CharacterService } from '../../core/services/character.service';
@@ -37,6 +37,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   dialogueHistory: ChatMessage[] = [];
   arcadeProps: CharacterProps | undefined;
   arcadeChaos = 0;
+  isMobile = false;
 
   private subs = new Subscription();
 
@@ -48,6 +49,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) { }
 
   ngOnInit(): void {
+    this.checkMobile();
     // Detect route for arcade mode
     this.checkRoute(this.router.url);
     this.subs.add(
@@ -89,6 +91,15 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkMobile();
+  }
+
+  private checkMobile(): void {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   private checkRoute(url: string): void {
@@ -146,6 +157,10 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   startMiniGame(): void {
     this.miniGameService.start(10);
+  }
+
+  goToMenu(): void {
+    this.router.navigate(['/']);
   }
 
   isToggled(prop: keyof CharacterProps, value: string): boolean {

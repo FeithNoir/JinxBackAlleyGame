@@ -5,6 +5,7 @@ import { DIALOGUE_DATA } from '../data/dialogues';
 import { DialogueNode } from '../interfaces/dialogue-node.interface';
 import { CharacterService } from './character.service';
 import { MiniGameService } from './mini-game.service';
+import { StorageService } from './storage.service';
 import { EventService } from './event.service';
 
 const INITIAL_GAME_STATE: GameState = {
@@ -40,8 +41,25 @@ export class GameService {
   constructor(
     private eventService: EventService,
     private characterService: CharacterService,
-    private miniGameService: MiniGameService
-  ) { }
+    private miniGameService: MiniGameService,
+    private storageService: StorageService
+  ) {
+    this.loadGame();
+  }
+
+  private async loadGame(): Promise<void> {
+    const savedState = await this.storageService.load('gameState');
+    if (savedState) {
+      this.gameState.next(savedState);
+      this.characterService.setProps(savedState.characters['jinx']);
+    } else {
+      this.loadInitialState();
+    }
+  }
+
+  public async saveGame(): Promise<void> {
+    await this.storageService.save('gameState', this.gameState.getValue());
+  }
 
   public loadInitialState(): void {
     this.gameState.next(INITIAL_GAME_STATE);
@@ -108,6 +126,7 @@ export class GameService {
         this.characterService.setProps(newCharactersState['jinx']);
       }
 
+      this.saveGame();
       this.checkAndTriggerEffects(numericId);
     }
   }

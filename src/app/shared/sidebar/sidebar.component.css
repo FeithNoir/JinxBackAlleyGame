@@ -345,6 +345,30 @@ app-options {
     padding: 10px;
     font-size: 1rem;
   }
+
+  /* Mobile Overlay Specifics */
+  .mobile-overlay {
+    position: fixed;
+    bottom: 60px; /* Above the footer area if possible, or just bottom */
+    left: 0;
+    width: 100%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8)) !important;
+    border: none !important;
+    padding: 20px !important;
+    z-index: 1000;
+  }
+
+  .mobile-overlay .chat-bubble {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--c-accent) !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-overlay .controls-container {
+    padding-top: 15px;
+  }
 }
 
 /* Arcade Controls & Neo UI */

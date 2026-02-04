@@ -84,3 +84,15 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+@media (max-width: 768px) {
+    .mini-game-ui {
+        width: 280px;
+        padding: 15px;
+        bottom: 100px; /* Position it higher for mobile to avoid covering too much */
+    }
+
+    .timer-badge {
+        font-size: 1rem;
+    }
+}
