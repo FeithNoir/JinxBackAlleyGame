@@ -1,9 +1,12 @@
+@if (currentNode) {
 <div class="game-screen" (mousemove)="onMouseMove($event)" [class.flashlight-active]="isFlashlightMode"
-  [class.scene-flash]="isFlashing" *ngIf="currentNode">
+  [class.scene-flash]="isFlashing">
   <!-- Scene Effects Overlay (Flashlight) -->
-  <div *ngIf="isFlashlightMode" class="flashlight-mask"
+  @if (isFlashlightMode) {
+  <div class="flashlight-mask"
     [style.background]="'radial-gradient(circle 180px at ' + flashlightX + 'px ' + flashlightY + 'px, transparent 0%, rgba(0,0,0,0.92) 100%)'">
   </div>
+  }
 
   <div class="character-area">
     <app-character [characterProps]="characterProps" [isVibrating]="isVibrating" [isFlashing]="isFlashing"
@@ -12,3 +15,4 @@
     </app-character>
   </div>
 </div>
+}

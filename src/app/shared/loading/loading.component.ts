@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoadingService } from '../../core/services/loading.service';
+import { LoadingService } from '@services/loading.service';
 
 @Component({
   selector: 'app-loading',
@@ -8,18 +8,20 @@ import { LoadingService } from '../../core/services/loading.service';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="loading-overlay" *ngIf="loadingService.isLoading$ | async">
-      <div class="loading-content">
-        <div class="chaos-loader">
-          <div class="purple-orb"></div>
-          <div class="biri-biri"></div>
-        </div>
-        <h2 class="loading-text">RELOADING CHAOS...</h2>
-        <div class="progress-track">
-          <div class="progress-fill"></div>
+    @if (loadingService.isLoading$ | async) {
+      <div class="loading-overlay">
+        <div class="loading-content">
+          <div class="chaos-loader">
+            <div class="purple-orb"></div>
+            <div class="biri-biri"></div>
+          </div>
+          <h2 class="loading-text">RELOADING CHAOS...</h2>
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
         </div>
       </div>
-    </div>
+    }
   `,
   styles: [`
     .loading-overlay {
@@ -125,5 +127,5 @@ import { LoadingService } from '../../core/services/loading.service';
   `]
 })
 export class LoadingComponent {
-  constructor(public loadingService: LoadingService) { }
+  public loadingService = inject(LoadingService);
 }
