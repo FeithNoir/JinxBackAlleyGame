@@ -3,10 +3,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { GameState } from '../interfaces/game-state.interface';
 import { DIALOGUE_DATA } from '../data/dialogues';
 import { DialogueNode } from '../interfaces/dialogue-node.interface';
+import { EventService } from './event.service';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
-  currentNodeId: 1,
+  currentNodeId: 100,
   chaosLevel: 0,
   characters: {
     jinx: {
@@ -34,10 +35,11 @@ export class GameService {
   private gameState = new BehaviorSubject<GameState>(INITIAL_GAME_STATE);
   public gameState$: Observable<GameState> = this.gameState.asObservable();
 
-  constructor() { }
+  constructor(private eventService: EventService) { }
 
   public loadInitialState(): void {
     this.gameState.next(INITIAL_GAME_STATE);
+    this.checkAndTriggerEffects(INITIAL_GAME_STATE.currentNodeId);
   }
 
   public getCurrentNode(): DialogueNode | undefined {
@@ -56,11 +58,12 @@ export class GameService {
     return node;
   }
 
-  public selectOption(nextNodeId: number): void {
+  public selectOption(nextNodeId: number | string): void {
+    const numericId = typeof nextNodeId === 'string' ? parseInt(nextNodeId) : nextNodeId;
     const currentState = this.gameState.getValue();
     const currentNode = DIALOGUE_DATA.find(node => node.id === currentState.currentNodeId);
-    const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === nextNodeId);
-    const nextNode = DIALOGUE_DATA.find(node => node.id === nextNodeId);
+    const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === numericId);
+    const nextNode = DIALOGUE_DATA.find(node => node.id === numericId);
 
     if (nextNode) {
       let newChaosLevel = currentState.chaosLevel;
@@ -81,10 +84,45 @@ export class GameService {
 
       this.gameState.next({
         ...currentState,
-        currentNodeId: nextNodeId,
+        currentNodeId: numericId,
         chaosLevel: newChaosLevel,
         characters: newCharactersState,
       });
+
+      this.checkAndTriggerEffects(numericId);
+    }
+  }
+
+  private checkAndTriggerEffects(nodeId: number): void {
+    const node = DIALOGUE_DATA.find(n => n.id === nodeId);
+    if (!node) return;
+
+    const overlay = node.characterProps?.effects?.overlay;
+
+    if (overlay === 'biri-biri') {
+      this.eventService.vibrate();
+    } else if (overlay === 'action-lines') {
+      this.eventService.vibrate();
+      this.eventService.flash();
+    }
+  }
+
+  public interactWith(part: string): void {
+    const currentState = this.gameState.getValue();
+    const chaos = currentState.chaosLevel;
+
+    let mood = '';
+    if (chaos <= 30) mood = 'annoyed';
+    else if (chaos <= 70) mood = 'nervous';
+    else mood = 'happy';
+
+    // Find a reaction node based on part and mood
+    const reactionNode = DIALOGUE_DATA.find(n =>
+      n.isInteraction && n.metadata?.part === part && n.metadata?.mood === mood
+    );
+
+    if (reactionNode) {
+      this.selectOption(reactionNode.id);
     }
   }
 }

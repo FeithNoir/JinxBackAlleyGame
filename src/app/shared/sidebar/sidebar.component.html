@@ -7,7 +7,7 @@
         <div class="top-section">
             <div class="char-avatar-section">
                 <div class="avatar-frame">
-                    <img src="character/base/jinx_portrait.png" alt="Jinx Avatar" class="avatar-img"
+                    <img src="character/base/body.png" alt="Jinx Avatar" class="avatar-img"
                         (error)="onImageError($event)">
                 </div>
                 <h3 class="char-name" *ngIf="!isCollapsed">JINX</h3>
@@ -28,7 +28,7 @@
             <div class="chaos-meter">
                 <span class="label">CHAOS</span>
                 <div class="progress-bar">
-                    <div class="progress-fill" [style.width.%]="gameState?.chaosLevel || 0"></div>
+                    <div class="progress-fill" [style.width.%]="gameState.chaosLevel"></div>
                 </div>
             </div>
         </div>

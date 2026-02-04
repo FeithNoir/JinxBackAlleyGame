@@ -1,6 +1,16 @@
-<div class="game-screen" *ngIf="currentNode">
+<div class="game-screen" (mousemove)="onMouseMove($event)" [class.flashlight-active]="isFlashlightMode"
+  [class.scene-flash]="isFlashing" *ngIf="currentNode">
+  <!-- Scene Effects Overlay (Flashlight) -->
+  <div *ngIf="isFlashlightMode" class="flashlight-mask"
+    [style.background]="'radial-gradient(circle 180px at ' + flashlightX + 'px ' + flashlightY + 'px, transparent 0%, rgba(0,0,0,0.92) 100%)'">
+  </div>
+
   <div class="character-area">
-    <div class="character-composite-container" *ngIf="characterProps">
+    <div class="character-composite-container" [class.vibrate]="isVibrating" *ngIf="characterProps">
+      <!-- Interaction Zones -->
+      <div class="interaction-zone head" (click)="onInteract('head')"></div>
+      <div class="interaction-zone top" (click)="onInteract('top')"></div>
+      <div class="interaction-zone bottom" (click)="onInteract('bottom')"></div>
       <!-- 1. Base Body -->
       <img src="character/base/body.png" class="layer base" alt="base">
 

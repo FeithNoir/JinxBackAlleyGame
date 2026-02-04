@@ -14,6 +14,6 @@ export interface CharacterProps {
     head?: string;   // blush, heat, mean
     bottom?: string; // fluid-1
     feet?: string;   // fluid-2
-    overlay?: string; // parallel-lines, biri-biri
+    overlay?: string; // parallel-lines, biri-biri, action-lines
   };
 }

@@ -13,7 +13,13 @@ export interface DialogueNode {
   character: string;
   text: string;
   characterProps?: Partial<CharacterProps>;
+  sceneEffect?: 'flashlight' | 'none';
   nextNodeId?: number;
   chaosChange?: number;
+  isInteraction?: boolean;
+  metadata?: {
+    part?: string;
+    mood?: string;
+  };
   options?: DialogueOption[];
 }
