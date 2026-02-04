@@ -18,6 +18,8 @@ export class MainComponent implements OnInit {
   private eventService = inject(EventService);
   private loadingService = inject(LoadingService);
 
+  protected backgroundStyle: string = "url('background/bg-1.png')";
+
   // Core signals from service
   gameState = this.gameService.gameState;
 

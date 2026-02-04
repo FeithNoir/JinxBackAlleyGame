@@ -15,7 +15,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url('/background/bg-1.png');
   background-size: contain; /* Story mode usually looks better with cover */
   background-position: center;
   background-repeat: no-repeat;

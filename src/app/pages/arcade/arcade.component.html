@@ -1,4 +1,4 @@
-<div class="arcade-screen">
+<div class="arcade-screen" [style.backgroundImage]="backgroundStyle">
     <div class="preview-area">
         @if (characterProps()) {
         <app-character [characterProps]="characterProps()" (interact)="onInteract($event)">

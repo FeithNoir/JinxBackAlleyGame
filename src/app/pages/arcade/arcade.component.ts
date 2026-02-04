@@ -18,6 +18,8 @@ export class ArcadeComponent implements OnInit {
   private gameService = inject(GameService);
   private loadingService = inject(LoadingService);
 
+  protected backgroundStyle: string = "url('background/bg-1.png')";
+
   // Use service signal directly
   characterProps = this.characterService.characterProps;
 

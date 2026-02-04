@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class TitleComponent {
   private router = inject(Router);
+  protected backgroundStyle: string = "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('background/bg-1.png')";
 
   startGame(): void {
     this.router.navigate(['/game']);
