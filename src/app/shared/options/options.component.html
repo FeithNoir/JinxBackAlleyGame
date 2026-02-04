@@ -1,0 +1,9 @@
+<div class="options-container">
+  <button
+    *ngFor="let option of options"
+    (click)="selectOption(option.nextNodeId)"
+    class="option-button"
+  >
+    {{ option.text }}
+  </button>
+</div>

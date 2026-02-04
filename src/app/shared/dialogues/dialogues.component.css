@@ -1,0 +1,50 @@
+.dialogue-box {
+  background-color: white;
+  border: var(--border-thick);
+  padding: 1.5rem 2rem;
+  margin: 1rem;
+  position: relative;
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  color: var(--c-dark);
+  box-shadow: var(--shadow-hard);
+}
+
+.speaker-name {
+  font-weight: bold;
+  color: var(--c-primary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  font-size: 1.2em;
+}
+
+.dialogue-text {
+  line-height: 1.4;
+}
+
+/* Speech bubble tail - basic example */
+.dialogue-box::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; /* Adjust to point downwards */
+  left: 50px; /* Adjust position */
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid var(--border-thick); /* Black border for the tail */
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.5)); /* Shadow for the tail */
+}
+
+.dialogue-box::before {
+  content: '';
+  position: absolute;
+  bottom: -17px; /* Slightly above the after pseudo-element */
+  left: 50px; /* Adjust position */
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid white; /* White fill for the tail */
+}

@@ -1,0 +1,69 @@
+<aside class="sidebar-container" [class.collapsed]="isCollapsed">
+    <button class="toggle-btn" (click)="toggleSidebar()">
+        {{ isCollapsed ? '»' : '«' }}
+    </button>
+
+    <div class="sidebar-content">
+        <div class="top-section">
+            <div class="char-avatar-section">
+                <div class="avatar-frame">
+                    <img src="character/base/jinx_portrait.png" alt="Jinx Avatar" class="avatar-img"
+                        (error)="onImageError($event)">
+                </div>
+                <h3 class="char-name" *ngIf="!isCollapsed">JINX</h3>
+            </div>
+
+            <nav class="sidebar-nav" *ngIf="!isCollapsed">
+                <button class="nav-btn" title="Inventory">
+                    <span class="icon">🎒</span>
+                </button>
+                <button class="nav-btn" title="Quests">
+                    <span class="icon">📜</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Chaos Meter (Moved from Header) -->
+        <div class="chaos-meter-container" *ngIf="!isCollapsed">
+            <div class="chaos-meter">
+                <span class="label">CHAOS</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="gameState?.chaosLevel || 0"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area" #chatArea *ngIf="!isCollapsed">
+            <div *ngFor="let msg of dialogueHistory" class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
+                <div class="speaker-label" *ngIf="!msg.isPlayer">{{ msg.speaker }}</div>
+                <div class="chat-bubble">
+                    {{ msg.text }}
+                </div>
+            </div>
+
+            <!-- Current Dialogue Interaction Area -->
+            <div class="current-interaction" *ngIf="currentNode">
+                <app-dialogues [speaker]="currentNode.character" [text]="''" (dialogueAdvance)="onDialogueAdvance()"
+                    class="hidden-trigger"></app-dialogues>
+
+                <div class="controls-container">
+                    <app-options *ngIf="currentNode.options && currentNode.options.length > 0"
+                        [options]="currentNode.options" (optionSelected)="onOptionSelected($event)"></app-options>
+
+                    <button *ngIf="(!currentNode.options || currentNode.options.length === 0) && currentNode.nextNodeId"
+                        class="next-btn" (click)="onDialogueAdvance()">
+                        SIGUIENTE ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="quick-settings" *ngIf="!isCollapsed">
+            <button class="setting-icon">🔊</button>
+            <button class="setting-icon">💾</button>
+        </div>
+    </div>
+</aside>

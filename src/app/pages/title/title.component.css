@@ -1,0 +1,38 @@
+.title-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('/background/bg-1.png'); /* Example background */
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 4rem;
+  color: var(--c-primary);
+  margin-bottom: 2rem;
+  text-shadow: var(--shadow-hard);
+  border: var(--border-thick);
+  padding: 1rem 2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+button {
+  background-color: var(--c-action);
+  color: var(--c-dark);
+  font-family: var(--font-comic);
+  font-size: 2rem;
+  padding: 1rem 3rem;
+  border: var(--border-thick);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: var(--shadow-hard);
+}
+
+button:hover {
+  transform: scale(1.05) rotate(-2deg);
+  background-color: var(--c-accent);
+}

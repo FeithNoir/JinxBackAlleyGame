@@ -1,59 +1,76 @@
-# JinxBackalleyGame
+# Jinx's Back-alley Game
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.15.
+This repository contains the source code for **"Jinx's Back-alley Game"**, a "point-and-click" visual novel developed with Angular. Immerse yourself in a chaotic narrative set in the back alleys, featuring a distinct "Electric Purple / Comic Pop" aesthetic inspired by Jinx and the undercity of Zaun. The project is structured to support a dynamic, component-based architecture, separating game assets from application logic for maintainability and scalability.
 
-## Development server
+## Aesthetic Direction: Purple Chaos
 
-To start a local development server, run:
+The game's design embraces a high-energy, comic-book inspired, and graffiti-infused visual style. Expect vibrant purple hues, neon accents, and thick black outlines on UI elements, reflecting Jinx's signature chaotic flair.
 
-```bash
-ng serve
-```
+## Project Structure
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The workspace is organized into several key directories, each serving a distinct purpose.
 
-## Code scaffolding
+### `/` (Root)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+The root directory contains standard configuration files for an Angular project:
 
-```bash
-ng generate component component-name
-```
+-   `angular.json`: Workspace configuration for the Angular CLI, defining build, serve, and test options.
+-   `package.json`: Lists project dependencies and defines npm scripts.
+-   `tsconfig.json`: Base TypeScript configuration for the project.
+-   `.editorconfig` & `.gitignore`: Standard configuration for code editor consistency and Git version control.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### `/public`
 
-```bash
-ng generate --help
-```
+This directory serves as the primary repository for all static game assets. The assets are structured to facilitate a layered rendering approach, allowing for dynamic composition of character sprites and scenes.
 
-## Building
+-   **/background**: Contains background images for various game scenes.
+-   **/character**: Holds all character-related assets, categorized for modular composition.
+    -   **/base**: The core body sprite.
+    -   **/arms**: Left and right arm variations.
+    -   **/clothes**: Apparel and accessories, allowing for character customization.
+    -   **/effects**: Visual effects like blushes, fluids, and action lines.
+    -   **/expressions**: Facial features (eyes, mouths) to convey different emotions.
 
-To build the project run:
+### `/src`
 
-```bash
-ng build
-```
+This directory contains the core application source code.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+-   `index.html`: The main HTML entry point.
+-   `main.ts`: The primary application bootstrap script.
+-   `styles.css`: Global stylesheet, now including custom CSS design tokens for the "Purple Chaos" aesthetic.
 
-## Running unit tests
+#### `/src/app`
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+The heart of the Angular application, structured into feature modules and shared components.
 
-```bash
-ng test
-```
+-   **/pages**: Contains components that represent the primary game screens or states.
+    -   **/title**: The title screen component, serving as the game's entry point.
+    -   **/main**: The main gameplay component, where the core interaction logic and narrative progression reside.
+    -   **/layout**: A wrapper component that defines the global UI layout, integrating shared UI elements.
 
-## Running end-to-end tests
+-   **/shared**: Contains reusable components that are utilized across different pages.
+    -   **/dialogues**: Component for rendering dialogue boxes and narrative text, styled as comic-book speech bubbles.
+    -   **/options**: Component for displaying player choices, styled as interactive graffiti tags.
+    -   **/sidebar**: UI component for a side navigation or status panel.
+    -   **/header** & **/footer**: Global header and footer components.
 
-For end-to-end (e2e) testing, run:
+-   **/core**: Contains core application logic, services, and interfaces.
+    -   **/interfaces**: TypeScript interfaces for `GameState`, `DialogueNode`, and `CharacterProps`.
+    -   **/services**: Includes `GameService` for managing game state and progression.
+    -   **/data**: Stores game data, such as `DIALOGUE_DATA` for narrative content.
 
-```bash
-ng e2e
-```
+### `/backend` (Optional)
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+This directory contains a Node.js backend with Prisma and SQLite, designed for persistent game state storage (save/load functionality). This component is optional for basic gameplay but essential for saving player progress.
 
-## Additional Resources
+## Development
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
+
+### Development Server
+
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+### Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.

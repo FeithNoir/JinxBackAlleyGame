@@ -1,1 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --c-primary: #9333EA;    /* Jinx Purple */
+  --c-accent: #FFD600;     /* Warning Yellow */
+  --c-action: #00BFFF;     /* Electric Blue */
+  --c-dark: #111827;       /* Ink Black */
+  --c-light: #FAF5FF;      /* Lavender White */
+
+  --font-comic: 'Bangers', display;
+  --font-ui: 'Outfit', sans-serif;
+
+  --border-thick: 3px solid #000000;
+  --shadow-hard: 6px 6px 0px 0px #000000;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-ui);
+  color: var(--c-light);
+  background-color: var(--c-dark);
+}
+
+/* Basic reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-comic);
+  color: var(--c-primary);
+  text-shadow: var(--shadow-hard);
+}
