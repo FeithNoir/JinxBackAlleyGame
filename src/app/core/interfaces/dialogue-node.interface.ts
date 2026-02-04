@@ -17,6 +17,7 @@ export interface DialogueNode {
   nextNodeId?: number;
   chaosChange?: number;
   isInteraction?: boolean;
+  presets?: { type: 'outfit' | 'expression', id: string }[];
   metadata?: {
     part?: string;
     mood?: string;

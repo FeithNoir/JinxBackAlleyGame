@@ -161,6 +161,13 @@
                         </div>
                     </details>
 
+                    <details class="neo-sub-accordion" open>
+                        <summary>MINI-GAME</summary>
+                        <div class="sub-accordion-content">
+                            <button class="neo-btn" (click)="startMiniGame()">START MINI-GAME</button>
+                        </div>
+                    </details>
+
                     <details class="neo-sub-accordion">
                         <summary>Overlay</summary>
                         <div class="sub-accordion-content">
@@ -210,7 +217,7 @@
 
                     <button *ngIf="(!currentNode.options || currentNode.options.length === 0) && currentNode.nextNodeId"
                         class="next-btn" (click)="onDialogueAdvance()">
-                        SIGUIENTE ➔
+                        NEXT ➔
                     </button>
                 </div>
             </div>

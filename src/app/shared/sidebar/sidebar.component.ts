@@ -8,6 +8,7 @@ import { CharacterProps } from '../../core/interfaces/character-props.interface'
 import { Subscription } from 'rxjs';
 import { DialoguesComponent } from '../dialogues/dialogues.component';
 import { OptionsComponent } from '../options/options.component';
+import { MiniGameService } from '../../core/services/mini-game.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -42,6 +43,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
     private gameService: GameService,
     private characterService: CharacterService,
+    private miniGameService: MiniGameService,
     private router: Router
   ) { }
 
@@ -140,6 +142,10 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateChaos(event: any): void {
     this.characterService.setArcadeChaosLevel(parseInt(event.target.value));
+  }
+
+  startMiniGame(): void {
+    this.miniGameService.start(10);
   }
 
   isToggled(prop: keyof CharacterProps, value: string): boolean {

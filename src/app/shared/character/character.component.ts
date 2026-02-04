@@ -2,12 +2,14 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { CommonModule } from '@angular/common';
 import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { CharacterService } from '../../core/services/character.service';
+import { EventService } from '../../core/services/event.service';
 import { Subscription } from 'rxjs';
+import { MiniGameComponent } from '../mini-game/mini-game.component';
 
 @Component({
     selector: 'app-character',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MiniGameComponent],
     templateUrl: './character.component.html',
     styleUrl: './character.component.css'
 })
@@ -24,7 +26,10 @@ export class CharacterComponent implements OnInit, OnDestroy {
     reactionText = '';
     private subs = new Subscription();
 
-    constructor(private characterService: CharacterService) { }
+    constructor(
+        private characterService: CharacterService,
+        private eventService: EventService
+    ) { }
 
     ngOnInit(): void {
         this.subs.add(

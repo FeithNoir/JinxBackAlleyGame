@@ -4,6 +4,7 @@ import { CharacterService, DEFAULT_JINX_PROPS } from '../../core/services/charac
 import { CharacterComponent } from '../../shared/character/character.component';
 import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { Subscription } from 'rxjs';
+import { GameService } from '../../core/services/game.service';
 import { EventService } from '../../core/services/event.service';
 
 @Component({
@@ -15,11 +16,11 @@ import { EventService } from '../../core/services/event.service';
 })
 export class ArcadeComponent implements OnInit, OnDestroy {
   characterProps: CharacterProps | undefined;
-  arcadeChaos = 0;
   private subs = new Subscription();
 
   constructor(
     private characterService: CharacterService,
+    private gameService: GameService,
     private eventService: EventService
   ) { }
 
@@ -31,12 +32,6 @@ export class ArcadeComponent implements OnInit, OnDestroy {
         this.characterProps = props;
       })
     );
-
-    this.subs.add(
-      this.characterService.arcadeChaosLevel$.subscribe(level => {
-        this.arcadeChaos = level;
-      })
-    );
   }
 
   ngOnDestroy(): void {
@@ -44,42 +39,6 @@ export class ArcadeComponent implements OnInit, OnDestroy {
   }
 
   onInteract(part: string): void {
-    const chaos = this.arcadeChaos;
-    let mood = '';
-    if (chaos <= 30) mood = 'annoyed';
-    else if (chaos <= 70) mood = 'nervous';
-    else mood = 'happy';
-
-    const reactions: Record<string, Record<string, string>> = {
-      'head': {
-        'annoyed': 'No me toques el pelo...',
-        'nervous': '¿Eh? ¿Qué haces?',
-        'happy': 'Hehe, se siente bien...'
-      },
-      'top': {
-        'annoyed': 'Manten tus manos lejos.',
-        'nervous': 'Uff, hace calor aquí...',
-        'happy': 'Me gusta cuando haces eso.'
-      },
-      'bottom': {
-        'annoyed': '¡Hey! Cuidado.',
-        'nervous': 'S-si sigues así...',
-        'happy': 'Mmm... no te detengas.'
-      }
-    };
-
-    const text = reactions[part]?.[mood] || '...';
-    this.characterService.showReaction(text);
-
-    // Expression shifts
-    if (mood === 'annoyed') this.characterService.applyPreset('expression', 'mad');
-    else if (mood === 'nervous') this.characterService.applyPreset('expression', 'nervous');
-    else if (mood === 'happy') this.characterService.applyPreset('expression', 'happy');
-
-    // Visual effects matching history mode
-    this.eventService.vibrate(300);
-    if (chaos > 50) {
-      this.eventService.flash();
-    }
+    this.gameService.interactWith(part);
   }
 }

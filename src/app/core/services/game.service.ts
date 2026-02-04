@@ -3,8 +3,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { GameState } from '../interfaces/game-state.interface';
 import { DIALOGUE_DATA } from '../data/dialogues';
 import { DialogueNode } from '../interfaces/dialogue-node.interface';
-import { EventService } from './event.service';
 import { CharacterService } from './character.service';
+import { MiniGameService } from './mini-game.service';
+import { EventService } from './event.service';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
@@ -38,7 +39,8 @@ export class GameService {
 
   constructor(
     private eventService: EventService,
-    private characterService: CharacterService
+    private characterService: CharacterService,
+    private miniGameService: MiniGameService
   ) { }
 
   public loadInitialState(): void {
@@ -88,6 +90,13 @@ export class GameService {
         };
       }
 
+      // Apply presets if present
+      if (nextNode.presets) {
+        nextNode.presets.forEach(p => {
+          this.characterService.applyPreset(p.type, p.id);
+        });
+      }
+
       this.gameState.next({
         ...currentState,
         currentNodeId: numericId,
@@ -126,13 +135,43 @@ export class GameService {
     else if (chaos <= 70) mood = 'nervous';
     else mood = 'happy';
 
-    // Find a reaction node based on part and mood
-    const reactionNode = DIALOGUE_DATA.find(n =>
-      n.isInteraction && n.metadata?.part === part && n.metadata?.mood === mood
-    );
+    // Find interaction text (can be externalized later)
+    const reactions: Record<string, Record<string, string>> = {
+      'head': {
+        'annoyed': "Don't touch my hair...",
+        'nervous': "Wait... what are you doing?",
+        'happy': "Hehe, that feels nice..."
+      },
+      'top': {
+        'annoyed': "Keep your hands off.",
+        'nervous': "Uff, is it getting hot in here?",
+        'happy': "I like it when you do that."
+      },
+      'bottom': {
+        'annoyed': "Hey! Watch it.",
+        'nervous': "I-if you keep doing that...",
+        'happy': "Mmm... don't stop."
+      }
+    };
 
-    if (reactionNode) {
-      this.selectOption(reactionNode.id);
+    const text = reactions[part]?.[mood] || '...';
+
+    // Show in speech bubble
+    this.characterService.showReaction(text);
+
+    // Trigger mini-game if chaos is high (> 60)
+    if (this.characterService.getMode() === 'history' && chaos > 60) {
+      if (part === 'top' || part === 'bottom') {
+        this.miniGameService.start(10);
+      }
     }
+
+    // Apply expression change based on mood
+    if (mood === 'annoyed') this.characterService.applyPreset('expression', 'mad');
+    if (mood === 'nervous') this.characterService.applyPreset('expression', 'nervous');
+    if (mood === 'happy') this.characterService.applyPreset('expression', 'happy');
+
+    // Trigger effects
+    this.eventService.vibrate(200);
   }
 }

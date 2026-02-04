@@ -6,13 +6,13 @@ export const DIALOGUE_DATA: DialogueNode[] = [
     character: 'jinx',
     text: "...Who's there?",
     sceneEffect: 'flashlight',
-    characterProps: { eyes: 'e-1', mouth: 'm-1' },
+    presets: [{ type: 'expression', id: 'neutral' }],
     nextNodeId: 101,
   },
   {
     id: 101,
     character: 'jinx',
-    text: "Stop pointing that thing at me! It's blinding!",
+    text: "Hey! Stop pointing that thing at me! It's blinding!",
     sceneEffect: 'flashlight',
     characterProps: { eyes: 'e-7', mouth: 'm-5' },
     nextNodeId: 1,
@@ -20,26 +20,25 @@ export const DIALOGUE_DATA: DialogueNode[] = [
   {
     id: 1,
     character: 'jinx',
-    text: "Hey! You finally showed up. I was getting bored.",
-    characterProps: { eyes: 'e-2', mouth: 'm-1', leftArm: 'left-2', rightArm: 'right-1' },
+    text: "Oh, it's you. You finally showed up! I was starting to get bored.",
+    presets: [{ type: 'expression', id: 'happy' }],
+    characterProps: { leftArm: 'left-2', rightArm: 'right-1' },
     chaosChange: 5,
     nextNodeId: 2,
   },
   {
     id: 2,
     character: 'jinx',
-    text: "What do you want to do? Cause I've got PLANS.",
-    characterProps: {
-      eyes: 'e-4',
-      mouth: 'm-3',
-      top: 'top-1',
-      bottom: 'short-1',
-    },
+    text: "So, what are we doing? Because I've got some BIG plans.",
+    presets: [
+      { type: 'outfit', id: 'normal' },
+      { type: 'expression', id: 'happy' }
+    ],
     options: [
       { text: "What kind of plans?", nextNodeId: 3, chaosChange: 10 },
-      { text: "I'm not sure I have time for plans...", nextNodeId: 4, chaosChange: -5 },
+      { text: "I'm not sure if I have time for 'plans'...", nextNodeId: 4, chaosChange: -5 },
       {
-        text: "Actually, why don't you try this 'Cat' outfit?",
+        text: "How about you try this 'Cat' outfit?",
         nextNodeId: 6,
         chaosRequirement: 30
       },
@@ -48,7 +47,7 @@ export const DIALOGUE_DATA: DialogueNode[] = [
   {
     id: 3,
     character: 'jinx',
-    text: "The fun kind! Explosions, chaos... the usual.",
+    text: "The fun kind! You know... explosions, chaos, total mayhem! The usual stuff.",
     characterProps: {
       eyes: 'e-5',
       mouth: 'm-4',
@@ -62,7 +61,7 @@ export const DIALOGUE_DATA: DialogueNode[] = [
   {
     id: 7,
     character: 'jinx',
-    text: "Wanna see something REALLY cool?",
+    text: "Wanna see something REALLY cool? It's gonna be a blast!",
     characterProps: {
       eyes: 'e-3',
       mouth: 'm-2',
@@ -74,14 +73,11 @@ export const DIALOGUE_DATA: DialogueNode[] = [
   {
     id: 4,
     character: 'jinx',
-    text: "BO-RING! You're no fun at all.",
+    text: "BO-RING! You're really no fun at all. Lighten up!",
+    presets: [{ type: 'expression', id: 'mad' }],
     characterProps: {
-      eyes: 'e-7',
-      mouth: 'm-5',
       leftArm: 'left-4',
       rightArm: 'right-3',
-      top: 'top-1',
-      bottom: 'short-1',
       effects: { head: 'mean' }
     },
     chaosChange: 5,
@@ -90,21 +86,18 @@ export const DIALOGUE_DATA: DialogueNode[] = [
   {
     id: 5,
     character: 'jinx',
-    text: "Anyway, let's get this show on the road.",
-    characterProps: { eyes: 'e-1', mouth: 'm-2', effects: {} },
+    text: "Anyway, let's get this show on the road. Don't blink!",
+    presets: [{ type: 'expression', id: 'neutral' }],
     nextNodeId: 5, // Loop back
   },
   {
     id: 6,
     character: 'jinx',
-    text: "A cat outfit? Oh, you're getting interesting now! Fine, for a little while...",
-    characterProps: {
-      eyes: 'e-2',
-      mouth: 'm-2',
-      head: 'cat-ears',
-      top: 'cat-top',
-      bottom: 'cat-bottom'
-    },
+    text: "A cat outfit? Oh, you're getting interesting now! Fine, I'll wear it for a bit...",
+    presets: [
+      { type: 'outfit', id: 'cat' },
+      { type: 'expression', id: 'happy' }
+    ],
     chaosChange: 20,
     nextNodeId: 5,
   },

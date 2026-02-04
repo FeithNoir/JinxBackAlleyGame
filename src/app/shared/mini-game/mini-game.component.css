@@ -1,0 +1,86 @@
+.mini-game-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    pointer-events: none;
+}
+
+.mini-game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.click-catcher {
+    width: 100%;
+    height: 100%;
+}
+
+.mini-game-ui {
+    position: relative;
+    bottom: 40px;
+    width: 320px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0px #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    backdrop-filter: blur(5px);
+}
+
+.timer-badge {
+    background: var(--c-action);
+    color: #000;
+    font-family: var(--font-comic);
+    font-weight: bold;
+    padding: 6px 16px;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0px #000;
+    font-size: 1.2rem;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 30px;
+    background: #111;
+    border: 3px solid #000;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--c-primary), var(--c-accent));
+    transition: width 0.1s ease-out;
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.click-hint {
+    color: var(--c-accent);
+    font-family: var(--font-comic);
+    font-weight: bold;
+    font-style: italic;
+    text-shadow: 2px 2px 0px #000;
+    font-size: 0.9rem;
+    animation: bounce 0.6s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
