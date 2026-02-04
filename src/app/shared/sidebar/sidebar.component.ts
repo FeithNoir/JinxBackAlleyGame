@@ -1,6 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -11,21 +9,17 @@ import { MusicService } from '@services/music.service';
 import { GameState } from '@interfaces/game-state.interface';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
 import { CharacterProps } from '@interfaces/character-props.interface';
-import { DialoguesComponent } from '@shared/dialogues/dialogues.component';
-import { OptionsComponent } from '@shared/options/options.component';
-
-export interface ChatMessage {
-  speaker: string;
-  text: string;
-  isPlayer?: boolean;
-}
+import { ChaosMeterComponent } from './chaos-meter/chaos-meter.component';
+import { MusicControlsComponent } from './music-controls/music-controls.component';
+import { ChatAreaComponent, ChatMessage } from './chat-area/chat-area.component';
+import { ArcadeControlsComponent } from './arcade-controls/arcade-controls.component';
 
 @Component({
   selector: 'app-sidebar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, DialoguesComponent, OptionsComponent],
+  imports: [ChaosMeterComponent, MusicControlsComponent, ChatAreaComponent, ArcadeControlsComponent],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrl: './sidebar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   private gameService = inject(GameService);
@@ -53,7 +47,6 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   isMuted = false;
   showVolumeSlider = false;
   isAskingName = false;
-  tempPlayerName = '';
 
   ngOnInit(): void {
     this.checkMobile();
@@ -67,6 +60,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.subs.add(
       this.musicService.isMuted$.subscribe(m => this.isMuted = m)
     );
+
     // Detect route for arcade mode
     this.checkRoute(this.router.url);
     this.subs.add(
@@ -121,93 +115,81 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private checkRoute(url: string): void {
     this.isArcadeMode = url.includes('/arcade');
-    this.characterService.setMode(this.isArcadeMode ? 'arcade' : 'history');
   }
 
-  private addToHistory(speaker: string, text: string) {
-    const lastMsg = this.dialogueHistory[this.dialogueHistory.length - 1];
-    if (lastMsg && lastMsg.speaker === speaker && lastMsg.text === text) return;
+  private addToHistory(speaker: string, text: string): void {
     this.dialogueHistory.push({ speaker, text });
   }
 
   private scrollToBottom(): void {
-    try {
-      this.chatArea.nativeElement.scrollTop = this.chatArea.nativeElement.scrollHeight;
-    } catch (err) { }
+    if (this.chatArea) {
+      try {
+        this.chatArea.nativeElement.scrollTop = this.chatArea.nativeElement.scrollHeight;
+      } catch (err) { }
+    }
   }
 
-  toggleSidebar() {
+  toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
     this.collapsedChange.emit(this.isCollapsed);
   }
 
-  onOptionSelected(nextNodeId: number): void {
-    const selectedOption = this.currentNode?.options?.find(opt => opt.nextNodeId === nextNodeId);
-    if (selectedOption) {
-      this.dialogueHistory.push({ speaker: 'PLAYER', text: selectedOption.text, isPlayer: true });
-    }
-    this.gameService.selectOption(nextNodeId);
+  // Arcade Controls Handlers
+  onChaosChanged(value: number): void {
+    this.characterService.setArcadeChaosLevel(value);
   }
 
-  onDialogueAdvance(): void {
-    if (this.currentNode && this.currentNode.nextNodeId) {
+  onPresetApplied(data: { type: string, preset: string }): void {
+    this.characterService.applyPreset(data.type as 'outfit' | 'expression', data.preset);
+  }
+
+  onPropertyToggled(data: { key: string, value: string }): void {
+    this.characterService.toggleLayer(data.key as keyof CharacterProps, data.value);
+  }
+
+  onEffectToggled(data: { key: string, value: string }): void {
+    this.characterService.updateEffect(data.key as keyof Required<CharacterProps>['effects'], data.value);
+  }
+
+  onMiniGameStarted(): void {
+    this.miniGameService.start(10);
+  }
+
+  // Chat Area Handlers
+  onDialogueAdvanced(): void {
+    if (this.currentNode?.nextNodeId) {
       this.gameService.selectOption(this.currentNode.nextNodeId);
     }
   }
 
-  // Arcade Controls
-  toggle(prop: keyof CharacterProps, value: string): void {
-    this.characterService.toggleLayer(prop, value);
+  onOptionSelected(nextNodeId: number): void {
+    this.gameService.selectOption(nextNodeId);
   }
 
-  toggleEffect(key: keyof Required<CharacterProps>['effects'], value: string): void {
-    this.characterService.updateEffect(key, value);
+  onPlayerNameSubmitted(name: string): void {
+    this.gameService.setPlayerName(name);
   }
 
-  applyPreset(type: 'outfit' | 'expression', id: string): void {
-    this.characterService.applyPreset(type, id);
+  // Music Controls Handlers
+  onVolumeChanged(value: number): void {
+    this.musicService.setVolume(value);
   }
 
-  updateChaos(event: any): void {
-    this.characterService.setArcadeChaosLevel(parseInt(event.target.value));
+  onMuteToggled(): void {
+    this.musicService.toggleMute();
   }
 
-  startMiniGame(): void {
-    this.miniGameService.start(10);
+  onSliderToggled(): void {
+    this.showVolumeSlider = !this.showVolumeSlider;
   }
 
-  onSave(): void {
+  onSaveRequested(): void {
     this.gameService.saveGame();
-    // Maybe show a quick visual feedback in the future
   }
 
+  // Navigation
   goToMenu(): void {
     this.router.navigate(['/']);
   }
 
-  toggleMute(): void {
-    this.musicService.toggleMute();
-  }
-
-  onVolumeChange(event: any): void {
-    this.musicService.setVolume(parseFloat(event.target.value));
-  }
-
-  toggleVolumeSlider(): void {
-    this.showVolumeSlider = !this.showVolumeSlider;
-  }
-
-  submitPlayerName(): void {
-    if (this.tempPlayerName.trim()) {
-      this.gameService.setPlayerName(this.tempPlayerName.trim());
-    }
-  }
-
-  isToggled(prop: keyof CharacterProps, value: string): boolean {
-    return this.arcadeProps ? this.arcadeProps[prop] === value : false;
-  }
-
-  isEffectToggled(key: keyof Required<CharacterProps>['effects'], value: string): boolean {
-    return this.arcadeProps?.effects?.[key] === value;
-  }
 }
