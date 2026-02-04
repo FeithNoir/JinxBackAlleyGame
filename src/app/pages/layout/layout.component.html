@@ -1,4 +1,5 @@
 <div class="game-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <app-loading></app-loading>
   <app-header></app-header>
   <app-sidebar [isCollapsed]="sidebarCollapsed" (collapsedChange)="onSidebarToggle($event)"></app-sidebar>
   <main class="game-main-content">

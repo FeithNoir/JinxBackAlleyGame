@@ -101,3 +101,14 @@
   justify-content: center;
   align-items: flex-end;
 }
+
+@media (max-width: 768px) {
+  .character-area {
+    height: 95%; /* Take more space to go lower */
+    transform: translateY(20px); /* Manual offset to touch bottom */
+  }
+  
+  .game-screen {
+    background-position: bottom center; /* Align bg too */
+  }
+}

@@ -38,6 +38,9 @@ export class GameService {
   private gameState = new BehaviorSubject<GameState>(INITIAL_GAME_STATE);
   public gameState$: Observable<GameState> = this.gameState.asObservable();
 
+  private isAskingName = new BehaviorSubject<boolean>(false);
+  public isAskingName$ = this.isAskingName.asObservable();
+
   constructor(
     private eventService: EventService,
     private characterService: CharacterService,
@@ -73,15 +76,25 @@ export class GameService {
     const currentNodeId = currentState.currentNodeId;
     const node = DIALOGUE_DATA.find(n => n.id === currentNodeId);
 
-    if (node && node.options) {
-      // Filter options by chaos requirement
-      const filteredOptions = node.options.filter(opt =>
-        !opt.chaosRequirement || currentState.chaosLevel >= opt.chaosRequirement
-      );
-      return { ...node, options: filteredOptions };
+    if (!node) return undefined;
+
+    // Process text to replace placeholders
+    let processedText = node.text;
+    if (currentState.playerName) {
+      processedText = processedText.replace(/{playerName}/g, currentState.playerName);
     }
 
-    return node;
+    const processedNode = { ...node, text: processedText };
+
+    if (processedNode.options) {
+      // Filter options by chaos requirement
+      const filteredOptions = processedNode.options.filter(opt =>
+        !opt.chaosRequirement || currentState.chaosLevel >= opt.chaosRequirement
+      );
+      return { ...processedNode, options: filteredOptions };
+    }
+
+    return processedNode;
   }
 
   public selectOption(nextNodeId: number | string): void {
@@ -128,6 +141,27 @@ export class GameService {
 
       this.saveGame();
       this.checkAndTriggerEffects(numericId);
+
+      // Check for name request
+      if (nextNode.metadata?.type === 'NAME_REQUEST') {
+        this.isAskingName.next(true);
+      }
+    }
+  }
+
+  public setPlayerName(name: string): void {
+    const currentState = this.gameState.getValue();
+    this.gameState.next({
+      ...currentState,
+      playerName: name
+    });
+    this.isAskingName.next(false);
+    this.saveGame();
+
+    // Advance dialogue after setting name
+    const currentNode = this.getCurrentNode();
+    if (currentNode?.nextNodeId) {
+      this.selectOption(currentNode.nextNodeId);
     }
   }
 

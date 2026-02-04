@@ -21,6 +21,7 @@ export interface DialogueNode {
   metadata?: {
     part?: string;
     mood?: string;
+    type?: string;
   };
   options?: DialogueOption[];
 }

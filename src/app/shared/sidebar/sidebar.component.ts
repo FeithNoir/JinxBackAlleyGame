@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { GameService } from '../../core/services/game.service';
 import { CharacterService } from '../../core/services/character.service';
 import { GameState } from '../../core/interfaces/game-state.interface';
@@ -9,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { DialoguesComponent } from '../dialogues/dialogues.component';
 import { OptionsComponent } from '../options/options.component';
 import { MiniGameService } from '../../core/services/mini-game.service';
+import { MusicService } from '../../core/services/music.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -21,7 +23,7 @@ export interface ChatMessage {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, DialoguesComponent, OptionsComponent],
+  imports: [CommonModule, FormsModule, DialoguesComponent, OptionsComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
@@ -45,11 +47,28 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
     private gameService: GameService,
     private characterService: CharacterService,
     private miniGameService: MiniGameService,
+    private musicService: MusicService,
     private router: Router
   ) { }
 
+  volume = 0.5;
+  isMuted = false;
+  showVolumeSlider = false;
+  isAskingName = false;
+  tempPlayerName = '';
+
   ngOnInit(): void {
     this.checkMobile();
+
+    this.subs.add(
+      this.gameService.isAskingName$.subscribe(asking => this.isAskingName = asking)
+    );
+    this.subs.add(
+      this.musicService.volume$.subscribe(v => this.volume = v)
+    );
+    this.subs.add(
+      this.musicService.isMuted$.subscribe(m => this.isMuted = m)
+    );
     // Detect route for arcade mode
     this.checkRoute(this.router.url);
     this.subs.add(
@@ -159,8 +178,31 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.miniGameService.start(10);
   }
 
+  onSave(): void {
+    this.gameService.saveGame();
+    // Maybe show a quick visual feedback in the future
+  }
+
   goToMenu(): void {
     this.router.navigate(['/']);
+  }
+
+  toggleMute(): void {
+    this.musicService.toggleMute();
+  }
+
+  onVolumeChange(event: any): void {
+    this.musicService.setVolume(parseFloat(event.target.value));
+  }
+
+  toggleVolumeSlider(): void {
+    this.showVolumeSlider = !this.showVolumeSlider;
+  }
+
+  submitPlayerName(): void {
+    if (this.tempPlayerName.trim()) {
+      this.gameService.setPlayerName(this.tempPlayerName.trim());
+    }
   }
 
   isToggled(prop: keyof CharacterProps, value: string): boolean {

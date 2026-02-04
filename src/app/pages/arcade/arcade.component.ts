@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { GameService } from '../../core/services/game.service';
 import { EventService } from '../../core/services/event.service';
 
+import { LoadingService } from '../../core/services/loading.service';
+
 @Component({
   selector: 'app-arcade',
   standalone: true,
@@ -21,11 +23,14 @@ export class ArcadeComponent implements OnInit, OnDestroy {
   constructor(
     private characterService: CharacterService,
     private gameService: GameService,
-    private eventService: EventService
+    private eventService: EventService,
+    private loadingService: LoadingService
   ) { }
 
   ngOnInit(): void {
+    this.loadingService.show();
     this.characterService.setMode('arcade');
+    this.loadingService.hide();
 
     this.subs.add(
       this.characterService.characterProps$.subscribe(props => {

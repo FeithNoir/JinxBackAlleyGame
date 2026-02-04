@@ -207,6 +207,7 @@
 
         <!-- Chat Area (History Only) -->
         <div class="chat-area" #chatArea *ngIf="!isCollapsed && !isArcadeMode" [class.mobile-overlay]="isMobile">
+            <!-- Full History (Desktop Only) -->
             <div *ngIf="!isMobile">
                 <div *ngFor="let msg of dialogueHistory" class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
                     <div class="speaker-label" *ngIf="!msg.isPlayer">{{ msg.speaker }}</div>
@@ -216,8 +217,23 @@
                 </div>
             </div>
 
+            <!-- Jinx's Last Dialogue (Mobile Context) -->
+            <div *ngIf="isMobile && currentNode" class="chat-bubble-wrapper">
+                <div class="speaker-label">{{ currentNode.character }}</div>
+                <div class="chat-bubble jinx-context">
+                    {{ currentNode.text }}
+                </div>
+            </div>
+
+            <!-- Player Name Input Area -->
+            <div class="name-input-area" *ngIf="isAskingName">
+                <input type="text" [(ngModel)]="tempPlayerName" placeholder="ENTER YOUR NAME..."
+                    (keyup.enter)="submitPlayerName()" class="neo-input">
+                <button class="neo-btn" (click)="submitPlayerName()">CONFIRM</button>
+            </div>
+
             <!-- Current Dialogue Interaction Area -->
-            <div class="current-interaction" *ngIf="currentNode">
+            <div class="current-interaction" *ngIf="currentNode && !isAskingName">
                 <app-dialogues [speaker]="currentNode.character" [text]="''" (dialogueAdvance)="onDialogueAdvance()"
                     class="hidden-trigger"></app-dialogues>
 
@@ -229,15 +245,34 @@
                         class="next-btn" (click)="onDialogueAdvance()">
                         NEXT ➔
                     </button>
+
+                    <!-- Return to Menu (History) -->
+                    <button class="neo-btn-sm menu-btn-history" (click)="goToMenu()">RETURN TO MENU</button>
+
+                    <!-- Mobile Settings Toggle -->
+                    <button *ngIf="isMobile" class="neo-btn-sm settings-toggle-mobile" (click)="toggleVolumeSlider()">
+                        ⚙️ SETTINGS
+                    </button>
                 </div>
             </div>
         </div>
 
         <div class="spacer"></div>
 
-        <div class="quick-settings" *ngIf="!isCollapsed">
-            <button class="setting-icon">🔊</button>
-            <button class="setting-icon">💾</button>
+        <div class="quick-settings" *ngIf="!isCollapsed || (isMobile && showVolumeSlider)">
+            <div class="music-control-wrapper">
+                <button class="setting-icon" (click)="toggleVolumeSlider()" [class.active]="!isMuted">
+                    {{ isMuted ? '🔇' : '🔊' }}
+                </button>
+                <div class="volume-popover" [class.mobile-popover]="isMobile" *ngIf="showVolumeSlider">
+                    <input type="range" min="0" max="1" step="0.05" [value]="volume" (input)="onVolumeChange($event)"
+                        class="neo-range-v">
+                    <button class="mute-btn" (click)="toggleMute()">
+                        {{ isMuted ? 'UNMUTE' : 'MUTE' }}
+                    </button>
+                </div>
+            </div>
+            <button class="setting-icon" (click)="onSave()">💾</button>
         </div>
     </div>
 </aside>

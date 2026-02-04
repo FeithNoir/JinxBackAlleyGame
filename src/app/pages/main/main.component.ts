@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { CharacterComponent } from '../../shared/character/character.component';
 
+import { LoadingService } from '../../core/services/loading.service';
+
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -34,11 +36,16 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(
     private gameService: GameService,
-    private eventService: EventService
+    private eventService: EventService,
+    private loadingService: LoadingService
   ) { }
 
   ngOnInit(): void {
+    this.loadingService.show();
     this.gameService.loadInitialState();
+
+    // Hide after state is loaded
+    this.loadingService.hide();
 
     this.gameStateSubscription = this.gameService.gameState$.subscribe(state => {
       this.gameState = state;

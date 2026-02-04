@@ -102,6 +102,45 @@ A sandbox mode where players can interact directly with the character without na
 -   **Chaos Control**: Adjust the **Chaos Level** manually via a slider to see different interactions and moods in real-time.
 -   **Instant Feedback**: The character and reactions update instantly as you tweak the settings.
 
+### 4. Music & Audio System
+The game includes a dedicated `MusicService` that manages background tracks (`title.mp3`, `main.mp3`, `arcade.mp3`):
+-   **Contextual Audio**: Automatically switches tracks based on whether the player is in the Title screen, History Mode, or Arcade Mode.
+-   **Volumen Control**: A neobrutalist volume slider and mute toggle are available in the sidebar settings.
+
+### 5. Desktop Application (Electron)
+The project can be bundled as a standalone desktop application using Electron:
+-   **Environment Awareness**: The game detects if it's running in a browser or as a desktop app.
+-   **Local "Backend" Persistence**: In Electron mode, game data is saved directly to a local JSON file (`game_data.json`) instead of `localStorage`, ensuring robust persistence for the desktop experience.
+
+## Build & Deployment
+
+### Production Build (Web)
+Run `ng build` to generate the production artifacts. The files will be located in the `dist/jinx-backalley-game/browser` directory.
+```bash
+npm run build
+```
+
+### Desktop Version (Electron)
+To build and run the game as a desktop application:
+1. Ensure the project is built: `npm run build`
+2. Run Electron: `npm run electron:run`
+Or do both at once:
+```bash
+npm run electron:serve
+```
+
+## Future Immersive Features
+
+To make the back-alley experience even more chaotic and immersive, the following features are planned for future updates:
+
+-   **Dynamic Soundscapes**: Implementation of spatial audio and ambient alley sounds (dripping water, distant explosions, neon buzzing).
+-   **Animated Character Sprites**: Moving from static layers to Live2D or subtle CSS animations for breathing and blinking.
+-   **Deep Relationship System**: Branching narrative paths based not just on Chaos, but on "Trust" levels with Jinx.
+-   **Inventory System**: Collect items in the alley to trigger special reactions or unlock new costume parts.
+-   **Mini-game Variety**: New rhythm-based or puzzle-based mini-games to break the narrative flow.
+
+---
+
 ## Support the Project
 
 If you enjoy the chaos, consider supporting the developer on Patreon:

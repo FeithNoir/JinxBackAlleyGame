@@ -85,6 +85,14 @@ app-footer {
   .game-main-content {
     border-left: none;
     border-bottom: var(--border-thick);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Push character to bottom */
+  }
+
+  app-character {
+    display: block;
+    margin-bottom: -50px; /* Slight offset to better "ground" the character */
   }
 
   app-sidebar {

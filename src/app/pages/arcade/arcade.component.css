@@ -17,3 +17,14 @@
   align-items: flex-end;
   padding-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+  .preview-area {
+    padding-bottom: 0;
+    transform: translateY(20px);
+  }
+  
+  .arcade-screen {
+    background-position: bottom center;
+  }
+}
