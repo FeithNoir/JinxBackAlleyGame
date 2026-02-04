@@ -1,0 +1,19 @@
+.arcade-screen {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-image: url('/background/bg-1.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--c-dark);
+  border-left: var(--border-thick);
+}
+
+.preview-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 20px;
+}

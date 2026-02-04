@@ -4,6 +4,7 @@ import { GameState } from '../interfaces/game-state.interface';
 import { DIALOGUE_DATA } from '../data/dialogues';
 import { DialogueNode } from '../interfaces/dialogue-node.interface';
 import { EventService } from './event.service';
+import { CharacterService } from './character.service';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
@@ -35,10 +36,15 @@ export class GameService {
   private gameState = new BehaviorSubject<GameState>(INITIAL_GAME_STATE);
   public gameState$: Observable<GameState> = this.gameState.asObservable();
 
-  constructor(private eventService: EventService) { }
+  constructor(
+    private eventService: EventService,
+    private characterService: CharacterService
+  ) { }
 
   public loadInitialState(): void {
     this.gameState.next(INITIAL_GAME_STATE);
+    this.characterService.setProps(INITIAL_GAME_STATE.characters['jinx']);
+    this.characterService.setMode('history');
     this.checkAndTriggerEffects(INITIAL_GAME_STATE.currentNodeId);
   }
 
@@ -88,6 +94,10 @@ export class GameService {
         chaosLevel: newChaosLevel,
         characters: newCharactersState,
       });
+
+      if (newCharactersState['jinx']) {
+        this.characterService.setProps(newCharactersState['jinx']);
+      }
 
       this.checkAndTriggerEffects(numericId);
     }

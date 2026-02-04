@@ -14,8 +14,8 @@ export class EventService {
         this.eventsSubject.next({ type, payload });
     }
 
-    public vibrate(): void {
-        this.emit('VIBRATE');
+    public vibrate(duration: number = 200): void {
+        this.emit('VIBRATE', duration);
     }
 
     public flash(): void {

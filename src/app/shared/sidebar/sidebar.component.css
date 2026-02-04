@@ -346,3 +346,224 @@ app-options {
     font-size: 1rem;
   }
 }
+
+/* Arcade Controls & Neo UI */
+.arcade-controls {
+    padding-top: 10px;
+}
+
+.arcade-title {
+    font-family: var(--font-comic);
+    color: var(--c-accent);
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 0px #000;
+    text-align: center;
+}
+
+.control-group {
+    margin-bottom: 1.5rem;
+}
+
+.control-group h3 {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--c-primary);
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+}
+
+/* Range Input */
+.neo-range {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.neo-range::-webkit-slider-runnable-track {
+    background: #111;
+    border: 2px solid #000;
+    height: 10px;
+}
+
+.neo-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 24px;
+    width: 24px;
+    background: var(--c-action);
+    border: 3px solid #000;
+    margin-top: -9px;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.chaos-value {
+    display: block;
+    text-align: right;
+    font-family: var(--font-comic);
+    font-weight: bold;
+    color: var(--c-action);
+    font-size: 1.2rem;
+    margin-top: 5px;
+}
+
+/* Checkbox Neobrutalism */
+.neo-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    color: var(--c-light);
+    transition: color 0.1s;
+    user-select: none;
+}
+
+.neo-checkbox:hover {
+    color: var(--c-accent);
+}
+
+.neo-checkbox input {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: var(--c-light);
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0px #000;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s;
+}
+
+.neo-checkbox input:checked {
+    background: var(--c-primary);
+}
+
+.neo-checkbox input:checked::after {
+    content: '✖';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Presets Section */
+.presets-group {
+    background: rgba(147, 51, 234, 0.1);
+    border: 3px solid #000;
+    padding: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 6px 6px 0px #000;
+}
+
+.preset-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.preset-buttons:last-child {
+    margin-bottom: 0;
+}
+
+.neo-btn-sm {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-family: var(--font-comic);
+    font-weight: bold;
+    background: var(--c-light);
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px #000;
+    cursor: pointer;
+    transition: all 0.1s;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.neo-btn-sm:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #000;
+    background: var(--c-accent);
+}
+
+.neo-btn-sm:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+/* Neo Accordion & Sub-Accordion */
+.neo-accordion, .neo-sub-accordion {
+    border: 3px solid #000;
+    background: var(--c-light);
+    margin-bottom: 1.2rem;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.neo-sub-accordion {
+    margin-bottom: 0.8rem;
+    box-shadow: 3px 3px 0px #000;
+    border-width: 2px;
+}
+
+.neo-accordion summary, .neo-sub-accordion summary {
+    padding: 12px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--c-primary);
+    color: #fff;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-comic);
+    letter-spacing: 1px;
+    user-select: none;
+}
+
+.neo-sub-accordion summary {
+    padding: 8px 12px;
+    background: var(--c-dark);
+    color: var(--c-accent);
+    font-size: 0.9rem;
+    border-bottom: 2px solid #000;
+}
+
+.neo-accordion summary::-webkit-details-marker,
+.neo-sub-accordion summary::-webkit-details-marker {
+    display: none;
+}
+
+.neo-accordion summary::after, .neo-sub-accordion summary::after {
+    content: '▼';
+    font-size: 0.8rem;
+}
+
+.neo-accordion[open] summary::after, .neo-sub-accordion[open] summary::after {
+    content: '▲';
+}
+
+.accordion-content, .sub-accordion-content {
+    background: var(--c-dark);
+}
+
+.accordion-content {
+    padding: 1.2rem;
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.sub-accordion-content {
+    padding: 10px;
+}
+
+.neo-divider {
+    border: none;
+    border-top: 2px dashed var(--c-primary);
+    margin: 1rem 0;
+}

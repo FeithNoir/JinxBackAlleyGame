@@ -1,0 +1,75 @@
+<div class="character-composite-container" [class.vibrate]="isVibrating" *ngIf="characterProps">
+    <!-- Speech Bubble -->
+    <div class="speech-bubble" *ngIf="reactionText">
+        <div class="bubble-content">{{ reactionText }}</div>
+        <div class="bubble-tail"></div>
+    </div>
+
+    <!-- Interaction Zones -->
+    <div class="interaction-zone head" (click)="onZoneClick('head')"></div>
+    <div class="interaction-zone top" (click)="onZoneClick('top')"></div>
+    <div class="interaction-zone bottom" (click)="onZoneClick('bottom')"></div>
+
+    <!-- 1. Base Body -->
+    <img src="character/base/body.png" class="layer base" alt="base">
+
+    <!-- 2. Underwear (Bottom) -->
+    <img *ngIf="characterProps.underwearBottom" [src]="'character/clothes/' + characterProps.underwearBottom + '.png'"
+        class="layer underwear-bottom" alt="underwear bottom">
+
+    <!-- 3. Stockings -->
+    <img *ngIf="characterProps.stockings" [src]="'character/clothes/' + characterProps.stockings + '.png'"
+        class="layer stockings" alt="stockings">
+
+    <!-- 4. Underwear (Top) -->
+    <img *ngIf="characterProps.underwearTop" [src]="'character/clothes/' + characterProps.underwearTop + '.png'"
+        class="layer underwear-top" alt="underwear top">
+
+    <!-- 5. Clothing (Bottom) -->
+    <img *ngIf="characterProps.bottom" [src]="'character/clothes/' + characterProps.bottom + '.png'"
+        class="layer clothes-bottom" alt="clothes bottom">
+
+    <!-- Fluid Effect 1 (Applied to Bottom) -->
+    <img *ngIf="characterProps.effects?.bottom" [src]="'character/effects/' + characterProps.effects?.bottom + '.png'"
+        class="layer effect-bottom" alt="effect bottom">
+
+    <!-- 6. Clothing (Top) -->
+    <img *ngIf="characterProps.top" [src]="'character/clothes/' + characterProps.top + '.png'" class="layer clothes-top"
+        alt="clothes top">
+
+    <!-- 7. Feet -->
+    <img *ngIf="characterProps.feet" [src]="'character/clothes/' + characterProps.feet + '.png'" class="layer feet"
+        alt="feet">
+
+    <!-- Fluid Effect 2 (Applied to Feet) -->
+    <img *ngIf="characterProps.effects?.feet" [src]="'character/effects/' + characterProps.effects?.feet + '.png'"
+        class="layer effect-feet" alt="effect feet">
+
+    <!-- 8. Arms (Gestures) -->
+    <img [src]="'character/arms/left/' + characterProps.leftArm + '.png'" class="layer arm-left" alt="left arm">
+    <img [src]="'character/arms/right/' + characterProps.rightArm + '.png'" class="layer arm-right" alt="right arm">
+
+    <!-- 9. Head Accessory -->
+    <img *ngIf="characterProps.head" [src]="'character/clothes/' + characterProps.head + '.png'"
+        class="layer head-accessory" alt="head accessory">
+
+    <!-- 10. Expressions (Eyes / Mouth) -->
+    <img [src]="'character/expressions/eyes/' + characterProps.eyes + '.png'" class="layer eyes" alt="eyes">
+    <img [src]="'character/expressions/mouths/' + characterProps.mouth + '.png'" class="layer mouth" alt="mouth">
+
+    <!-- Head Effects (Blush / Heat / Mean) -->
+    <img *ngIf="characterProps.effects?.head" [src]="'character/effects/' + characterProps.effects?.head + '.png'"
+        class="layer effect-head" alt="effect head">
+
+    <!-- Body Fluid Effect 3 -->
+    <img *ngIf="characterProps.effects?.body" [src]="'character/effects/' + characterProps.effects?.body + '.png'"
+        class="layer effect-body" alt="effect body">
+
+    <!-- Toy Layer -->
+    <img *ngIf="characterProps.toy" [src]="'character/clothes/' + characterProps.toy + '.png'" class="layer toy"
+        alt="toy">
+
+    <!-- Overlay Effects (Parallel Lines / Biri-biri / Action Lines) -->
+    <img *ngIf="characterProps.effects?.overlay" [src]="'character/effects/' + characterProps.effects?.overlay + '.png'"
+        class="layer effect-overlay" alt="effect overlay">
+</div>

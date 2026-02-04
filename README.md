@@ -74,3 +74,35 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 ### Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## Game Systems & Mechanics
+
+### 1. Game Event System
+The game features a centralized `EventService` that triggers dynamic visual effects during dialogues:
+-   **Vibration**: The character sprite shakes during intense or chaotic moments (e.g., explosions, "biri-biri" effect).
+-   **Scene Flash**: A screen-wide white flash for impactful actions.
+-   **Flashlight Effect**: Used in the intro, a dark mask follows the cursor, revealing only a small area of the scene.
+
+### 2. "Click and Point" Interaction
+Players can interact directly with the character by clicking on different body parts (Head, Top, Bottom):
+-   **Mood-Based Reactions**: Reacting to clicks is driven by the internal **Chaos Level**.
+    -   **Low Chaos**: Jinx reacts with annoyance or anger.
+    -   **Medium Chaos**: She becomes nervous or shy.
+    -   **High Chaos**: She reacts with excitement or joy.
+
+### 3. Gameplay Modes
+
+#### History Mode
+Follow the narrative and make choices that influence the **Chaos Meter**. These points unlock special dialogue options and alternate outfits (like the "Cat" outfit). Progression is dialogue-driven with persistent state.
+
+#### Arcade Mode (Dressing Room)
+A sandbox mode where players can interact directly with the character without narrative constraints.
+-   **Sidebar Integration**: Controls are now conveniently located in the Sidebar for a seamless experience.
+-   **Expanded Customization**: Toggle garments, toys (`toy-1`), and multiple fluid/overlay effects.
+-   **Chaos Control**: Adjust the **Chaos Level** manually via a slider to see different interactions and moods in real-time.
+-   **Instant Feedback**: The character and reactions update instantly as you tweak the settings.
+
+## Support the Project
+
+If you enjoy the chaos, consider supporting the developer on Patreon:
+[**Generic Factory International**](https://patreon.com/genericfactoryint?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink)

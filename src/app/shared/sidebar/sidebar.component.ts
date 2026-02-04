@@ -1,11 +1,15 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../core/services/game.service';
+import { CharacterService } from '../../core/services/character.service';
 import { GameState } from '../../core/interfaces/game-state.interface';
 import { DialogueNode } from '../../core/interfaces/dialogue-node.interface';
+import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { Subscription } from 'rxjs';
 import { DialoguesComponent } from '../dialogues/dialogues.component';
 import { OptionsComponent } from '../options/options.component';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 export interface ChatMessage {
   speaker: string;
@@ -23,41 +27,76 @@ export interface ChatMessage {
 export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chatArea') private chatArea!: ElementRef;
 
-  isCollapsed = false;
+  @Input() isCollapsed = false;
+  @Output() collapsedChange = new EventEmitter<boolean>();
+
+  isArcadeMode = false;
   gameState!: GameState;
   currentNode!: DialogueNode | undefined;
   dialogueHistory: ChatMessage[] = [];
-  private gameStateSubscription!: Subscription;
+  arcadeProps: CharacterProps | undefined;
+  arcadeChaos = 0;
 
-  constructor(private gameService: GameService) { }
+  private subs = new Subscription();
+
+  constructor(
+    private gameService: GameService,
+    private characterService: CharacterService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.gameStateSubscription = this.gameService.gameState$.subscribe(state => {
-      this.gameState = state;
-      const newNode = this.gameService.getCurrentNode();
+    // Detect route for arcade mode
+    this.checkRoute(this.router.url);
+    this.subs.add(
+      this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd)
+      ).subscribe((event: any) => {
+        this.checkRoute(event.urlAfterRedirects);
+      })
+    );
 
-      if (newNode && newNode !== this.currentNode) {
-        this.currentNode = newNode;
-        this.addToHistory(newNode.character, newNode.text);
-      }
-    });
+    this.subs.add(
+      this.gameService.gameState$.subscribe(state => {
+        this.gameState = state;
+        const newNode = this.gameService.getCurrentNode();
+
+        if (newNode && newNode !== this.currentNode) {
+          this.currentNode = newNode;
+          this.addToHistory(newNode.character, newNode.text);
+        }
+      })
+    );
+
+    this.subs.add(
+      this.characterService.characterProps$.subscribe(props => {
+        this.arcadeProps = props;
+      })
+    );
+
+    this.subs.add(
+      this.characterService.arcadeChaosLevel$.subscribe(level => {
+        this.arcadeChaos = level;
+      })
+    );
   }
 
   ngOnDestroy(): void {
-    if (this.gameStateSubscription) {
-      this.gameStateSubscription.unsubscribe();
-    }
+    this.subs.unsubscribe();
   }
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
 
+  private checkRoute(url: string): void {
+    this.isArcadeMode = url.includes('/arcade');
+    this.characterService.setMode(this.isArcadeMode ? 'arcade' : 'history');
+  }
+
   private addToHistory(speaker: string, text: string) {
-    // Avoid duplicate entries if the node hasn't actually changed but state did
     const lastMsg = this.dialogueHistory[this.dialogueHistory.length - 1];
     if (lastMsg && lastMsg.speaker === speaker && lastMsg.text === text) return;
-
     this.dialogueHistory.push({ speaker, text });
   }
 
@@ -69,6 +108,7 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
+    this.collapsedChange.emit(this.isCollapsed);
   }
 
   onOptionSelected(nextNodeId: number): void {
@@ -85,7 +125,28 @@ export class SidebarComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  onImageError(event: any) {
-    event.target.src = 'https://via.placeholder.com/150/9333EA/FFD600?text=JINX';
+  // Arcade Controls
+  toggle(prop: keyof CharacterProps, value: string): void {
+    this.characterService.toggleLayer(prop, value);
+  }
+
+  toggleEffect(key: keyof Required<CharacterProps>['effects'], value: string): void {
+    this.characterService.updateEffect(key, value);
+  }
+
+  applyPreset(type: 'outfit' | 'expression', id: string): void {
+    this.characterService.applyPreset(type, id);
+  }
+
+  updateChaos(event: any): void {
+    this.characterService.setArcadeChaosLevel(parseInt(event.target.value));
+  }
+
+  isToggled(prop: keyof CharacterProps, value: string): boolean {
+    return this.arcadeProps ? this.arcadeProps[prop] === value : false;
+  }
+
+  isEffectToggled(key: keyof Required<CharacterProps>['effects'], value: string): boolean {
+    return this.arcadeProps?.effects?.[key] === value;
   }
 }

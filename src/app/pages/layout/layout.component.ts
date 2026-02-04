@@ -12,5 +12,9 @@ import { SidebarComponent } from '../../shared/sidebar/sidebar.component';
   styleUrl: './layout.component.css'
 })
 export class LayoutComponent {
+  sidebarCollapsed = false;
 
+  onSidebarToggle(collapsed: boolean): void {
+    this.sidebarCollapsed = collapsed;
+  }
 }

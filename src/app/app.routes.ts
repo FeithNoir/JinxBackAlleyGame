@@ -10,7 +10,8 @@ export const routes: Routes = [
     path: 'game',
     component: LayoutComponent,
     children: [
-      { path: '', component: MainComponent }
+      { path: '', component: MainComponent },
+      { path: 'arcade', loadComponent: () => import('./pages/arcade/arcade.component').then(m => m.ArcadeComponent) }
     ]
   },
   { path: '**', redirectTo: '/title' } // Wildcard route for any unmatched URL

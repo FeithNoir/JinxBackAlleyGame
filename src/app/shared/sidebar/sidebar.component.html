@@ -4,27 +4,184 @@
     </button>
 
     <div class="sidebar-content">
-        <div class="top-section">
-            <div class="char-avatar-section">
-                <div class="avatar-frame">
-                    <img src="character/base/body.png" alt="Jinx Avatar" class="avatar-img"
-                        (error)="onImageError($event)">
+        <!-- Arcade Mode Control Panel -->
+        <div class="arcade-controls" *ngIf="isArcadeMode && !isCollapsed">
+            <h2 class="arcade-title">ARCADE SETTINGS</h2>
+
+            <!-- Quick Presets -->
+            <div class="control-group presets-group">
+                <h3>QUICK PRESETS</h3>
+                <div class="preset-buttons">
+                    <button class="neo-btn-sm" (click)="applyPreset('outfit', 'normal')" title="Safe">NORMAL</button>
+                    <button class="neo-btn-sm" (click)="applyPreset('outfit', 'cat')" title="Meow!">CAT MODE</button>
+                    <button class="neo-btn-sm" (click)="applyPreset('outfit', 'naked')" title="Naked">NAKED</button>
                 </div>
-                <h3 class="char-name" *ngIf="!isCollapsed">JINX</h3>
+                <div class="preset-buttons">
+                    <button class="neo-btn-sm" (click)="applyPreset('expression', 'neutral')"
+                        title="Neutral">😐</button>
+                    <button class="neo-btn-sm" (click)="applyPreset('expression', 'happy')" title="Happy">😊</button>
+                    <button class="neo-btn-sm" (click)="applyPreset('expression', 'mad')" title="Mad">😠</button>
+                    <button class="neo-btn-sm" (click)="applyPreset('expression', 'nervous')"
+                        title="Nervous">😰</button>
+                </div>
             </div>
 
-            <nav class="sidebar-nav" *ngIf="!isCollapsed">
-                <button class="nav-btn" title="Inventory">
-                    <span class="icon">🎒</span>
-                </button>
-                <button class="nav-btn" title="Quests">
-                    <span class="icon">📜</span>
-                </button>
-            </nav>
+            <div class="control-group">
+                <h3>Chaos Level</h3>
+                <input type="range" min="0" max="100" [value]="arcadeChaos" (input)="updateChaos($event)"
+                    class="neo-range">
+                <span class="chaos-value">{{ arcadeChaos }}%</span>
+            </div>
+
+            <!-- Categorized Controls (Accordions) -->
+            <details class="neo-accordion" open>
+                <summary>CLOTHING</summary>
+                <div class="accordion-content">
+                    <details class="neo-sub-accordion" open>
+                        <summary>Head</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('head', 'cat-ears')"
+                                    (change)="toggle('head', 'cat-ears')">
+                                <span>Cat Ears</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion" open>
+                        <summary>Top</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('top', 'top-1')"
+                                    (change)="toggle('top', 'top-1')">
+                                <span>Default Top</span>
+                            </label>
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('top', 'cat-top')"
+                                    (change)="toggle('top', 'cat-top')">
+                                <span>Cat Top</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Underwear Top</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('underwearTop', 'bandage-1')"
+                                    (change)="toggle('underwearTop', 'bandage-1')">
+                                <span>Bandage</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion" open>
+                        <summary>Bottom</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('bottom', 'short-1')"
+                                    (change)="toggle('bottom', 'short-1')">
+                                <span>Shorts</span>
+                            </label>
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('bottom', 'cat-bottom')"
+                                    (change)="toggle('bottom', 'cat-bottom')">
+                                <span>Cat Skirt</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Underwear Bottom</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('underwearBottom', 'sticker-1')"
+                                    (change)="toggle('underwearBottom', 'sticker-1')">
+                                <span>Sticker</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Stockings</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('stockings', 'stocking-1')"
+                                    (change)="toggle('stockings', 'stocking-1')">
+                                <span>Stockings</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Feet</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('feet', 'boots-1')"
+                                    (change)="toggle('feet', 'boots-1')">
+                                <span>Boots</span>
+                            </label>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <details class="neo-accordion">
+                <summary>EXTRAS & EFFECTS</summary>
+                <div class="accordion-content">
+                    <details class="neo-sub-accordion" open>
+                        <summary>Toys</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isToggled('toy', 'toy-1')"
+                                    (change)="toggle('toy', 'toy-1')">
+                                <span>Toy 1</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Fluids</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isEffectToggled('bottom', 'fluid-1')"
+                                    (change)="toggleEffect('bottom', 'fluid-1')">
+                                <span>Fluid 1</span>
+                            </label>
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isEffectToggled('feet', 'fluid-2')"
+                                    (change)="toggleEffect('feet', 'fluid-2')">
+                                <span>Fluid 2</span>
+                            </label>
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isEffectToggled('body', 'fluid-3')"
+                                    (change)="toggleEffect('body', 'fluid-3')">
+                                <span>Fluid 3</span>
+                            </label>
+                        </div>
+                    </details>
+
+                    <details class="neo-sub-accordion">
+                        <summary>Overlay</summary>
+                        <div class="sub-accordion-content">
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isEffectToggled('overlay', 'biri-biri')"
+                                    (change)="toggleEffect('overlay', 'biri-biri')">
+                                <span>Biri-Biri</span>
+                            </label>
+                            <label class="neo-checkbox">
+                                <input type="checkbox" [checked]="isEffectToggled('overlay', 'action-lines')"
+                                    (change)="toggleEffect('overlay', 'action-lines')">
+                                <span>Action Lines</span>
+                            </label>
+                        </div>
+                    </details>
+                </div>
+            </details>
         </div>
 
-        <!-- Chaos Meter (Moved from Header) -->
-        <div class="chaos-meter-container" *ngIf="!isCollapsed">
+        <!-- Chaos Meter (History Only) -->
+        <div class="chaos-meter-container" *ngIf="!isCollapsed && !isArcadeMode">
             <div class="chaos-meter">
                 <span class="label">CHAOS</span>
                 <div class="progress-bar">
@@ -33,8 +190,8 @@
             </div>
         </div>
 
-        <!-- Chat Area -->
-        <div class="chat-area" #chatArea *ngIf="!isCollapsed">
+        <!-- Chat Area (History Only) -->
+        <div class="chat-area" #chatArea *ngIf="!isCollapsed && !isArcadeMode">
             <div *ngFor="let msg of dialogueHistory" class="chat-bubble-wrapper" [class.player-msg]="msg.isPlayer">
                 <div class="speaker-label" *ngIf="!msg.isPlayer">{{ msg.speaker }}</div>
                 <div class="chat-bubble">

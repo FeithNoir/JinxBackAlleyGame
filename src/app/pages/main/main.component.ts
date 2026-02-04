@@ -6,11 +6,12 @@ import { GameState } from '../../core/interfaces/game-state.interface';
 import { DialogueNode } from '../../core/interfaces/dialogue-node.interface';
 import { Subscription } from 'rxjs';
 import { CharacterProps } from '../../core/interfaces/character-props.interface';
+import { CharacterComponent } from '../../shared/character/character.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CharacterComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css'
 })

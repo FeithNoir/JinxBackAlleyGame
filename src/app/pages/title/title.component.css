@@ -4,35 +4,90 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('/background/bg-1.png'); /* Example background */
+  width: 100vw;
+  background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/background/bg-1.png');
   background-size: cover;
   background-position: center;
+  background-color: var(--c-dark);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-container {
+  margin-bottom: 3rem;
+  transform: rotate(-2deg);
 }
 
 h1 {
-  font-size: 4rem;
+  font-size: 5rem;
+  margin: 0;
+  line-height: 1;
   color: var(--c-primary);
-  margin-bottom: 2rem;
-  text-shadow: var(--shadow-hard);
-  border: var(--border-thick);
-  padding: 1rem 2rem;
-  background-color: rgba(0, 0, 0, 0.7);
+  text-shadow: 8px 8px 0px #000;
 }
 
-button {
-  background-color: var(--c-action);
-  color: var(--c-dark);
+.subtitle {
+  font-size: 3.5rem;
+  color: var(--c-accent);
+  margin-top: -10px;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 300px;
+}
+
+.neo-btn {
+  padding: 1rem 2rem;
   font-family: var(--font-comic);
-  font-size: 2rem;
-  padding: 1rem 3rem;
+  font-size: 1.8rem;
   border: var(--border-thick);
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
   box-shadow: var(--shadow-hard);
+  transition: all 0.1s;
 }
 
-button:hover {
-  transform: scale(1.05) rotate(-2deg);
-  background-color: var(--c-accent);
+.neo-btn:hover {
+  transform: scale(1.02);
+}
+
+.neo-btn:active {
+  box-shadow: 2px 2px 0px 0px #000;
+  transform: translate(4px, 4px);
+}
+
+.neo-btn.primary {
+  background: var(--c-primary);
+  color: white;
+}
+
+.neo-btn.accent {
+  background: var(--c-accent);
+  color: black;
+}
+
+.patreon-footer {
+  position: absolute;
+  bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.patreon-footer p {
+  font-family: var(--font-comic);
+  color: var(--c-light);
+  margin: 0;
+}
+
+.patreon-link {
+  transition: transform 0.2s;
+}
+
+.patreon-link:hover {
+  transform: scale(1.1);
 }
