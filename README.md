@@ -37,7 +37,8 @@ This directory contains the core application source code.
 
 -   `index.html`: The main HTML entry point.
 -   `main.ts`: The primary application bootstrap script.
--   `styles.css`: Global stylesheet, now including custom CSS design tokens for the "Purple Chaos" aesthetic.
+-   `styles.css`: Global stylesheet with custom CSS design tokens for the "Purple Chaos" aesthetic.
+-   `styles/neobrutalist.css`: Centralized Neobrutalist UI component library for consistent design patterns.
 
 #### `/src/app`
 
@@ -129,6 +130,35 @@ Or do both at once:
 npm run electron:serve
 ```
 
+## Technical Optimizations
+
+### Recent Improvements (Phase 1)
+
+1. **CSS Centralization**: Created a unified Neobrutalist design system (`styles/neobrutalist.css`) with reusable components:
+   - Standardized buttons (`.neo-btn`, `.neo-btn-sm`)
+   - Custom form inputs (`.neo-input`, `.neo-range`, `.neo-checkbox`)
+   - Consistent scrollbars (`.neo-scrollbar`)
+   - Accordion patterns (`.neo-accordion`)
+
+2. **Service Layer Enhancements**:
+   - **StorageService**: Added comprehensive error handling and data validation
+   - **GameService**: Improved error reporting for save operations
+   - Better async/await patterns throughout
+
+3. **Performance Optimizations**:
+   - Implemented `OnPush` change detection strategy in presentational components
+   - Reduced unnecessary re-renders in `CharacterComponent` and `LoadingComponent`
+   - Optimized observable subscriptions
+
+### Planned Optimizations (Future Phases)
+
+- **Bundle Size**: Lazy loading for Arcade mode, dynamic imports for mini-games
+- **Asset Optimization**: WebP image format, sprite sheets for character layers
+- **State Management**: Potential NgRx/Akita integration for complex state
+- **Testing**: Unit tests for services, E2E tests for critical game flows
+
+---
+
 ## Future Immersive Features
 
 To make the back-alley experience even more chaotic and immersive, the following features are planned for future updates:
@@ -138,6 +168,13 @@ To make the back-alley experience even more chaotic and immersive, the following
 -   **Deep Relationship System**: Branching narrative paths based not just on Chaos, but on "Trust" levels with Jinx.
 -   **Inventory System**: Collect items in the alley to trigger special reactions or unlock new costume parts.
 -   **Mini-game Variety**: New rhythm-based or puzzle-based mini-games to break the narrative flow.
+-   **Achievement System**: Track player milestones and unlock special content.
+-   **Multiple Endings**: Divergent story paths based on player choices and chaos level.
+-   **Voice Acting**: Professional voice lines for key dialogue moments.
+-   **Particle Effects**: Enhanced visual feedback with WebGL-based particle systems.
+-   **Save Slots**: Multiple save files for different playthroughs.
+-   **Gallery Mode**: Unlock and view CG artwork and character variations.
+-   **Accessibility**: Screen reader support, colorblind modes, and customizable text sizes.
 
 ---
 

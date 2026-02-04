@@ -1,0 +1,331 @@
+/* ========================================
+   NEOBRUTALIST UI SYSTEM
+   Centralized styles for consistent design
+   ======================================== */
+
+/* --- Buttons --- */
+.neo-btn {
+  padding: 12px 20px;
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  font-weight: bold;
+  background: var(--c-action);
+  color: #000;
+  border: 4px solid #000;
+  box-shadow: 6px 6px 0px #000;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.neo-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px #000;
+  background: var(--c-accent);
+}
+
+.neo-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0px #000;
+}
+
+.neo-btn-sm {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-family: var(--font-comic);
+  font-weight: bold;
+  background: var(--c-light);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-align: center;
+}
+
+.neo-btn-sm:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000;
+  background: var(--c-accent);
+}
+
+.neo-btn-sm:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* --- Input Fields --- */
+.neo-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  background: var(--c-light);
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.neo-input:focus {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000;
+  border-color: var(--c-primary);
+}
+
+.neo-input::placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+/* --- Range Sliders --- */
+.neo-range {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.neo-range::-webkit-slider-runnable-track {
+  background: #111;
+  border: 2px solid #000;
+  height: 10px;
+}
+
+.neo-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  background: var(--c-action);
+  border: 3px solid #000;
+  margin-top: -9px;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.neo-range::-moz-range-track {
+  background: #111;
+  border: 2px solid #000;
+  height: 10px;
+}
+
+.neo-range::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  background: var(--c-action);
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0px #000;
+}
+
+/* Vertical Range */
+.neo-range-v {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #111;
+  height: 8px;
+  border: 1px solid #000;
+}
+
+.neo-range-v::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  background: var(--c-action);
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+.neo-range-v::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  background: var(--c-action);
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+/* --- Checkboxes --- */
+.neo-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: var(--c-light);
+  transition: color 0.1s;
+  user-select: none;
+}
+
+.neo-checkbox:hover {
+  color: var(--c-accent);
+}
+
+.neo-checkbox input {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--c-light);
+  border: 3px solid #000;
+  box-shadow: 2px 2px 0px #000;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.1s;
+}
+
+.neo-checkbox input:checked {
+  background: var(--c-primary);
+}
+
+.neo-checkbox input:checked::after {
+  content: '✖';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* --- Scrollbars --- */
+.neo-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.neo-scrollbar::-webkit-scrollbar-track {
+  background: #111;
+  border-left: 2px solid #000;
+}
+
+.neo-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--c-primary);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.neo-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--c-accent);
+}
+
+/* --- Accordions --- */
+.neo-accordion,
+.neo-sub-accordion {
+  border: 3px solid #000;
+  background: var(--c-light);
+  margin-bottom: 1.2rem;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.neo-sub-accordion {
+  margin-bottom: 0.8rem;
+  box-shadow: 3px 3px 0px #000;
+  border-width: 2px;
+}
+
+.neo-accordion summary,
+.neo-sub-accordion summary {
+  padding: 12px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  background: var(--c-primary);
+  color: #fff;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-comic);
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+.neo-sub-accordion summary {
+  padding: 8px 12px;
+  background: var(--c-dark);
+  color: var(--c-accent);
+  font-size: 0.9rem;
+  border-bottom: 2px solid #000;
+}
+
+.neo-accordion summary::-webkit-details-marker,
+.neo-sub-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.neo-accordion summary::after,
+.neo-sub-accordion summary::after {
+  content: '▼';
+  font-size: 0.8rem;
+}
+
+.neo-accordion[open] summary::after,
+.neo-sub-accordion[open] summary::after {
+  content: '▲';
+}
+
+/* --- Cards & Panels --- */
+.neo-card {
+  background: var(--c-light);
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0px #000;
+  padding: 20px;
+  color: #000;
+}
+
+.neo-panel {
+  background: rgba(147, 51, 234, 0.1);
+  border: 3px solid #000;
+  padding: 15px;
+  box-shadow: 6px 6px 0px #000;
+}
+
+/* --- Dividers --- */
+.neo-divider {
+  border: none;
+  border-top: 2px dashed var(--c-primary);
+  margin: 1rem 0;
+}
+
+/* --- Utility Classes --- */
+.text-shadow-hard {
+  text-shadow: 4px 4px 0px #000;
+}
+
+.skew-left {
+  transform: skew(-3deg);
+}
+
+.skew-right {
+  transform: skew(3deg);
+}
+
+/* --- Animations --- */
+@keyframes neo-pop-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes neo-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.neo-pop-in {
+  animation: neo-pop-in 0.3s ease-out;
+}
+
+.neo-shake {
+  animation: neo-shake 0.3s ease-in-out;
+}

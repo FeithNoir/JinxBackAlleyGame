@@ -60,8 +60,12 @@ export class GameService {
     }
   }
 
-  public async saveGame(): Promise<void> {
-    await this.storageService.save('gameState', this.gameState.getValue());
+  public async saveGame(): Promise<boolean> {
+    const success = await this.storageService.save('gameState', this.gameState.getValue());
+    if (!success) {
+      console.warn('GameService: Failed to save game state');
+    }
+    return success;
   }
 
   public loadInitialState(): void {

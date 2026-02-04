@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../../core/services/loading.service';
 
 @Component({
-    selector: 'app-loading',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-loading',
+  standalone: true,
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <div class="loading-overlay" *ngIf="loadingService.isLoading$ | async">
       <div class="loading-content">
         <div class="chaos-loader">
@@ -20,7 +21,7 @@ import { LoadingService } from '../../core/services/loading.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .loading-overlay {
       position: fixed;
       top: 0;
@@ -124,5 +125,5 @@ import { LoadingService } from '../../core/services/loading.service';
   `]
 })
 export class LoadingComponent {
-    constructor(public loadingService: LoadingService) { }
+  constructor(public loadingService: LoadingService) { }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CharacterProps } from '../../core/interfaces/character-props.interface';
 import { CharacterService } from '../../core/services/character.service';
@@ -11,7 +11,8 @@ import { MiniGameComponent } from '../mini-game/mini-game.component';
     standalone: true,
     imports: [CommonModule, MiniGameComponent],
     templateUrl: './character.component.html',
-    styleUrl: './character.component.css'
+    styleUrl: './character.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CharacterComponent implements OnInit, OnDestroy {
     @Input() characterProps: CharacterProps | undefined;
