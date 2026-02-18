@@ -7,7 +7,10 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './dialogues.component.html',
   styleUrl: './dialogues.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    style: 'z-index: 2002; position: relative;' // Ensure it's above screen effects
+  }
 })
 export class DialoguesComponent {
   speaker = input<string>('');

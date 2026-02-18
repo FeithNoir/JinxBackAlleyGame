@@ -1,24 +1,16 @@
-<main class="main-content" [class.flashlight-mode]="isFlashlightMode()" [class.vibrate]="isVibrating()" [style.backgroundImage]="backgroundStyle"
-  (mousemove)="handleMouseMove($event)">
+<main class="main-content" [style.backgroundImage]="backgroundStyle">
 
   <div class="character-area">
     @if (characterProps()) {
-    <app-character [characterProps]="characterProps()!" [isVibrating]="isVibrating()" [isFlashing]="isFlashing()"
-      [isFlashlightMode]="isFlashlightMode()" [flashlightX]="flashlightX()" [flashlightY]="flashlightY()"
-      (interact)="onInteract($event)">
+    <app-character [characterProps]="characterProps()!" (interact)="onInteract($event)">
     </app-character>
     }
   </div>
 
-  <!-- Flashlight Overlay -->
-  @if (isFlashlightMode()) {
-  <div class="flashlight-overlay"
-    [style.background]="'radial-gradient(circle 150px at ' + flashlightX() + 'px ' + flashlightY() + 'px, transparent 0%, rgba(0,0,0,0.95) 100%)'">
-  </div>
+  <!-- Mini-game Overlay -->
+  @if (miniGameService.isActive()) {
+  <app-mini-game></app-mini-game>
   }
 
-  <!-- Screen Flash Effect -->
-  @if (isFlashing()) {
-  <div class="screen-flash"></div>
-  }
+  <app-screen-effects [sceneEffect]="currentNode()?.sceneEffect ?? 'none'" [class.vibrate]="eventService.isVibrating()"></app-screen-effects>
 </main>

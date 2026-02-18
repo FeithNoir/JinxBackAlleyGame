@@ -6,9 +6,11 @@
         }
     </div>
 
-    <button class="neo-btn" (click)="startClickerMiniGame()">Start Clicker Mini-Game</button>
-
+    <!-- Mini-game Overlay -->
     @if (miniGameService.isActive()) {
         <app-mini-game></app-mini-game>
     }
+
+    <app-screen-effects [sceneEffect]="currentNode()?.sceneEffect ?? 'none'" [class.vibrate]="eventService.isVibrating()"></app-screen-effects>
 </div>
+

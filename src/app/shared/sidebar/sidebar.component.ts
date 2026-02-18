@@ -11,6 +11,7 @@ import { ChatAreaComponent, ChatMessage } from './chat-area/chat-area.component'
 import { ArcadeControlsComponent } from './arcade-controls/arcade-controls.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SettingsService } from '@services/settings.service';
+import { MiniGameType } from '@interfaces/mini-game-type.enum';
 
 @Component({
   selector: 'app-sidebar',
@@ -133,7 +134,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
   }
 
   onMiniGameStarted(): void {
-    this.miniGameService.start(10);
+    this.miniGameService.start(MiniGameType.Clicker, 10);
   }
 
   // Chat Area Handlers

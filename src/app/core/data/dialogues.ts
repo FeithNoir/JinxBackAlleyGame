@@ -5,7 +5,7 @@ export const DIALOGUE_DATA: DialogueNode[] = [
     id: 100, // Intro start
     character: 'jinx',
     text: "...Who's there?",
-    sceneEffect: 'flashlight',
+    sceneEffect: 'night', // Changed from 'flashlight' to 'night' for testing
     presets: [{ type: 'expression', id: 'neutral' }],
     nextNodeId: 101,
   },

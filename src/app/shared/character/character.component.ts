@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { CharacterProps } from '@interfaces/character-props.interface';
 import { EventService } from '@services/event.service';
 import { CharacterService } from '@services/character.service';
-import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 
 @Component({
     selector: 'app-character',
     standalone: true,
-    imports: [CommonModule, MiniGameComponent],
+    imports: [CommonModule],
     templateUrl: './character.component.html',
     styleUrl: './character.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush

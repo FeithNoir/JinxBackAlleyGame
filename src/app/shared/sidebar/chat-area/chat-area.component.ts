@@ -17,7 +17,10 @@ export interface ChatMessage {
   imports: [CommonModule, FormsModule, DialoguesComponent, OptionsComponent],
   templateUrl: './chat-area.component.html',
   styleUrl: './chat-area.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    style: 'z-index: 2001; position: relative;' // Ensure it's above night effect, below active dialogue
+  }
 })
 export class ChatAreaComponent {
   dialogueHistory = input<ChatMessage[]>([]);

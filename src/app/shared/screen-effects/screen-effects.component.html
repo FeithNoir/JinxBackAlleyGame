@@ -1,0 +1,7 @@
+<!-- Screen Flash Effect -->
+@if (eventService.isFlashing()) {
+  <div class="screen-flash"></div>
+}
+
+<!-- Dynamic Scene Overlay (Night or Flashlight) -->
+<div class="scene-overlay" [ngStyle]="overlayStyle()"></div>
