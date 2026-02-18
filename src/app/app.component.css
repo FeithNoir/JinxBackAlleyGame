@@ -1,0 +1,29 @@
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.settings-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+app-settings {
+  background-color: var(--c-dark);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
+  padding: 2rem;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+}

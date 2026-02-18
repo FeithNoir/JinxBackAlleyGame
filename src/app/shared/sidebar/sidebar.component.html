@@ -26,6 +26,8 @@
 
         <div class="spacer"></div>
 
+        <button class="neo-btn" (click)="openSettings()">Settings</button>
+
         <!-- Music Controls + Save Button -->
         @if (!isCollapsed() || (isMobile() && showVolumeSlider())) {
         <app-music-controls [volume]="volume()" [isMuted]="isMuted()" [showVolumeSlider]="showVolumeSlider()"

@@ -1,1 +1,9 @@
-<router-outlet />
+<div class="app-container">
+  <router-outlet />
+
+  @if (settingsService.isSettingsPanelOpen()) {
+    <div class="settings-overlay">
+      <app-settings></app-settings>
+    </div>
+  }
+</div>

@@ -10,6 +10,7 @@ import { MusicControlsComponent } from './music-controls/music-controls.componen
 import { ChatAreaComponent, ChatMessage } from './chat-area/chat-area.component';
 import { ArcadeControlsComponent } from './arcade-controls/arcade-controls.component';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { SettingsService } from '@services/settings.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -24,6 +25,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
   private miniGameService = inject(MiniGameService);
   private musicService = inject(MusicService);
   private router = inject(Router);
+  private settingsService = inject(SettingsService);
 
   // View Queries
   chatAreaComp = viewChild<ChatAreaComponent>('chatAreaComp');
@@ -165,6 +167,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
   onSaveRequested(): void {
     this.gameService.saveGame();
+  }
+
+  openSettings(): void {
+    this.settingsService.openSettingsPanel();
   }
 
   // Navigation
