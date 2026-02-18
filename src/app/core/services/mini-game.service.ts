@@ -1,6 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CharacterService } from '@services/character.service';
+import { Subject, Observable } from 'rxjs';
+import { MiniGameType } from '@interfaces/mini-game-type.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -21,11 +23,16 @@ export class MiniGameService {
     public timer = this.timerSignal.asReadonly();
     public timer$ = toObservable(this.timerSignal);
 
-    private timerInterval: any;
+    private miniGameEndedSource = new Subject<{ success: boolean, type: MiniGameType }>();
+    public miniGameEnded$: Observable<{ success: boolean, type: MiniGameType }> = this.miniGameEndedSource.asObservable();
 
-    public start(duration: number = 10): void {
+    private timerInterval: any;
+    private currentMiniGameType: MiniGameType | null = null;
+
+    public start(type: MiniGameType, duration: number = 10): void {
         if (this.isActiveSignal()) return;
 
+        this.currentMiniGameType = type;
         this.isActiveSignal.set(true);
         this.progressSignal.set(0);
         this.timerSignal.set(duration);
@@ -77,6 +84,11 @@ export class MiniGameService {
         }
         this.isActiveSignal.set(false);
 
+        if (this.currentMiniGameType) {
+            this.miniGameEndedSource.next({ success, type: this.currentMiniGameType });
+            this.currentMiniGameType = null;
+        }
+
         if (success) {
             this.characterService.showReaction("Uwah! You actually did it!", 5000);
         } else {
@@ -89,5 +101,6 @@ export class MiniGameService {
         this.progressSignal.set(0);
         this.timerSignal.set(0);
         if (this.timerInterval) clearInterval(this.timerInterval);
+        this.currentMiniGameType = null;
     }
 }

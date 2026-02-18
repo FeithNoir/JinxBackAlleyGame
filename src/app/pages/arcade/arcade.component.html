@@ -5,4 +5,10 @@
         </app-character>
         }
     </div>
+
+    <button class="neo-btn" (click)="startClickerMiniGame()">Start Clicker Mini-Game</button>
+
+    @if (miniGameService.isActive()) {
+        <app-mini-game></app-mini-game>
+    }
 </div>

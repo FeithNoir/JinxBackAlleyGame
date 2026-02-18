@@ -5,6 +5,7 @@
   --c-primary: #9333EA;    /* Jinx Purple */
   --c-accent: #FFD600;     /* Warning Yellow */
   --c-action: #00BFFF;     /* Electric Blue */
+  --c-action-dark: #008CBA; /* Darker Electric Blue */
   --c-dark: #111827;       /* Ink Black */
   --c-light: #FAF5FF;      /* Lavender White */
 
@@ -13,6 +14,8 @@
 
   --border-thick: 3px solid #000000;
   --shadow-hard: 6px 6px 0px 0px #000000;
+  --shadow-hard-hover: 9px 9px 0px 0px #000000;
+  --shadow-hard-active: 2px 2px 0px 0px #000000;
 }
 
 html, body {

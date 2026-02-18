@@ -7,6 +7,7 @@ import { CharacterService } from '@services/character.service';
 import { MiniGameService } from '@services/mini-game.service';
 import { StorageService } from '@services/storage.service';
 import { EventService } from '@services/event.service';
+import { MiniGameType } from '@core/interfaces/mini-game-type.enum';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
@@ -222,7 +223,7 @@ export class GameService {
     // Trigger mini-game if chaos is high (> 60)
     if (this.characterService.getMode() === 'history' && chaos > 60) {
       if (part === 'top' || part === 'bottom') {
-        this.miniGameService.start(10);
+        this.miniGameService.start(MiniGameType.Clicker, 10);
       }
     }
 

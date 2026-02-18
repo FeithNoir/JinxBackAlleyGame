@@ -11,8 +11,8 @@ This document outlines the improvement areas identified for the "Jinx Backalley 
 | Category | Task | Global Priority | Can an AI Agent Solve It? | Status | Notes |
 |---|---|---|---|---|---|
 | User Interface (UI) | Neo-Brutalist Design Consistency | 8 | ✅ Yes | Done | Code audit, component creation based on rules, linting. |
-| User Interface (UI) | Visual Feedback for Interactions | 8 | ✅ Yes | Pending | Implementing animations, cues based on defined triggers. |
-| Game Flow | Mini-game Integration (`ArcadeComponent`) | 8 | ✅ Yes | Pending | State management, entry/exit points, outcome handling for mini-games. |
+| User Interface (UI) | Visual Feedback for Interactions | 8 | ✅ Yes | Done | Implementing animations, cues based on defined triggers. |
+| Game Flow | Mini-game Integration (`ArcadeComponent`) | 8 | ✅ Yes | Done | State management, entry/exit points, outcome handling for mini-games. |
 | User Experience (UX) | Game Settings | 8 | ✅ Yes | Pending | Implementing the settings component, persistence, and UI elements. |
 | User Experience (UX) | Save/Load Interface | 8 | ✅ Yes | Pending | Implementing the save/load component, save slots, and confirmation. |
 | Game Flow | Complex State Management | 7 | ✅ Yes | Pending | Modularization, reactive programming, immutable state management. |

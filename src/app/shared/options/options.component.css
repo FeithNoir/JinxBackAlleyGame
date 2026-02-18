@@ -25,4 +25,11 @@
 .option-button:hover {
   transform: rotate(-2deg) scale(1.1);
   background-color: var(--c-action); /* Electric Blue on hover */
+  box-shadow: var(--shadow-hard-hover);
+}
+
+.option-button:active {
+  transform: rotate(0deg) scale(1.05);
+  background-color: var(--c-action-dark); /* Darker Electric Blue on active */
+  box-shadow: var(--shadow-hard-active);
 }
