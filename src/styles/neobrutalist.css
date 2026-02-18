@@ -299,6 +299,20 @@
   transform: skew(3deg);
 }
 
+/* --- Dialogue Box --- */
+.neo-dialogue-box {
+  background-color: var(--c-light);
+  border: var(--border-thick);
+  padding: 1.5rem 2rem;
+  margin: 1rem;
+  position: relative;
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  color: var(--c-dark);
+  box-shadow: var(--shadow-hard);
+}
+
 /* --- Animations --- */
 @keyframes neo-pop-in {
   0% {
