@@ -1,10 +1,9 @@
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dialogues',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './dialogues.component.html',
   styleUrl: './dialogues.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Injectable, inject, signal, DestroyRef, effect } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 import { StorageService } from '@services/storage.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
     providedIn: 'root'
@@ -24,9 +24,6 @@ export class MusicService {
     public isMuted = this.isMutedSignal.asReadonly();
 
     // Compat Observables
-    public currentTrack$ = toObservable(this.currentTrackSignal);
-    public volume$ = toObservable(this.volumeSignal);
-    public isMuted$ = toObservable(this.isMutedSignal);
 
     private tracks: Record<string, string> = {
         title: 'music/title.mp3',
@@ -34,19 +31,30 @@ export class MusicService {
         arcade: 'music/arcade.mp3'
     };
 
+    private routeUrl = toSignal(
+        this.router.events.pipe(
+            filter(e => e instanceof NavigationEnd),
+            map(e => (e as NavigationEnd).urlAfterRedirects),
+            startWith(this.router.url)
+        )
+    );
+
     constructor() {
+        const destroyRef = inject(DestroyRef);
         this.audio.loop = true;
         this.audio.volume = this.volumeSignal();
 
-        // Detect route changes to switch music
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd)
-        ).subscribe((event: any) => {
-            this.handleRouteChange(event.urlAfterRedirects);
+        effect(() => {
+            const url = this.routeUrl();
+            if (url) {
+                this.handleRouteChange(url);
+            }
         });
 
-        // Initial check
-        this.handleRouteChange(this.router.url);
+        destroyRef.onDestroy(() => {
+            this.audio.pause();
+            this.audio.src = '';
+        });
     }
 
     private handleRouteChange(url: string): void {
@@ -84,10 +92,5 @@ export class MusicService {
         const muted = !this.isMutedSignal();
         this.isMutedSignal.set(muted);
         this.audio.volume = muted ? 0 : this.volumeSignal();
-    }
-
-    ngOnDestroy(): void {
-        this.audio.pause();
-        this.audio.src = '';
     }
 }

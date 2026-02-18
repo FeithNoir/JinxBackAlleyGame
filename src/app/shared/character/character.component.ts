@@ -1,5 +1,4 @@
 import { Component, input, output, inject, ChangeDetectionStrategy, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { CharacterProps } from '@interfaces/character-props.interface';
 import { EventService } from '@services/event.service';
 import { CharacterService } from '@services/character.service';
@@ -7,7 +6,7 @@ import { CharacterService } from '@services/character.service';
 @Component({
     selector: 'app-character',
     standalone: true,
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './character.component.html',
     styleUrl: './character.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush

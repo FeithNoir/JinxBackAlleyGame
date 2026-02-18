@@ -1,12 +1,11 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MiniGameService } from '@services/mini-game.service';
 import { EventService } from '@services/event.service';
 
 @Component({
   selector: 'app-mini-game',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './mini-game.component.html',
   styleUrl: './mini-game.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

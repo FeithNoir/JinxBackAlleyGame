@@ -1,11 +1,10 @@
 import { Component, inject, ChangeDetectionStrategy, HostListener, signal, computed, input, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { EventService } from '@services/event.service';
 
 @Component({
   selector: 'app-screen-effects',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './screen-effects.component.html',
   styleUrl: './screen-effects.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

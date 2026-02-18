@@ -37,8 +37,7 @@
     <!-- Current Dialogue Interaction Area -->
     @if (currentNode() && !isAskingName()) {
     <div class="current-interaction">
-        <app-dialogues [speaker]="currentNode()?.character || ''" [text]="''" (dialogueAdvance)="onDialogueAdvance()"
-            class="hidden-trigger"></app-dialogues>
+        <app-dialogues [speaker]="currentNode()?.character || ''" [text]="currentNode()?.text || ''" (dialogueAdvance)="onDialogueAdvance()"></app-dialogues>
 
         <div class="controls-container">
             @if (currentNode()?.options && (currentNode()?.options?.length || 0) > 0) {

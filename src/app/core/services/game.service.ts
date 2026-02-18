@@ -1,5 +1,4 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { GameState } from '@interfaces/game-state.interface';
 import { DIALOGUE_DATA } from '@data/dialogues';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
@@ -44,11 +43,9 @@ export class GameService {
   // Signals
   private gameStateSignal = signal<GameState>(INITIAL_GAME_STATE);
   public gameState = this.gameStateSignal.asReadonly();
-  public gameState$ = toObservable(this.gameStateSignal);
 
   private isAskingNameSignal = signal<boolean>(false);
   public isAskingName = this.isAskingNameSignal.asReadonly();
-  public isAskingName$ = toObservable(this.isAskingNameSignal);
 
   constructor() {
     this.loadGame();

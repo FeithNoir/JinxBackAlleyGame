@@ -6,6 +6,7 @@ import { CharacterComponent } from '@shared/character/character.component';
 import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 import { MiniGameService } from '@services/mini-game.service';
 import { ScreenEffectsComponent } from '@shared/screen-effects/screen-effects.component';
+import { SceneService } from '@services/scene.service';
 
 @Component({
   selector: 'app-main',
@@ -20,8 +21,9 @@ export class MainComponent implements OnInit {
   protected eventService = inject(EventService);
   private loadingService = inject(LoadingService);
   protected miniGameService = inject(MiniGameService);
+  protected sceneService = inject(SceneService);
 
-  protected backgroundStyle: string = "url('background/bg-1.png')";
+  
 
   // Core signals from service
   gameState = this.gameService.gameState;

@@ -1,6 +1,6 @@
-import { Component, OnInit, viewChild, ElementRef, AfterViewChecked, input, output, model, HostListener, inject, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
+import { Component, viewChild, ElementRef, input, output, model, HostListener, inject, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { GameService } from '@services/game.service';
 import { CharacterService } from '@services/character.service';
 import { MiniGameService } from '@services/mini-game.service';
@@ -20,7 +20,7 @@ import { MiniGameType } from '@interfaces/mini-game-type.enum';
   styleUrl: './sidebar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarComponent implements OnInit, AfterViewChecked {
+export class SidebarComponent {
   private gameService = inject(GameService);
   private characterService = inject(CharacterService);
   private miniGameService = inject(MiniGameService);
@@ -53,6 +53,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
   currentNode = computed(() => this.gameService.getCurrentNode());
 
+  private navUrl = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(e => (e as NavigationEnd).urlAfterRedirects)
+    )
+  );
+
   constructor() {
     this.checkMobile();
     this.checkRoute(this.router.url);
@@ -65,24 +72,22 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
       }
     });
 
-    // Handle navigation events
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.checkRoute(event.urlAfterRedirects);
+    // Scroll to bottom when dialogue history changes
+    effect(() => {
+      const _ = this.dialogueHistory(); // track dependency
+      queueMicrotask(() => this.scrollToBottom());
+    });
+
+    effect(() => {
+      const url = this.navUrl();
+      if (url) {
+        this.checkRoute(url);
+      }
     });
   }
 
-  ngOnInit(): void {
-    // Initialization logic handled by constructor/signals
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-
   @HostListener('window:resize')
-  onResize() {
+  public onResize() {
     this.checkMobile();
   }
 
@@ -112,70 +117,70 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  toggleSidebar(): void {
+  public toggleSidebar(): void {
     this.isCollapsed.update((v: boolean) => !v);
   }
 
   // Arcade Controls Handlers
-  onChaosChanged(value: number): void {
+  public onChaosChanged(value: number): void {
     this.characterService.setArcadeChaosLevel(value);
   }
 
-  onPresetApplied(data: { type: string, preset: string }): void {
+  public onPresetApplied(data: { type: string, preset: string }): void {
     this.characterService.applyPreset(data.type as any, data.preset);
   }
 
-  onPropertyToggled(data: { key: string, value: string }): void {
+  public onPropertyToggled(data: { key: string, value: string }): void {
     this.characterService.toggleLayer(data.key as any, data.value);
   }
 
-  onEffectToggled(data: { key: string, value: string }): void {
+  public onEffectToggled(data: { key: string, value: string }): void {
     this.characterService.updateEffect(data.key as any, data.value);
   }
 
-  onMiniGameStarted(): void {
+  public onMiniGameStarted(): void {
     this.miniGameService.start(MiniGameType.Clicker, 10);
   }
 
   // Chat Area Handlers
-  onDialogueAdvanced(): void {
+  public onDialogueAdvanced(): void {
     const node = this.currentNode();
     if (node?.nextNodeId) {
       this.gameService.selectOption(node.nextNodeId);
     }
   }
 
-  onOptionSelected(nextNodeId: number): void {
+  public onOptionSelected(nextNodeId: number): void {
     this.gameService.selectOption(nextNodeId);
   }
 
-  onPlayerNameSubmitted(name: string): void {
+  public onPlayerNameSubmitted(name: string): void {
     this.gameService.setPlayerName(name);
   }
 
   // Music Controls Handlers
-  onVolumeChanged(value: number): void {
+  public onVolumeChanged(value: number): void {
     this.musicService.setVolume(value);
   }
 
-  onMuteToggled(): void {
+  public onMuteToggled(): void {
     this.musicService.toggleMute();
   }
 
-  onSliderToggled(): void {
+  public onSliderToggled(): void {
     this.showVolumeSlider.update(v => !v);
   }
 
-  onSaveRequested(): void {
+  public onSaveRequested(): void {
     this.gameService.saveGame();
   }
 
-  openSettings(): void {
+  public openSettings(): void {
     this.settingsService.openSettingsPanel();
   }
 
   // Navigation
-  goToMenu(): void {
+  public goToMenu(): void {
     this.router.navigate(['/']);
   }
 }

@@ -93,28 +93,31 @@ This document contains the full diagnostic of the current codebase and a priorit
 | 🔴 P1 | Architecture | Fix `MainComponent` event subscription leak (no cleanup) | ✅ Yes | ✔️ Done |
 | 🔴 P1 | Modularization | Create `ScreenEffectsComponent` — centralize flash/vibrate/flashlight | ✅ Yes | ✔️ Done |
 | 🔴 P1 | Component Redundancy | Remove `<app-mini-game>` from `CharacterComponent` (keep only in `ArcadeComponent`/overlay) | ✅ Yes | ✔️ Done |
-| 🔴 P1 | Bug Fix | Fix `MiniGameService.start()` call in `SidebarComponent` (missing `MiniGameType` argument) | ✅ Yes | Pending |
-| 🟡 P2 | Architecture | Remove `toObservable()` wrappers from all services (use Signals directly in templates) | ✅ Yes | Pending |
-| 🟡 P2 | Architecture | Replace `router.events.subscribe()` with `toSignal(router.events.pipe(...))` in `SidebarComponent` and `MusicService` | ✅ Yes | Pending |
-| 🟡 P2 | Architecture | Replace `takeUntil(destroy$)` with `takeUntilDestroyed()` in `ArcadeComponent` | ✅ Yes | Pending |
-| 🟡 P2 | Angular Syntax | Remove `CommonModule` from standalone components using new control flow (`@if`, `@for`) | ✅ Yes | Pending |
-| 🟡 P2 | Angular Syntax | Remove empty `ngOnInit` implementations and unused `OnInit` interface | ✅ Yes | Pending |
-| 🟡 P2 | Modularization | Externalize `backgroundStyle` to a shared token or `SceneService` | ✅ Yes | Pending |
+| 🔴 P1 | Bug Fix | Fix `MiniGameService.start()` call in `SidebarComponent` (missing `MiniGameType` argument) | ✅ Yes | ✔️ Done |
+| 🔴 P1 | Bug Fix | `DialoguesComponent` receives an empty `text` input | ✅ Yes | ✔️ Done |
+| 🔴 P1 | Bug Fix | `MainComponent` event subscription has no cleanup (memory leak) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Architecture | Remove `toObservable()` wrappers from all services (use Signals directly in templates) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Architecture | Replace `router.events.subscribe()` with `toSignal(router.events.pipe(...))` in `SidebarComponent` and `MusicService` | ✅ Yes | ✔️ Done | | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Architecture | Replace `takeUntil(destroy$)` with `takeUntilDestroyed()` in `ArcadeComponent` | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Angular Syntax | Remove `CommonModule` from standalone components using new control flow (`@if`, `@for`) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Angular Syntax | Remove empty `ngOnInit` implementations and unused `OnInit` interface | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Modularization | Externalize `backgroundStyle` to a shared token or `SceneService` | ✅ Yes | ✔️ Done |
 | 🟡 P2 | Modularization | Externalize reaction strings from `GameService` and `MiniGameService` to a data file | ✅ Yes | Pending |
 | 🟡 P2 | CSS | Deduplicate `@keyframes shake` — move to `styles.css` global stylesheet | ✅ Yes | Pending |
-| 🟡 P2 | Gameplay | Apply screen effects (vibrate/flash) in Arcade mode | ✅ Yes | Pending |
+| 🟡 P2 | Gameplay | Apply screen effects (vibrate/flash) in Arcade mode | ✅ Yes | ✔️ Done |
 | 🟡 P2 | Gameplay | Add CSS transitions to character layer changes (outfit/expression swaps) | ✅ Yes | Pending |
 | 🟡 P2 | Gameplay | Add entrance/exit animations for `<app-character>` on scene transitions | ✅ Yes | Pending |
 | 🟡 P2 | Gameplay | Add keyboard navigation for dialogue options (arrow keys + Enter) | ✅ Yes | Pending |
 | 🟡 P2 | Visual | Make `CharacterComponent` responsive (replace fixed px with `clamp()` / `vmin` units) | ✅ Yes | Pending |
 | 🟡 P2 | Visual | Fix speech bubble clipping on small screens (use dynamic positioning) | ✅ Yes | Pending |
 | 🟡 P2 | Visual | Add visual milestone feedback to Chaos Meter (pulse at 25/50/75/100) | ✅ Yes | Pending |
-| 🟢 P3 | Architecture | Fix `MusicService.ngOnDestroy()` — it will never fire in a root service | ✅ Yes | Pending |
+| 🟢 P3 | Architecture | Fix `MusicService.ngOnDestroy()` — it will never fire in a root service | ✅ Yes | ✔️ Done |
 | 🟢 P3 | Gameplay | Add color variants to screen flash (e.g., red for danger, white for shock) | ✅ Yes | Pending |
 | 🟢 P3 | Gameplay | Make flashlight radius dynamic (scale with viewport size) | ✅ Yes | Pending |
 | 🟢 P3 | Architecture | Simplify `model()` → `input()` for `SidebarComponent.isCollapsed` (two-way binding unused) | ✅ Yes | Pending |
 | 🟢 P3 | Architecture | Remove `GameState.id` or connect it to a real persistence layer | ✅ Yes | Pending |
 | 🟢 P3 | Modularization | Abstract `DIALOGUE_DATA` access behind a `DialogueRepository` service | ✅ Yes | Pending |
+| 🟢 P3 | Performance | Replace `ngAfterViewChecked` scroll logic with `effect()` | ✅ Yes | ✔️ Done |
 | — | Narrative | Deeper narrative branching and player choice consequences | ❌ Creative | Pending |
 | — | Narrative | Dynamic dialogue content with contextual variables | ❌ Creative | Pending |
 | — | Narrative | Tutorial / onboarding flow | ❌ Creative | Pending |
@@ -259,142 +262,38 @@ effect(() => {
 ### 🐛 BUG-01 — `MiniGameService.start()` called without required `MiniGameType` argument
 **Severity:** 🔴 Critical — Mini-game cannot start correctly from the sidebar  
 **File:** `src/app/shared/sidebar/sidebar.component.ts` — line 136  
-**Reproduction:** Open Arcade mode → click "START MINI-GAME" in the sidebar controls panel.
-
-```typescript
-// ❌ Current — 10 is interpreted as `duration`, MiniGameType is missing
-onMiniGameStarted(): void {
-  this.miniGameService.start(10);
-}
-
-// ✅ Fix
-onMiniGameStarted(): void {
-  this.miniGameService.start(MiniGameType.Clicker, 10);
-}
-```
-
-**Impact:** The mini-game starts with `currentMiniGameType = null`. When it ends, `miniGameEndedSource.next()` is never called, so the `miniGameEnded$` observable never fires and the game state is never updated with the result.
-
----
+**Status:** ✔️ Done
 
 ### 🐛 BUG-02 — `DialoguesComponent` receives an empty `text` input
 **Severity:** 🔴 Critical — The dialogue component is effectively unused in history mode  
 **File:** `src/app/shared/sidebar/chat-area/chat-area.component.html` — line 40  
-**Reproduction:** Start the game → advance any dialogue node.
-
-```html
-<!-- ❌ Current — text is hardcoded to empty string -->
-<app-dialogues [speaker]="currentNode()?.character || ''" [text]="''"
-  (dialogueAdvance)="onDialogueAdvance()" class="hidden-trigger">
-</app-dialogues>
-
-<!-- ✅ Fix — pass the actual node text -->
-<app-dialogues [speaker]="currentNode()?.character || ''" [text]="currentNode()?.text || ''"
-  (dialogueAdvance)="onDialogueAdvance()">
-</app-dialogues>
-```
-
-**Impact:** `DialoguesComponent` renders with no text. The current node's dialogue text is only shown via raw `{{ currentNode()?.text }}` interpolation in the mobile branch (line 23), bypassing the styled dialogue component entirely on desktop.
-
----
+**Status:** ✔️ Done
 
 ### 🐛 BUG-03 — `MainComponent` event subscription has no cleanup (memory leak)
 **Severity:** 🔴 Critical — Subscription accumulates on every navigation  
 **File:** `src/app/pages/main/main.component.ts` — lines 49–55  
-**Reproduction:** Navigate away from `/game` and back multiple times.
-
-```typescript
-// ❌ Current — no takeUntilDestroyed(), no unsubscribe
-constructor() {
-  this.eventService.events$.subscribe(event => { ... });
-}
-
-// ✅ Fix — use takeUntilDestroyed()
-private destroyRef = inject(DestroyRef);
-constructor() {
-  this.eventService.events$
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe(event => { ... });
-}
-```
-
-**Impact:** Every time the user navigates to `/game`, a new subscription is created and never disposed. After several navigations, multiple handlers fire simultaneously for each event, causing duplicate vibrations and flashes.
+**Status:** ✔️ Done
 
 ---
 
 ### 🐛 BUG-04 — `SidebarComponent` router subscription has no cleanup
 **Severity:** 🟡 Medium — Memory leak on long sessions  
 **File:** `src/app/shared/sidebar/sidebar.component.ts` — lines 68–72  
-**Reproduction:** Navigate between routes multiple times.
-
-```typescript
-// ❌ Current — RxJS subscription in constructor, never unsubscribed
-this.router.events.pipe(
-  filter(event => event instanceof NavigationEnd)
-).subscribe((event: any) => {
-  this.checkRoute(event.urlAfterRedirects);
-});
-
-// ✅ Fix — use toSignal() which auto-cleans up
-private navUrl = toSignal(
-  this.router.events.pipe(
-    filter(e => e instanceof NavigationEnd),
-    map(e => (e as NavigationEnd).urlAfterRedirects)
-  )
-);
-// Then react with an effect() on navUrl
-```
-
-**Impact:** Each `SidebarComponent` instance adds a new router subscription that is never removed, causing `checkRoute()` to be called multiple times per navigation event.
+**Status:** ✔️ Done
 
 ---
 
 ### 🐛 BUG-05 — `MusicService` router subscription has no cleanup
 **Severity:** 🟡 Medium — Subscription reference is lost; impossible to unsubscribe  
 **File:** `src/app/core/services/music.service.ts` — lines 42–46  
-**Reproduction:** Navigate between routes repeatedly.
-
-```typescript
-// ❌ Current — subscribe() result is discarded
-this.router.events.pipe(
-  filter(event => event instanceof NavigationEnd)
-).subscribe((event: any) => { ... });
-
-// ✅ Fix — use toSignal() with startWith for initial value
-private routeUrl = toSignal(
-  this.router.events.pipe(
-    filter(e => e instanceof NavigationEnd),
-    map(e => (e as NavigationEnd).urlAfterRedirects),
-    startWith(this.router.url)
-  )
-);
-```
-
-**Impact:** While a root service lives for the app's lifetime, the subscription reference is lost, making future cleanup impossible. If the service is ever scoped, this becomes a critical leak.
+**Status:** ✔️ Done
 
 ---
 
 ### 🐛 BUG-06 — `MusicService.ngOnDestroy()` is never called
 **Severity:** 🟡 Medium — Audio resources are never released  
-**File:** `src/app/core/services/music.service.ts` — lines 89–92
-
-```typescript
-// ❌ Current — ngOnDestroy() on a providedIn: 'root' service is never invoked by Angular
-ngOnDestroy(): void {
-  this.audio.pause();
-  this.audio.src = '';
-}
-
-// ✅ Fix — use DestroyRef listener instead
-constructor() {
-  inject(DestroyRef).onDestroy(() => {
-    this.audio.pause();
-    this.audio.src = '';
-  });
-}
-```
-
-**Impact:** The `Audio` object is never paused or released when the app closes. On Electron, this may cause the audio process to linger.
+**File:** `src/app/core/services/music.service.ts` — lines 89–92  
+**Status:** ✔️ Done
 
 ---
 
@@ -410,41 +309,21 @@ constructor() {
 ### 🐛 BUG-08 — Screen effects (vibrate/flash) absent in Arcade mode
 **Severity:** 🟡 Medium — Inconsistent gameplay feedback  
 **File:** `src/app/pages/arcade/arcade.component.ts`  
-**Reproduction:** In Arcade mode, click on Jinx or trigger any interaction.
-
-**Impact:** `ArcadeComponent` does not subscribe to `EventService` events and has no `isVibrating`/`isFlashing` signals. All `eventService.vibrate()` and `eventService.flash()` calls from `GameService.interactWith()` and `CharacterComponent.onZoneClick()` are silently ignored in Arcade mode.
+**Status:** ✔️ Done
 
 ---
 
 ### 🐛 BUG-09 — `<app-mini-game>` rendered twice simultaneously in Arcade mode
 **Severity:** 🟡 Medium — Duplicate UI overlay; double-speed mini-game progress  
 **Files:** `src/app/shared/character/character.component.html:12`, `src/app/pages/arcade/arcade.component.html:12`  
-**Reproduction:** In Arcade mode, start a mini-game.
-
-**Impact:** Two `MiniGameComponent` instances are mounted at the same time. Both listen to the same `MiniGameService` signals. Clicking on one instance calls `onInteractionClick()` twice (once per instance), incrementing progress by `5 × 2 = 10` per click, making the mini-game complete at double speed.
+**Status:** ✔️ Done
 
 ---
 
 ### 🐛 BUG-10 — `ngAfterViewChecked` scroll fires on every change detection cycle
 **Severity:** 🟢 Low — Performance degradation on long dialogue sessions  
-**File:** `src/app/shared/sidebar/sidebar.component.ts` — lines 79–81
-
-```typescript
-// ❌ Current — scrollToBottom() called on EVERY change detection cycle
-ngAfterViewChecked(): void {
-  this.scrollToBottom();
-}
-
-// ✅ Fix — react only when dialogueHistory signal changes
-constructor() {
-  effect(() => {
-    const _ = this.dialogueHistory(); // track dependency
-    queueMicrotask(() => this.scrollToBottom());
-  });
-}
-```
-
-**Impact:** On long dialogue sessions with many history entries, this causes unnecessary DOM reads (`scrollHeight`) on every cycle, degrading performance.
+**File:** `src/app/shared/sidebar/sidebar.component.ts` — lines 79–81  
+**Status:** ✔️ Done
 
 ---
 

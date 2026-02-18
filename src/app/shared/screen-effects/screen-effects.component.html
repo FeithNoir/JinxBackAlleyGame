@@ -4,4 +4,8 @@
 }
 
 <!-- Dynamic Scene Overlay (Night or Flashlight) -->
-<div class="scene-overlay" [ngStyle]="overlayStyle()"></div>
+<div class="scene-overlay"
+  [style.background]="overlayStyle().background"
+  [style.pointer-events]="overlayStyle()['pointer-events']"
+  [style.z-index]="overlayStyle()['z-index']">
+</div>

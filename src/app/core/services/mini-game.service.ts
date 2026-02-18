@@ -1,5 +1,4 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { CharacterService } from '@services/character.service';
 import { Subject, Observable } from 'rxjs';
 import { MiniGameType } from '@interfaces/mini-game-type.enum';
@@ -13,15 +12,12 @@ export class MiniGameService {
     // Signals
     private progressSignal = signal<number>(0);
     public progress = this.progressSignal.asReadonly();
-    public progress$ = toObservable(this.progressSignal);
 
     private isActiveSignal = signal<boolean>(false);
     public isActive = this.isActiveSignal.asReadonly();
-    public isActive$ = toObservable(this.isActiveSignal);
 
     private timerSignal = signal<number>(0);
     public timer = this.timerSignal.asReadonly();
-    public timer$ = toObservable(this.timerSignal);
 
     private miniGameEndedSource = new Subject<{ success: boolean, type: MiniGameType }>();
     public miniGameEnded$: Observable<{ success: boolean, type: MiniGameType }> = this.miniGameEndedSource.asObservable();

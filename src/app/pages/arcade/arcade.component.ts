@@ -9,6 +9,7 @@ import { MiniGameType } from '@interfaces/mini-game-type.enum';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 import { ScreenEffectsComponent } from '@shared/screen-effects/screen-effects.component';
+import { SceneService } from '@services/scene.service';
 
 @Component({
   selector: 'app-arcade',
@@ -25,8 +26,9 @@ export class ArcadeComponent implements OnInit {
   private loadingService = inject(LoadingService);
   protected miniGameService = inject(MiniGameService);
   private destroyRef = inject(DestroyRef);
+  protected sceneService = inject(SceneService);
 
-  protected backgroundStyle: string = "url('background/bg-1.png')";
+  
 
   // Use service signal directly
   characterProps = this.characterService.characterProps;

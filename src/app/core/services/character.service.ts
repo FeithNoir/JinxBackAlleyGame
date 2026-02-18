@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { CharacterProps } from '@interfaces/character-props.interface';
 
 export const DEFAULT_JINX_PROPS: CharacterProps = {
@@ -60,19 +59,15 @@ export const EXPRESSION_PRESETS: Record<string, Partial<CharacterProps>> = {
 export class CharacterService {
     private characterPropsSignal = signal<CharacterProps>(DEFAULT_JINX_PROPS);
     public characterProps = this.characterPropsSignal.asReadonly();
-    public characterProps$ = toObservable(this.characterPropsSignal);
 
     private arcadeChaosLevelSignal = signal<number>(0);
     public arcadeChaosLevel = this.arcadeChaosLevelSignal.asReadonly();
-    public arcadeChaosLevel$ = toObservable(this.arcadeChaosLevelSignal);
 
     private modeSignal = signal<'history' | 'arcade'>('history');
     public mode = this.modeSignal.asReadonly();
-    public mode$ = toObservable(this.modeSignal);
 
     private reactionTextSignal = signal<string>('');
     public reactionText = this.reactionTextSignal.asReadonly();
-    public reactionText$ = toObservable(this.reactionTextSignal);
 
     constructor() { }
 
