@@ -2,6 +2,7 @@ import { Component, input, output, inject, ChangeDetectionStrategy, computed } f
 import { CharacterProps } from '@interfaces/character-props.interface';
 import { EventService } from '@services/event.service';
 import { CharacterService } from '@services/character.service';
+import { CharacterAssetService } from '@services/character-asset.service';
 
 @Component({
     selector: 'app-character',
@@ -17,6 +18,7 @@ import { CharacterService } from '@services/character.service';
 export class CharacterComponent {
     private eventService = inject(EventService);
     private characterService = inject(CharacterService);
+    protected characterAssetService = inject(CharacterAssetService);
 
     // Signal Inputs
     characterProps = input.required<CharacterProps>();

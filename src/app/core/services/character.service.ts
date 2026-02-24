@@ -1,5 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { CharacterProps } from '@interfaces/character-props.interface';
+import { CharacterAssetService } from './character-asset.service';
 
 export const DEFAULT_JINX_PROPS: CharacterProps = {
     eyes: 'e-1',
@@ -68,6 +69,8 @@ export class CharacterService {
 
     private reactionTextSignal = signal<string>('');
     public reactionText = this.reactionTextSignal.asReadonly();
+
+    private characterAssetService = inject(CharacterAssetService);
 
     constructor() { }
 
