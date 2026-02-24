@@ -1,6 +1,6 @@
 <!-- Screen Flash Effect -->
-@if (eventService.isFlashing()) {
-  <div class="screen-flash"></div>
+@if (eventService.flashColor()) {
+  <div class="screen-flash" [style.background-color]="eventService.flashColor()"></div>
 }
 
 <!-- Dynamic Scene Overlay (Night or Flashlight) -->

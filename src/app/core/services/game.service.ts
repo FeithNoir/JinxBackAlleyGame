@@ -1,6 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { GameState } from '@interfaces/game-state.interface';
-import { DIALOGUE_DATA } from '@data/dialogues';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
 import { CharacterService } from '@services/character.service';
 import { MiniGameService } from '@services/mini-game.service';
@@ -8,9 +7,9 @@ import { StorageService } from '@services/storage.service';
 import { EventService } from '@services/event.service';
 import { MiniGameType } from '@core/interfaces/mini-game-type.enum';
 import { GAME_REACTIONS } from '@data/reactions';
+import { DialogueRepositoryService } from '@services/dialogue-repository.service';
 
 const INITIAL_GAME_STATE: GameState = {
-  id: 1,
   currentNodeId: 100,
   chaosLevel: 0,
   characters: {
@@ -40,6 +39,7 @@ export class GameService {
   private characterService = inject(CharacterService);
   private miniGameService = inject(MiniGameService);
   private storageService = inject(StorageService);
+  private dialogueRepositoryService = inject(DialogueRepositoryService);
 
   // Signals
   private gameStateSignal = signal<GameState>(INITIAL_GAME_STATE);
@@ -80,7 +80,7 @@ export class GameService {
   public getCurrentNode(): DialogueNode | undefined {
     const currentState = this.gameStateSignal();
     const currentNodeId = currentState.currentNodeId;
-    const node = DIALOGUE_DATA.find(n => n.id === currentNodeId);
+    const node = this.dialogueRepositoryService.getDialogueNode(currentNodeId);
 
     if (!node) return undefined;
 
@@ -106,9 +106,9 @@ export class GameService {
   public selectOption(nextNodeId: number | string): void {
     const numericId = typeof nextNodeId === 'string' ? parseInt(nextNodeId) : nextNodeId;
     const currentState = this.gameStateSignal();
-    const currentNode = DIALOGUE_DATA.find(node => node.id === currentState.currentNodeId);
+    const currentNode = this.dialogueRepositoryService.getDialogueNode(currentState.currentNodeId);
     const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === numericId);
-    const nextNode = DIALOGUE_DATA.find(node => node.id === numericId);
+    const nextNode = this.dialogueRepositoryService.getDialogueNode(numericId);
 
     if (nextNode) {
       let newChaosLevel = currentState.chaosLevel;
@@ -172,7 +172,7 @@ export class GameService {
   }
 
   private checkAndTriggerEffects(nodeId: number): void {
-    const node = DIALOGUE_DATA.find(n => n.id === nodeId);
+    const node = this.dialogueRepositoryService.getDialogueNode(nodeId);
     if (!node) return;
 
     const overlay = node.characterProps?.effects?.overlay;

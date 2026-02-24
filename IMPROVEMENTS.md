@@ -114,9 +114,9 @@ This document contains the full diagnostic of the current codebase and a priorit
 | 🟢 P3 | Architecture | Fix `MusicService.ngOnDestroy()` — it will never fire in a root service | ✅ Yes | ✔️ Done |
 | 🟢 P3 | Gameplay | Add color variants to screen flash (e.g., red for danger, white for shock) | ✅ Yes | Pending |
 | 🟢 P3 | Gameplay | Make flashlight radius dynamic (scale with viewport size) | ✅ Yes | Pending |
-| 🟢 P3 | Architecture | Simplify `model()` → `input()` for `SidebarComponent.isCollapsed` (two-way binding unused) | ✅ Yes | Pending |
-| 🟢 P3 | Architecture | Remove `GameState.id` or connect it to a real persistence layer | ✅ Yes | Pending |
-| 🟢 P3 | Modularization | Abstract `DIALOGUE_DATA` access behind a `DialogueRepository` service | ✅ Yes | Pending |
+| 🟢 P3 | Architecture | Simplify `model()` → `input()` for `SidebarComponent.isCollapsed` (two-way binding unused) | ✅ Yes | Not Applicable (Two-way binding is used in LayoutComponent) |
+| 🟢 P3 | Architecture | Remove `GameState.id` or connect it to a real persistence layer | ✅ Yes | ✔️ Done |
+| 🟢 P3 | Modularization | Abstract `DIALOGUE_DATA` access behind a `DialogueRepository` service | ✅ Yes | ✔️ Done |
 | 🟢 P3 | Performance | Replace `ngAfterViewChecked` scroll logic with `effect()` | ✅ Yes | ✔️ Done |
 | — | Narrative | Deeper narrative branching and player choice consequences | ❌ Creative | Pending |
 | — | Narrative | Dynamic dialogue content with contextual variables | ❌ Creative | Pending |

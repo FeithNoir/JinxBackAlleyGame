@@ -9,8 +9,8 @@ export class EventService {
     public isVibrating = this._isVibrating.asReadonly();
 
     // --- Flash Effect ---
-    private _isFlashing = signal<boolean>(false);
-    public isFlashing = this._isFlashing.asReadonly();
+    private _flashColor = signal<string | null>(null);
+    public flashColor = this._flashColor.asReadonly();
 
     // --- Screen Shake Effect (alias for vibrate at screen level) ---
     private _isShaking = signal<boolean>(false);
@@ -21,9 +21,9 @@ export class EventService {
         setTimeout(() => this._isVibrating.set(false), duration);
     }
 
-    public flash(): void {
-        this._isFlashing.set(true);
-        setTimeout(() => this._isFlashing.set(false), 300);
+    public flash(color: string = 'rgba(255, 255, 255, 0.8)'): void {
+        this._flashColor.set(color);
+        setTimeout(() => this._flashColor.set(null), 300);
     }
 
     public shake(duration: number = 900): void {

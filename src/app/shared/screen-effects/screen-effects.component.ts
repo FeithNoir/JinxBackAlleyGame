@@ -9,7 +9,8 @@ import { EventService } from '@services/event.service';
   styleUrl: './screen-effects.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.flashlight-active]': 'sceneEffect() === "flashlight"' // Apply class based on input
+    '[class.flashlight-active]': 'sceneEffect() === "flashlight"',
+    '[class.vibrate]': 'eventService.isVibrating()' // Apply vibrate class to host
   }
 })
 export class ScreenEffectsComponent {
@@ -23,12 +24,19 @@ export class ScreenEffectsComponent {
   flashlightX = signal<number>(0);
   flashlightY = signal<number>(0);
 
+  // Dynamic flashlight radius
+  private dynamicFlashlightRadius = computed(() => {
+    // Calculate radius based on viewport size, e.g., 15% of the smaller dimension
+    const viewportMin = Math.min(window.innerWidth, window.innerHeight);
+    return Math.max(100, viewportMin * 0.15); // Ensure a minimum radius of 100px
+  });
+
   // Computed style for the dynamic overlay
   overlayStyle = computed(() => {
     const effect = this.sceneEffect();
     if (effect === 'flashlight') {
       return {
-        background: `radial-gradient(circle at ${this.flashlightX()}px ${this.flashlightY()}px, transparent 150px, rgba(0,0,0,0.9) 100%)`,
+        background: `radial-gradient(circle at ${this.flashlightX()}px ${this.flashlightY()}px, transparent ${this.dynamicFlashlightRadius()}px, rgba(0,0,0,0.9) 100%)`,
         'pointer-events': 'auto', // Enable pointer events for flashlight
         'z-index': '1000'
       };
