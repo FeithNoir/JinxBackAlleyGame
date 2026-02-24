@@ -1,6 +1,12 @@
 <div class="options-container">
-  @for (option of options(); track option.nextNodeId) {
-  <button (click)="selectOption(option.nextNodeId)" class="option-button">
+  @for (option of options(); track option.nextNodeId; let i = $index) {
+  <button
+    #optionButton
+    (click)="selectOption(option.nextNodeId)"
+    class="option-button"
+    [class.focused]="focusedOptionIndex() === i"
+    tabindex="0"
+  >
     {{ option.text }}
   </button>
   }

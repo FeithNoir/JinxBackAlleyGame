@@ -9,7 +9,10 @@ import { CharacterService } from '@services/character.service';
     imports: [],
     templateUrl: './character.component.html',
     styleUrl: './character.component.css',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+      'class': 'app-character-enter'
+    }
 })
 export class CharacterComponent {
     private eventService = inject(EventService);

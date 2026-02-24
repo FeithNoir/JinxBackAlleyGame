@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { CharacterService } from '@services/character.service';
 import { Subject, Observable } from 'rxjs';
 import { MiniGameType } from '@interfaces/mini-game-type.enum';
+import { GAME_REACTIONS } from '@data/reactions';
 
 @Injectable({
     providedIn: 'root'
@@ -62,11 +63,11 @@ export class MiniGameService {
         let reaction = '';
 
         if (p < 30) {
-            reaction = "Wait! What are you doing?";
+            reaction = GAME_REACTIONS.miniGame.progress.low;
         } else if (p < 70) {
-            reaction = "Stop! That... that feels weird!";
+            reaction = GAME_REACTIONS.miniGame.progress.medium;
         } else if (p < 100) {
-            reaction = "I can't... concentrate! Stop it!";
+            reaction = GAME_REACTIONS.miniGame.progress.high;
         }
 
         if (reaction) {
@@ -86,9 +87,9 @@ export class MiniGameService {
         }
 
         if (success) {
-            this.characterService.showReaction("Uwah! You actually did it!", 5000);
+            this.characterService.showReaction(GAME_REACTIONS.miniGame.end.success, 5000);
         } else {
-            this.characterService.showReaction("Hah! Too slow!", 3000);
+            this.characterService.showReaction(GAME_REACTIONS.miniGame.end.failure, 3000);
         }
     }
 

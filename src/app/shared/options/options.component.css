@@ -33,3 +33,9 @@
   background-color: var(--c-action-dark); /* Darker Electric Blue on active */
   box-shadow: var(--shadow-hard-active);
 }
+
+.option-button.focused {
+  outline: 4px solid var(--c-primary); /* Highlight with primary color */
+  background-color: var(--c-action); /* Keep it distinct from hover */
+  transform: scale(1.05);
+}

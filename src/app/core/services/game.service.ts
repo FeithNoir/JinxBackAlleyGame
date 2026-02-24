@@ -7,6 +7,7 @@ import { MiniGameService } from '@services/mini-game.service';
 import { StorageService } from '@services/storage.service';
 import { EventService } from '@services/event.service';
 import { MiniGameType } from '@core/interfaces/mini-game-type.enum';
+import { GAME_REACTIONS } from '@data/reactions';
 
 const INITIAL_GAME_STATE: GameState = {
   id: 1,
@@ -194,25 +195,7 @@ export class GameService {
     else mood = 'happy';
 
     // Find interaction text (can be externalized later)
-    const reactions: Record<string, Record<string, string>> = {
-      'head': {
-        'annoyed': "Don't touch my hair...",
-        'nervous': "Wait... what are you doing?",
-        'happy': "Hehe, that feels nice..."
-      },
-      'top': {
-        'annoyed': "Keep your hands off.",
-        'nervous': "Uff, is it getting hot in here?",
-        'happy': "I like it when you do that."
-      },
-      'bottom': {
-        'annoyed': "Hey! Watch it.",
-        'nervous': "I-if you keep doing that...",
-        'happy': "Mmm... don't stop."
-      }
-    };
-
-    const text = reactions[part]?.[mood] || '...';
+    const text = GAME_REACTIONS.interaction[part]?.[mood] || '...';
 
     // Show in speech bubble
     this.characterService.showReaction(text);

@@ -102,15 +102,15 @@ This document contains the full diagnostic of the current codebase and a priorit
 | 🟡 P2 | Angular Syntax | Remove `CommonModule` from standalone components using new control flow (`@if`, `@for`) | ✅ Yes | ✔️ Done |
 | 🟡 P2 | Angular Syntax | Remove empty `ngOnInit` implementations and unused `OnInit` interface | ✅ Yes | ✔️ Done |
 | 🟡 P2 | Modularization | Externalize `backgroundStyle` to a shared token or `SceneService` | ✅ Yes | ✔️ Done |
-| 🟡 P2 | Modularization | Externalize reaction strings from `GameService` and `MiniGameService` to a data file | ✅ Yes | Pending |
-| 🟡 P2 | CSS | Deduplicate `@keyframes shake` — move to `styles.css` global stylesheet | ✅ Yes | Pending |
+| 🟡 P2 | Modularization | Externalize reaction strings from `GameService` and `MiniGameService` to a data file | ✅ Yes | ✔️ Done |
+| 🟡 P2 | CSS | Deduplicate `@keyframes shake` — move to `styles.css` global stylesheet | ✅ Yes | ✔️ Done |
 | 🟡 P2 | Gameplay | Apply screen effects (vibrate/flash) in Arcade mode | ✅ Yes | ✔️ Done |
-| 🟡 P2 | Gameplay | Add CSS transitions to character layer changes (outfit/expression swaps) | ✅ Yes | Pending |
-| 🟡 P2 | Gameplay | Add entrance/exit animations for `<app-character>` on scene transitions | ✅ Yes | Pending |
-| 🟡 P2 | Gameplay | Add keyboard navigation for dialogue options (arrow keys + Enter) | ✅ Yes | Pending |
-| 🟡 P2 | Visual | Make `CharacterComponent` responsive (replace fixed px with `clamp()` / `vmin` units) | ✅ Yes | Pending |
-| 🟡 P2 | Visual | Fix speech bubble clipping on small screens (use dynamic positioning) | ✅ Yes | Pending |
-| 🟡 P2 | Visual | Add visual milestone feedback to Chaos Meter (pulse at 25/50/75/100) | ✅ Yes | Pending |
+| 🟡 P2 | Gameplay | Add CSS transitions to character layer changes (outfit/expression swaps) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Gameplay | Add entrance/exit animations for `<app-character>` on scene transitions | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Gameplay | Add keyboard navigation for dialogue options (arrow keys + Enter) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Visual | Make `CharacterComponent` responsive (replace fixed px with `clamp()` / `vmin` units) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Visual | Fix speech bubble clipping on small screens (use dynamic positioning) | ✅ Yes | ✔️ Done |
+| 🟡 P2 | Visual | Add visual milestone feedback to Chaos Meter (pulse at 25/50/75/100) | ✅ Yes | ✔️ Done |
 | 🟢 P3 | Architecture | Fix `MusicService.ngOnDestroy()` — it will never fire in a root service | ✅ Yes | ✔️ Done |
 | 🟢 P3 | Gameplay | Add color variants to screen flash (e.g., red for danger, white for shock) | ✅ Yes | Pending |
 | 🟢 P3 | Gameplay | Make flashlight radius dynamic (scale with viewport size) | ✅ Yes | Pending |
@@ -250,6 +250,7 @@ effect(() => {
 | User Experience (UX) | Game Settings Panel | ✔️ Done |
 | User Interface (UI) | Responsiveness and Adaptability (initial pass) | ✔️ Done |
 | User Experience (UX) | Save/Load (basic persistence via `StorageService`) | ✔️ Done |
+| Build Fix | Resolved TypeScript `TS7053` error by adding index signatures to `InteractionReactions` interface | ✔️ Done |
 
 ---
 
