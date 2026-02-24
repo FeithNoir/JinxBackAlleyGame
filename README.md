@@ -132,44 +132,38 @@ npm run electron:serve
 
 ## Technical Optimizations
 
-### Recent Improvements (Phase 1 & 2)
+### Recent Improvements (Phase 1, 2 & 3)
 
-**Phase 1: Code Quality**
-1. **CSS Centralization**: Created a unified Neobrutalist design system (`styles/neobrutalist.css`) with reusable components:
-   - Standardized buttons (`.neo-btn`, `.neo-btn-sm`)
-   - Custom form inputs (`.neo-input`, `.neo-range`, `.neo-checkbox`)
-   - Consistent scrollbars (`.neo-scrollbar`)
-   - Accordion patterns (`.neo-accordion`)
+**Phase 1 & 2: Structural Foundation**
+1.  **CSS Centralization**: Developed a unified Neobrutalist design system (`styles/neobrutalist.css`) with standardized UI components (buttons, inputs, scrollbars).
+2.  **Modern Dependency Injection**: Migrated all logic to use the `inject()` function, removing constructor boilerplate.
+3.  **Clean Imports**: Implemented absolute path mapping (`@services/*`, `@shared/*`, etc.) for better maintainability.
 
-2. **Service Layer Enhancements**:
-   - **StorageService**: Added comprehensive error handling and data validation
-   - **GameService**: Improved error reporting for save operations
-   - Better async/await patterns throughout
+**Phase 3: State Modernization (Alpha 0.1.0 Ready)**
+1.  **Signal Integration**: Refactored `GameService` and `EventService` to use **Angular Signals**. This provides fine-grained reactivity, reduced re-renders, and a cleaner API for state management.
+2.  **Inventory System Implementation**: Moved from a planned feature to a functional system. Players can now collect items that persist in the game state.
+3.  **Chaos Logic & Branching**: Implemented dynamic narrative branching based on the Chaos Meter. The game now resolves different dialogue paths and outfit offers based on player choices.
+4.  **UI Responsiveness**: Enhanced the layout for mobile devices, ensuring the "Purple Chaos" aesthetic remains functional on all screen sizes.
+5.  **Event System 2.0**: Centralized visual effects (vibration, flashes, screen shake) driven by Signals for consistent feedback across all game modes.
 
-3. **Performance Optimizations**:
-   - Implemented `OnPush` change detection strategy in presentational components
-   - Reduced unnecessary re-renders in `CharacterComponent` and `LoadingComponent`
-   - Optimized observable subscriptions
+### Roadmap to Modern Excellence (Angular 20+ & Polish)
 
-**Phase 2: Angular 17+ Modernization**
-1. **Modern Dependency Injection**: Migrated all components and services to use `inject()` function instead of constructor injection
-   - Eliminated constructor boilerplate across 13 components and 7 services
-   - More concise and functional programming style
-   - Better tree-shaking potential
+To achieve a "state-of-the-art" experience, the following technical and design points are prioritized:
 
-2. **Absolute Path Imports**: Configured TypeScript path mapping for cleaner imports
-   - `@services/*` - Core services
-   - `@interfaces/*` - TypeScript interfaces
-   - `@data/*` - Game data
-   - `@shared/*` - Shared components
-   - `@pages/*` - Page components
-   - `@core/*` - Core modules
+**1. Performance & Architecture**
+-   **Zoneless Transition**: Adopt `provideExperimentalZonelessChangeDetection()` to remove the overhead of `Zone.js`, paving the way for the most efficient Angular execution model.
+-   **Signal-Based Components**: Complete the migration to `input()`, `output()`, and `viewChild()` APIs. This aligns the codebase with Angular's future direction and improves type safety.
+-   **Asset Preloading Service**: Implement a robust preloading strategy for character layers to eliminate visual flickering during state changes.
 
-3. **Code Modernization Benefits**:
-   - 50% shorter import paths
-   - 100% reduction in constructor lines
-   - Improved code readability and maintainability
-   - Better IDE autocomplete and refactoring support
+**2. Visual & Immersive Polishing**
+-   **Micro-Animations**: Add subtle breathing and blinking animations to Jinx using CSS keyframes or `@angular/animations` to increase immersion.
+-   **State Transitions**: Implement smooth page transitions and loading states that reflect the chaotic graffiti aesthetic.
+-   **Interactive Feedback**: Enhance clickable areas with better hover states and dynamic cursors.
+
+**3. UX & Functional Depth**
+-   **Save/Load Manager**: A dedicated in-game UI to manage multiple save slots and persistent progress.
+-   **Arcade UX Refinement**: Optimize the sidebar controls for mobile users, making customization faster and more intuitive.
+-   **Advanced Mini-games**: Expand the variety of interactions beyond simple clicking to include rhythm or logic-based challenges.
 
 ### Planned Optimizations (Future Phases)
 
@@ -180,22 +174,11 @@ npm run electron:serve
 
 ---
 
-## Future Immersive Features
+## Technical Status
 
-To make the back-alley experience even more chaotic and immersive, the following features are planned for future updates:
-
--   **Dynamic Soundscapes**: Implementation of spatial audio and ambient alley sounds (dripping water, distant explosions, neon buzzing).
--   **Animated Character Sprites**: Moving from static layers to Live2D or subtle CSS animations for breathing and blinking.
--   **Deep Relationship System**: Branching narrative paths based not just on Chaos, but on "Trust" levels with Jinx.
--   **Inventory System**: Collect items in the alley to trigger special reactions or unlock new costume parts.
--   **Mini-game Variety**: New rhythm-based or puzzle-based mini-games to break the narrative flow.
--   **Achievement System**: Track player milestones and unlock special content.
--   **Multiple Endings**: Divergent story paths based on player choices and chaos level.
--   **Voice Acting**: Professional voice lines for key dialogue moments.
--   **Particle Effects**: Enhanced visual feedback with WebGL-based particle systems.
--   **Save Slots**: Multiple save files for different playthroughs.
--   **Gallery Mode**: Unlock and view CG artwork and character variations.
--   **Accessibility**: Screen reader support, colorblind modes, and customizable text sizes.
+**Current Version**: `0.0.1-alpha.1`  
+**Angular Version**: `19.2.0` (Ready for 20+)  
+**Stage**: Alpha (Experimental)
 
 ---
 
