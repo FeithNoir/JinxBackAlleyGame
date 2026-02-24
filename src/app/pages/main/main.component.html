@@ -12,5 +12,5 @@
   <app-mini-game></app-mini-game>
   }
 
-  <app-screen-effects [sceneEffect]="currentNode()?.sceneEffect ?? 'none'" [class.vibrate]="eventService.isVibrating()"></app-screen-effects>
+  <app-screen-effects [sceneEffect]="currentNode().sceneEffect ?? 'none'" [class.vibrate]="eventService.isVibrating()"></app-screen-effects>
 </main>

@@ -50,8 +50,10 @@ export const OUTFIT_PRESETS: Record<string, Partial<CharacterProps>> = {
 export const EXPRESSION_PRESETS: Record<string, Partial<CharacterProps>> = {
     neutral: { eyes: 'e-1', mouth: 'm-1', effects: {} },
     happy: { eyes: 'e-2', mouth: 'm-2', effects: {} },
-    mad: { eyes: 'e-3', mouth: 'm-3', effects: {} },
-    nervous: { eyes: 'e-1', mouth: 'm-3', effects: { head: 'heat' } }
+    mad: { eyes: 'e-4', mouth: 'm-5', effects: {} },
+    nervous: { eyes: 'e-7', mouth: 'm-3', effects: {} },
+    suspicious: { eyes: 'e-6', mouth: 'm-2', effects: {} },
+    excited: { eyes: 'e-5', mouth: 'm-4', effects: {} },
 };
 
 @Injectable({

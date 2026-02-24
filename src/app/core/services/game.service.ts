@@ -8,6 +8,8 @@ import { EventService } from '@services/event.service';
 import { MiniGameType } from '@core/interfaces/mini-game-type.enum';
 import { GAME_REACTIONS } from '@data/reactions';
 import { DialogueRepositoryService } from '@services/dialogue-repository.service';
+import { InventoryItem } from '@interfaces/inventory-item.interface';
+import { INVENTORY_ITEMS_DATA } from '@data/inventory-items.data';
 
 const INITIAL_GAME_STATE: GameState = {
   currentNodeId: 100,
@@ -29,6 +31,7 @@ const INITIAL_GAME_STATE: GameState = {
     },
   },
   playerFlags: [],
+  inventory: [], // Initialize inventory
 };
 
 @Injectable({
@@ -47,6 +50,9 @@ export class GameService {
 
   private isAskingNameSignal = signal<boolean>(false);
   public isAskingName = this.isAskingNameSignal.asReadonly();
+
+  private isInventoryOpenSignal = signal<boolean>(false);
+  public isInventoryOpen = this.isInventoryOpenSignal.asReadonly();
 
   constructor() {
     this.loadGame();
@@ -77,12 +83,10 @@ export class GameService {
     this.checkAndTriggerEffects(INITIAL_GAME_STATE.currentNodeId);
   }
 
-  public getCurrentNode(): DialogueNode | undefined {
+  public getCurrentNode(): DialogueNode {
     const currentState = this.gameStateSignal();
     const currentNodeId = currentState.currentNodeId;
     const node = this.dialogueRepositoryService.getDialogueNode(currentNodeId);
-
-    if (!node) return undefined;
 
     // Process text to replace placeholders
     let processedText = node.text;
@@ -105,10 +109,11 @@ export class GameService {
 
   public selectOption(nextNodeId: number | string): void {
     const numericId = typeof nextNodeId === 'string' ? parseInt(nextNodeId) : nextNodeId;
+    const resolvedNodeId = this.resolveNextNodeId(numericId);
     const currentState = this.gameStateSignal();
     const currentNode = this.dialogueRepositoryService.getDialogueNode(currentState.currentNodeId);
     const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === numericId);
-    const nextNode = this.dialogueRepositoryService.getDialogueNode(numericId);
+    const nextNode = this.dialogueRepositoryService.getDialogueNode(resolvedNodeId);
 
     if (nextNode) {
       let newChaosLevel = currentState.chaosLevel;
@@ -134,9 +139,14 @@ export class GameService {
         });
       }
 
+      // Handle INVENTORY_ADD metadata
+      if (nextNode.metadata?.type === 'INVENTORY_ADD' && nextNode.metadata?.item) {
+        this.addItemToInventory(nextNode.metadata.item);
+      }
+
       this.gameStateSignal.set({
         ...currentState,
-        currentNodeId: numericId,
+        currentNodeId: resolvedNodeId,
         chaosLevel: newChaosLevel,
         characters: newCharactersState,
       });
@@ -146,13 +156,34 @@ export class GameService {
       }
 
       this.saveGame();
-      this.checkAndTriggerEffects(numericId);
+      this.checkAndTriggerEffects(resolvedNodeId);
 
       // Check for name request
       if (nextNode.metadata?.type === 'NAME_REQUEST') {
         this.isAskingNameSignal.set(true);
       }
     }
+  }
+
+  private resolveNextNodeId(nodeId: number): number {
+    const node = this.dialogueRepositoryService.getDialogueNode(nodeId);
+    if (!node) return nodeId;
+
+    const chaosLevel = this.gameStateSignal().chaosLevel;
+
+    if (node.metadata?.type === 'OFFER_OUTFIT') {
+      if (chaosLevel < 20) return 231;
+      if (chaosLevel < 40) return 232;
+      return 233;
+    }
+
+    if (node.metadata?.type === 'NAKED_SUGGEST') {
+      if (chaosLevel < 20) return 241;
+      if (chaosLevel < 40) return 242;
+      return 243;
+    }
+
+    return nodeId;
   }
 
   public setPlayerName(name: string): void {
@@ -169,6 +200,35 @@ export class GameService {
     if (currentNode?.nextNodeId) {
       this.selectOption(currentNode.nextNodeId);
     }
+  }
+
+  public addItemToInventory(itemId: string): void {
+    const itemToAdd = INVENTORY_ITEMS_DATA[itemId];
+    if (!itemToAdd) {
+      console.warn(`Attempted to add unknown item: ${itemId}`);
+      return;
+    }
+
+    this.gameStateSignal.update(state => {
+      const existingItemIndex = state.inventory.findIndex(item => item.id === itemId);
+      if (existingItemIndex > -1) {
+        // Item already exists, just increment quantity
+        const updatedInventory = [...state.inventory];
+        updatedInventory[existingItemIndex] = {
+          ...updatedInventory[existingItemIndex],
+          quantity: updatedInventory[existingItemIndex].quantity + 1
+        };
+        return { ...state, inventory: updatedInventory };
+      } else {
+        // Add new item
+        return { ...state, inventory: [...state.inventory, { ...itemToAdd, quantity: 1 }] };
+      }
+    });
+    this.saveGame();
+  }
+
+  public toggleInventory(): void {
+    this.isInventoryOpenSignal.update(val => !val);
   }
 
   private checkAndTriggerEffects(nodeId: number): void {

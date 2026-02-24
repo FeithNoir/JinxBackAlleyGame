@@ -1,0 +1,138 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #222;
+  border: 2px solid #0f0;
+  box-shadow: 5px 5px 0 #0a0;
+  padding: 20px;
+  width: 80%;
+  max-width: 600px;
+  color: #0f0;
+  font-family: 'Press Start 2P', cursive; /* Assuming a retro font */
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.close-button {
+  background: none;
+  border: 2px solid #0f0;
+  color: #0f0;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 5px 10px;
+  box-shadow: 2px 2px 0 #0a0;
+}
+
+.close-button:hover {
+  background-color: #0f0;
+  color: #222;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+  min-height: 300px; /* Ensure grid has some height */
+}
+
+.grid-item {
+  background-color: #333;
+  border: 1px solid #0f0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  min-height: 90px;
+}
+
+.grid-item.placeholder {
+  visibility: hidden; /* Hide empty slots */
+}
+
+.item-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.item-quantity {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #0f0;
+  color: #222;
+  padding: 2px 5px;
+  font-size: 0.8em;
+  border-radius: 3px;
+}
+
+.item-name {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #0f0;
+}
+
+.item-description {
+  font-size: 0.7em;
+  color: #0a0;
+  margin-top: 5px;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.pagination-controls button {
+  background: none;
+  border: 2px solid #0f0;
+  color: #0f0;
+  padding: 8px 15px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #0a0;
+}
+
+.pagination-controls button:disabled {
+  border-color: #555;
+  color: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #0f0;
+  color: #222;
+}
+
+.pagination-controls span {
+  font-size: 0.9em;
+}

@@ -22,6 +22,7 @@ export interface DialogueNode {
     part?: string;
     mood?: string;
     type?: string;
+    item?: string; // Added for inventory items
   };
   options?: DialogueOption[];
 }

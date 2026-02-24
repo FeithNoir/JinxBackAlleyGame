@@ -1,13 +1,27 @@
 import { CharacterProps } from './character-props.interface';
 
+import { InventoryItem } from './inventory-item.interface';
+
 export interface GameState {
-  playerName?: string;
   currentNodeId: number;
   chaosLevel: number;
   characters: {
-    [characterName: string]: CharacterProps;
+    [key: string]: { // Add index signature
+      eyes: string;
+      mouth: string;
+      leftArm: string;
+      rightArm: string;
+      head: string;
+      top: string;
+      underwearTop: string;
+      bottom: string;
+      underwearBottom: string;
+      stockings: string;
+      feet: string;
+      effects: { [key: string]: string };
+    };
   };
   playerFlags: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  playerName?: string;
+  inventory: InventoryItem[];
 }

@@ -1,0 +1,36 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Inventory</h2>
+        <button class="close-button" (click)="onClose()">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="inventory-grid">
+          @for (item of paginatedItems(); track item.id) {
+            <div class="grid-item">
+              <img [src]="item.icon" [alt]="item.name" class="item-icon">
+              @if (item.quantity > 1) {
+                <div class="item-quantity">{{ item.quantity }}</div>
+              }
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-description">{{ item.description }}</div>
+            </div>
+          } @empty {
+            <!-- Optional: message when inventory is empty -->
+          }
+          @for (i of [].constructor(itemsPerPage - paginatedItems().length); track $index) {
+            <div class="grid-item placeholder"></div>
+          }
+        </div>
+        @if (totalPages() > 1) {
+          <div class="pagination-controls">
+            <button (click)="prevPage()" [disabled]="currentPage() === 1">Previous</button>
+            <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage() === totalPages()">Next</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

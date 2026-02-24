@@ -6,4 +6,9 @@
     <router-outlet></router-outlet>
   </main>
   <app-footer></app-footer>
+  <app-inventory-modal
+    [isOpen]="gameService.isInventoryOpen()"
+    [inventory]="gameService.gameState().inventory"
+    (close)="gameService.toggleInventory()">
+  </app-inventory-modal>
 </div>
