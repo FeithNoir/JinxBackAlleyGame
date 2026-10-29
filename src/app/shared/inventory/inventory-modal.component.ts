@@ -31,7 +31,8 @@ export class InventoryModalComponent {
     } else if (currentPageVal === 0 && totalPages > 0) {
       currentPageVal = 1;
     }
-    this.currentPage.set(currentPageVal); // Update signal if adjusted
+    // NG0600: no se puede escribir un signal dentro de computed(); se usa el valor ajustado localmente.
+    currentPageVal = Math.max(1, currentPageVal);
 
     const startIndex = (currentPageVal - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;

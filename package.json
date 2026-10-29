@@ -9,7 +9,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "electron:serve": "npm run build && electron .",
-    "electron:run": "electron ."
+    "electron:run": "electron .",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI",
+    "optimize:assets": "node scripts/optimize-assets.mjs"
   },
   "private": true,
   "dependencies": {

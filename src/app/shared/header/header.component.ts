@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { GameService } from '@services/game.service';
 
@@ -12,4 +12,5 @@ import { GameService } from '@services/game.service';
 })
 export class HeaderComponent {
   gameService = inject(GameService);
+  logoFailed = signal(false);
 }

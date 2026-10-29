@@ -1,5 +1,32 @@
 <div class="settings-container">
-  <h2>Game Settings</h2>
-  <button class="close-button" (click)="closeSettings()">X</button>
-  <!-- Settings UI elements will go here -->
+  <h2 id="settings-title">Game Settings</h2>
+  <button class="close-button" (click)="closeSettings()" aria-label="Close settings" autofocus>X</button>
+
+  <label class="row">
+    <span>Music volume</span>
+    <input type="range" min="0" max="1" step="0.05" [value]="music.volume()" (input)="onVolume($event)" aria-label="Music volume">
+  </label>
+  <button class="neo-btn-sm" (click)="music.toggleMute()" [attr.aria-pressed]="music.isMuted()">{{ music.isMuted() ? 'Unmute' : 'Mute' }}</button>
+
+  <fieldset class="row">
+    <legend>Text speed</legend>
+    <div class="seg">
+      @for (s of speeds; track s) {
+      <button class="seg-btn" [class.active]="settings().textSpeed === s" [attr.aria-pressed]="settings().textSpeed === s" (click)="setSpeed(s)">{{ s }}</button>
+      }
+    </div>
+  </fieldset>
+
+  <label class="row check"><input type="checkbox" [checked]="settings().reducedMotion" (change)="toggle('reducedMotion')"> Reduce motion &amp; flashes</label>
+  <label class="row check"><input type="checkbox" [checked]="settings().highlightHotspots" (change)="toggle('highlightHotspots')"> Highlight interactive zones</label>
+  <label class="row check"><input type="checkbox" [checked]="settings().vibration" (change)="toggle('vibration')"> Device vibration</label>
+
+  @if (game.endings().length) {
+  <div class="row endings">
+    <span>Endings unlocked: {{ game.endings().length }}/5</span>
+    <small>{{ game.endings().join(' · ') }}</small>
+  </div>
+  }
+
+  <button class="neo-btn-sm danger" (click)="resetProgress()">{{ confirmReset ? 'Tap again to confirm' : 'Reset story progress' }}</button>
 </div>

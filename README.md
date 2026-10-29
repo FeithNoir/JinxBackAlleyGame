@@ -1,80 +1,81 @@
-# Jinx's Back-alley Game
+# Jinx's Back-Alley Game
 
-This repository contains the source code for **"Jinx's Back-alley Game"**, a "point-and-click" visual novel developed with Angular. Immerse yourself in a chaotic narrative set in the back alleys, featuring a distinct "Electric Purple / Comic Pop" aesthetic inspired by Jinx and the undercity of Zaun. The project is structured to support a dynamic, component-based architecture, separating game assets from application logic for maintainability and scalability.
+Novela visual **point-and-click para adultos (18+)** hecha con **Angular 19**. Conversa con Jinx en los callejones de Zaun: tus decisiones suben o bajan el **caos**, desbloquean opciones, objetos y **5 finales**. Incluye un **modo Arcade** (vestidor/sandbox) y empaquetado opcional con **Electron**.
 
-## Aesthetic Direction: Purple Chaos
+> Todos los personajes son adultos. El juego muestra una puerta de edad al iniciar.
 
-The game's design embraces a high-energy, comic-book inspired, and graffiti-infused visual style. Expect vibrant purple hues, neon accents, and thick black outlines on UI elements, reflecting Jinx's signature chaotic flair.
+## Requisitos y ejecución
 
-## Project Structure
+```bash
+npm install
+npm start              # servidor de desarrollo → http://localhost:4200
+npm run build          # build de producción → dist/jinx-backalley-game/browser
+npm run test:ci        # pruebas (Karma + Chrome headless; define CHROME_BIN si hace falta)
+npm run electron:serve # build + app de escritorio
+npm run optimize:assets  # PNG → WebP (requiere: npm i -D sharp)
+```
 
-The workspace is organized into several key directories, each serving a distinct purpose.
+**Assets:** la carpeta `public/` (fondos, capas del personaje, música, iconos, `logo.svg`) **no está versionada** (`.gitignore: public/*`). Sin ella el juego funciona con una silueta y logo de texto de respaldo. Estructura esperada:
 
-### `/` (Root)
+```
+public/
+  background/bg-1.png
+  character/{base,arms/left,arms/right,clothes,effects,expressions/eyes,expressions/mouths}/*.png
+  icons/{cat-outfit,shimmer-keycard,chem-ledger}.png
+  music/{title,main,arcade}.mp3
+  logo.svg
+```
 
-The root directory contains standard configuration files for an Angular project:
+## Estructura
 
--   `angular.json`: Workspace configuration for the Angular CLI, defining build, serve, and test options.
--   `package.json`: Lists project dependencies and defines npm scripts.
--   `tsconfig.json`: Base TypeScript configuration for the project.
--   `.editorconfig` & `.gitignore`: Standard configuration for code editor consistency and Git version control.
+```
+src/app/
+  pages/      title (puerta de edad, Continuar/Nueva), layout, main, arcade   ← layout/main/arcade se cargan bajo demanda
+  shared/     dialogues (máquina de escribir), options, sidebar (chat, caos, música),
+              character (capas + zonas interactivas), inventory, settings, mini-game, header, footer…
+  core/
+    data/       dialogues.ts (guion), inventory-items.data.ts, reactions.ts
+    services/   game (estado, ramas, finales), character, settings (ajustes persistentes), music, storage…
+    interfaces/
+backend/      API opcional Express + Prisma + SQLite (no conectada al frontend)
+scripts/      optimize-assets.mjs
+docs/
+  files/        documentación del proyecto
+  screenshots/  capturas before-* / after-*
+```
 
-### `/public`
+## Formato del guion (`dialogues.ts`)
 
-This directory serves as the primary repository for all static game assets. The assets are structured to facilitate a layered rendering approach, allowing for dynamic composition of character sprites and scenes.
+Cada nodo: `id`, `character`, `text` (admite `{playerName}`), `presets`, `characterProps`, `chaosChange`, `nextNodeId` u `options`, `hint`, `metadata`.
 
--   **/background**: Contains background images for various game scenes.
--   **/character**: Holds all character-related assets, categorized for modular composition.
-    -   **/base**: The core body sprite.
-    -   **/arms**: Left and right arm variations.
-    -   **/clothes**: Apparel and accessories, allowing for character customization.
-    -   **/effects**: Visual effects like blushes, fluids, and action lines.
-    -   **/expressions**: Facial features (eyes, mouths) to convey different emotions.
+| Campo | Uso |
+|---|---|
+| `options[].chaosRequirement` | Opción visible con caos ≥ N |
+| `options[].requiresItem` / `requiresFlag` / `setsFlag` | Opciones condicionadas por inventario/flags |
+| `metadata.type = 'INVENTORY_ADD'` + `item` | Añade un objeto |
+| `'SET_FLAG'` + `flag` | Activa un flag |
+| `'CHAOS_BRANCH'` + `branches:[{minChaos,nodeId}]` | Ramifica por caos (de mayor a menor) |
+| `'ITEM_BRANCH'` + `item` + 2 `branches` | [tiene, no tiene] |
+| `'ENDING'` + `ending` | Final (se guarda en "Endings found") |
+| `'RESTART'` | Nueva partida conservando el nombre |
 
-### `/src`
+`npm run test:ci` valida que no haya nodos rotos, presets u objetos inexistentes.
 
-This directory contains the core application source code.
+## Documentación
 
--   `index.html`: The main HTML entry point.
--   `main.ts`: The primary application bootstrap script.
--   `styles.css`: Global stylesheet with custom CSS design tokens for the "Purple Chaos" aesthetic.
--   `styles/neobrutalist.css`: Centralized Neobrutalist UI component library for consistent design patterns.
+- [Auditoría](docs/files/auditoria.md) — hallazgos con severidad y evidencias
+- [Mejoras aplicables](docs/files/mejoras.md) — priorizadas, con estado
+- [Plan de mejora](docs/files/plan-mejora.md) — fases y criterios de aceptación
+- [Escenas propuestas](docs/files/escenas-propuestas.md) — ideas para ampliar la historia
+- [Capturas](docs/screenshots/) — `before-*` (estado original) y `after-*` (con mejoras)
 
-#### `/src/app`
+## Ajustes del jugador
 
-The heart of the Angular application, structured into feature modules and shared components.
+Volumen/mute, velocidad del texto, reducir movimiento y destellos (también respeta `prefers-reduced-motion`), resaltar zonas interactivas, vibración, reiniciar progreso. Se guardan en `localStorage` (o en `userData/game_data.json` con Electron).
 
--   **/pages**: Contains components that represent the primary game screens or states.
-    -   **/title**: The title screen component, serving as the game's entry point.
-    -   **/main**: The main gameplay component, where the core interaction logic and narrative progression reside.
-    -   **/layout**: A wrapper component that defines the global UI layout, integrating shared UI elements.
+---
 
--   **/shared**: Contains reusable components that are utilized across different pages.
-    -   **/dialogues**: Component for rendering dialogue boxes and narrative text, styled as comic-book speech bubbles.
-    -   **/options**: Component for displaying player choices, styled as interactive graffiti tags.
-    -   **/sidebar**: UI component for a side navigation or status panel.
-    -   **/header** & **/footer**: Global header and footer components.
-
--   **/core**: Contains core application logic, services, and interfaces.
-    -   **/interfaces**: TypeScript interfaces for `GameState`, `DialogueNode`, and `CharacterProps`.
-    -   **/services**: Includes `GameService` for managing game state and progression.
-    -   **/data**: Stores game data, such as `DIALOGUE_DATA` for narrative content.
-
-### `/backend` (Optional)
-
-This directory contains a Node.js backend with Prisma and SQLite, designed for persistent game state storage (save/load functionality). This component is optional for basic gameplay but essential for saving player progress.
-
-## Development
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
-
-### Development Server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-### Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Referencia original (inglés)
 
 ## Game Systems & Mechanics
 

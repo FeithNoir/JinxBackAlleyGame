@@ -40,9 +40,9 @@ export class MainComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Antes: loadInitialState() aquí borraba la partida guardada cada vez que se entraba.
     this.loadingService.show();
-    this.gameService.loadInitialState();
-    this.loadingService.hide();
+    this.gameService.continueGame().finally(() => this.loadingService.hide());
   }
 
   onInteract(part: string): void {

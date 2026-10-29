@@ -36,6 +36,12 @@ export class CharacterComponent {
     // Computed signals
     effects = computed(() => this.characterProps().effects || {});
 
+    /** Oculta capas cuyo PNG no existe en lugar de mostrar el icono de imagen rota. */
+    onImgError(ev: Event): void {
+        const img = ev.target as HTMLImageElement;
+        img.classList.add('missing');
+    }
+
     onZoneClick(zone: string): void {
         this.interact.emit(zone);
         this.eventService.vibrate(50); // Short vibration feedback

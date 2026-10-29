@@ -36,6 +36,10 @@ export const OUTFIT_PRESETS: Record<string, Partial<CharacterProps>> = {
         stockings: 'stocking-1',
         feet: 'boots-1'
     },
+    'naked-top': {
+        top: '',
+        underwearTop: ''
+    },
     naked: {
         head: '',
         top: '',
@@ -54,7 +58,19 @@ export const EXPRESSION_PRESETS: Record<string, Partial<CharacterProps>> = {
     nervous: { eyes: 'e-7', mouth: 'm-3', effects: {} },
     suspicious: { eyes: 'e-6', mouth: 'm-2', effects: {} },
     excited: { eyes: 'e-5', mouth: 'm-4', effects: {} },
+    // Alias usados por el guion (antes no existían y se ignoraban en silencio)
+    smirk: { eyes: 'e-6', mouth: 'm-4', effects: {} },
+    curious: { eyes: 'e-3', mouth: 'm-1', effects: {} },
+    'nervous-happy': { eyes: 'e-7', mouth: 'm-2', effects: {} },
+    ecstatic: { eyes: 'e-5', mouth: 'm-4', effects: {} },
+    tease: { eyes: 'e-6', mouth: 'm-2', effects: {} },
+    lusty: { eyes: 'e-3', mouth: 'm-3', effects: {} },
 };
+
+/** Devuelve las props de un preset (o undefined si no existe). */
+export function getPresetProps(type: 'outfit' | 'expression', id: string): Partial<CharacterProps> | undefined {
+    return (type === 'outfit' ? OUTFIT_PRESETS : EXPRESSION_PRESETS)[id];
+}
 
 @Injectable({
     providedIn: 'root'

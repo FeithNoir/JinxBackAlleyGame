@@ -1,4 +1,4 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
@@ -35,6 +35,12 @@ export class ChatAreaComponent {
   settingsToggled = output<void>();
 
   tempPlayerName = '';
+  showHint = signal<boolean>(false);
+
+  constructor() {
+    // La pista se oculta al cambiar de nodo
+    effect(() => { this.currentNode(); this.showHint.set(false); }, { allowSignalWrites: true });
+  }
 
   onDialogueAdvance(): void {
     this.dialogueAdvanced.emit();

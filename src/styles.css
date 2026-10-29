@@ -37,3 +37,13 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--c-primary);
   text-shadow: var(--shadow-hard);
 }
+/* === Accesibilidad / movimiento reducido (feat/mejoras-auditoria) === */
+html.reduced-motion *, html.reduced-motion *::before, html.reduced-motion *::after {
+  animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+:focus-visible { outline: 3px solid var(--c-action); outline-offset: 2px; }
+button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+img { -webkit-user-drag: none; }

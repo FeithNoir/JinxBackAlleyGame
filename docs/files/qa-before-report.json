@@ -1,0 +1,68 @@
+{
+ "phone-360": {
+  "load": 678,
+  "ov": {
+   "sw": 360,
+   "sh": 800
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ },
+ "phone-390": {
+  "load": 635,
+  "ov": {
+   "sw": 390,
+   "sh": 844
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ },
+ "phone-390-land": {
+  "load": 620,
+  "ov": {
+   "sw": 844,
+   "sh": 390
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ },
+ "tablet-768": {
+  "load": 627,
+  "ov": {
+   "sw": 768,
+   "sh": 1024
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ },
+ "laptop-1366": {
+  "load": 630,
+  "ov": {
+   "sw": 1366,
+   "sh": 768
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ },
+ "desktop-1920": {
+  "load": 630,
+  "ov": {
+   "sw": 1920,
+   "sh": 1080
+  },
+  "errs": [
+   "Audio playback blocked: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD"
+  ],
+  "fails": []
+ }
+}

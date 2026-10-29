@@ -14,3 +14,16 @@
   height: 60px;
   filter: drop-shadow(4px 4px 0px #000000);
 }
+
+/* === Mejoras === */
+.header-container { justify-content: space-between; gap: 1rem; }
+.text-logo { font-family: var(--font-comic); font-size: clamp(1.5rem, 5vw, 2.4rem); color: var(--c-light); text-shadow: 3px 3px 0 #000; letter-spacing: 1px; }
+.text-logo span { color: var(--c-accent); }
+.inventory-button { position: relative; font-family: var(--font-comic); font-size: 1.2rem; background: var(--c-accent); color: #000; border: var(--border-thick); box-shadow: 4px 4px 0 #000; padding: .4rem .9rem; min-height: 44px; cursor: pointer; transition: transform .1s, box-shadow .1s; }
+.inventory-button:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+.inventory-button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+.inventory-button:focus-visible { outline: 3px solid var(--c-action); outline-offset: 2px; }
+.badge { position: absolute; top: -8px; right: -8px; background: var(--c-primary); color: #fff; border: 2px solid #000; border-radius: 999px; min-width: 22px; font-size: .9rem; line-height: 20px; animation: badge-pop .35s ease-out; }
+@keyframes badge-pop { from { transform: scale(0); } }
+@media (max-width: 480px) { .header-container { padding: 0 .75rem; height: 60px; } .label { display: none; } }
+@media (max-height: 500px) { .header-container { height: 48px; } }
