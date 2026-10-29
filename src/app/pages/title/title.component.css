@@ -90,3 +90,33 @@ h1 {
 .patreon-link:hover {
   transform: scale(1.1);
 }
+
+/* === Mejoras: responsive, puerta de edad, animación idle === */
+.title-screen { height: 100dvh; width: 100%; padding: 1rem; box-sizing: border-box; }
+.h1-like { font-family: var(--font-comic); line-height: 1; margin: 0; text-shadow: 6px 6px 0 #000; }
+h1, .h1-like { font-size: clamp(2.6rem, 11vw, 5rem); }
+.subtitle { font-size: clamp(1.8rem, 7.5vw, 3.5rem); }
+.logo-container { margin-bottom: clamp(1rem, 5vh, 3rem); animation: logo-idle 3.2s ease-in-out infinite; }
+@keyframes logo-idle { 0%,100% { transform: rotate(-2deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-6px); } }
+.menu-buttons { width: min(300px, 86vw); gap: 1rem; }
+.neo-btn { background: var(--c-light); color: #000; font-size: clamp(1.3rem, 4.5vw, 1.8rem); }
+.neo-btn:hover { transform: translate(-2px, -2px) rotate(-1deg); box-shadow: var(--shadow-hard-hover); }
+.neo-btn:focus-visible { outline: 4px solid var(--c-action); outline-offset: 3px; }
+.neo-btn.ghost { background: transparent; color: var(--c-light); border-color: var(--c-light); box-shadow: none; }
+.neo-btn.small { font-size: 1.1rem; padding: .6rem 1rem; }
+.age-gate { background: var(--c-dark); color: var(--c-light); border: var(--border-thick); box-shadow: 8px 8px 0 var(--c-primary); padding: 1.25rem; max-width: min(420px, 90vw); display: flex; flex-direction: column; align-items: center; gap: .75rem; z-index: 2; }
+.age-gate h2 { font-family: var(--font-comic); color: var(--c-accent); font-size: 2.2rem; margin: 0; }
+.age-gate p { margin: 0; line-height: 1.4; }
+.endings-badge { color: var(--c-accent); font-family: var(--font-comic); font-size: 1.3rem; margin: 0; text-shadow: 2px 2px 0 #000; }
+.title-noise { position: absolute; inset: 0; pointer-events: none; opacity: .18;
+  background: repeating-linear-gradient(115deg, transparent 0 18px, rgba(147,51,234,.5) 18px 20px),
+              radial-gradient(circle at 20% 80%, rgba(0,191,255,.35), transparent 40%),
+              radial-gradient(circle at 85% 15%, rgba(255,214,0,.25), transparent 35%); }
+@media (max-height: 500px) {
+  .logo-container { margin-bottom: .5rem; }
+  h1, .h1-like { font-size: 2.4rem; } .subtitle { font-size: 1.6rem; }
+  .menu-buttons { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 96vw; gap: .5rem; }
+  .neo-btn { padding: .5rem 1rem; font-size: 1.1rem; }
+  .patreon-footer { display: none; }
+}
+.patreon-footer { bottom: max(1rem, env(safe-area-inset-bottom)); }

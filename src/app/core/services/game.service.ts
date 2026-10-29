@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { GameState } from '@interfaces/game-state.interface';
 import { DialogueNode } from '@interfaces/dialogue-node.interface';
-import { CharacterService } from '@services/character.service';
+import { CharacterService, getPresetProps } from '@services/character.service';
 import { MiniGameService } from '@services/mini-game.service';
 import { StorageService } from '@services/storage.service';
 import { EventService } from '@services/event.service';
@@ -55,21 +55,74 @@ export class GameService {
   public isInventoryOpen = this.isInventoryOpenSignal.asReadonly();
 
   constructor() {
-    this.loadGame();
+    this.loaded = this.loadGame();
   }
+
+  private hasSaveSignal = signal<boolean>(false);
+  /** true si existe una partida guardada que se pueda continuar. */
+  public hasSave = this.hasSaveSignal.asReadonly();
+
+  private endingsSignal = signal<string[]>([]);
+  /** Finales desbloqueados (persisten entre partidas). */
+  public endings = this.endingsSignal.asReadonly();
+
+  private loaded: Promise<void>;
 
   private async loadGame(): Promise<void> {
     const savedState = await this.storageService.load('gameState');
-    if (savedState) {
-      this.gameStateSignal.set(savedState);
-      this.characterService.setProps(savedState.characters['jinx']);
+    const endings = await this.storageService.load('endings');
+    if (Array.isArray(endings)) this.endingsSignal.set(endings);
+    if (savedState && typeof savedState.currentNodeId === 'number') {
+      // Fusiona con el estado inicial para tolerar partidas antiguas sin campos nuevos
+      const merged: GameState = {
+        ...structuredClone(INITIAL_GAME_STATE),
+        ...savedState,
+        characters: { ...structuredClone(INITIAL_GAME_STATE.characters), ...(savedState.characters ?? {}) },
+        playerFlags: savedState.playerFlags ?? [],
+        inventory: savedState.inventory ?? [],
+      };
+      this.gameStateSignal.set(merged);
+      this.characterService.setProps(merged.characters['jinx'] as any);
+      this.hasSaveSignal.set(merged.currentNodeId !== INITIAL_GAME_STATE.currentNodeId || !!merged.playerName);
     } else {
       this.loadInitialState();
     }
   }
 
+  /** Espera a que la carga inicial termine (útil para "Continuar"). */
+  public whenLoaded(): Promise<void> {
+    return this.loaded;
+  }
+
+  /** Reanuda la partida guardada (o arranca de cero si no hay). */
+  public async continueGame(): Promise<void> {
+    await this.loaded;
+    const state = this.gameStateSignal();
+    this.characterService.setMode('history');
+    this.characterService.setProps(state.characters['jinx'] as any);
+    if (state.playerName === undefined && this.getCurrentNode().metadata?.type === 'NAME_REQUEST') {
+      this.isAskingNameSignal.set(true);
+    }
+  }
+
+  /** Borra el progreso de la historia (los finales desbloqueados se conservan). */
+  public newGame(): void {
+    this.isAskingNameSignal.set(false);
+    this.loadInitialState();
+    this.saveGame();
+  }
+
+  public hasItem(itemId: string): boolean {
+    return this.gameStateSignal().inventory.some(i => i.id === itemId);
+  }
+
+  public hasFlag(flag: string): boolean {
+    return this.gameStateSignal().playerFlags.includes(flag);
+  }
+
   public async saveGame(): Promise<boolean> {
     const success = await this.storageService.save('gameState', this.gameStateSignal());
+    if (success) this.hasSaveSignal.set(true);
     if (!success) {
       console.warn('GameService: Failed to save game state');
     }
@@ -77,8 +130,9 @@ export class GameService {
   }
 
   public loadInitialState(): void {
-    this.gameStateSignal.set(INITIAL_GAME_STATE);
-    this.characterService.setProps(INITIAL_GAME_STATE.characters['jinx']);
+    const fresh = structuredClone(INITIAL_GAME_STATE);
+    this.gameStateSignal.set(fresh);
+    this.characterService.setProps(fresh.characters['jinx'] as any);
     this.characterService.setMode('history');
     this.checkAndTriggerEffects(INITIAL_GAME_STATE.currentNodeId);
   }
@@ -99,8 +153,10 @@ export class GameService {
     if (processedNode.options) {
       // Filter options by chaos requirement
       const filteredOptions = processedNode.options.filter(opt =>
-        !opt.chaosRequirement || currentState.chaosLevel >= opt.chaosRequirement
-      );
+        (!opt.chaosRequirement || currentState.chaosLevel >= opt.chaosRequirement) &&
+        (!opt.requiresItem || currentState.inventory.some(i => i.id === opt.requiresItem)) &&
+        (!opt.requiresFlag || currentState.playerFlags.includes(opt.requiresFlag))
+      ).map(opt => ({ ...opt, text: currentState.playerName ? opt.text.replace(/{playerName}/g, currentState.playerName) : opt.text }));
       return { ...processedNode, options: filteredOptions };
     }
 
@@ -115,6 +171,15 @@ export class GameService {
     const selectedOption = currentNode?.options?.find(opt => opt.nextNodeId === numericId);
     const nextNode = this.dialogueRepositoryService.getDialogueNode(resolvedNodeId);
 
+    if (nextNode?.metadata?.type === 'RESTART') {
+      // Nueva partida conservando nombre del jugador y finales desbloqueados
+      const name = currentState.playerName;
+      this.loadInitialState();
+      if (name) this.gameStateSignal.update(s => ({ ...s, playerName: name, currentNodeId: 1 }));
+      this.saveGame();
+      return;
+    }
+
     if (nextNode) {
       let newChaosLevel = currentState.chaosLevel;
       // Increment chaos from the selected option or the current node itself
@@ -125,18 +190,33 @@ export class GameService {
       newChaosLevel = Math.min(Math.max(newChaosLevel, 0), 100);
 
       const newCharactersState = { ...currentState.characters };
-      if (nextNode.character && nextNode.characterProps) {
-        newCharactersState[nextNode.character] = {
-          ...newCharactersState[nextNode.character],
-          ...nextNode.characterProps,
-        };
+      const charKey = nextNode.character;
+      if (charKey && newCharactersState[charKey]) {
+        // Los presets se fusionan en el estado (antes se aplicaban al CharacterService
+        // y setProps() los sobrescribía, así que el cambio de ropa/expresión no se veía).
+        let merged: any = { ...newCharactersState[charKey] };
+        nextNode.presets?.forEach(p => {
+          const props = getPresetProps(p.type, p.id);
+          if (props) merged = { ...merged, ...props };
+          else console.warn(`GameService: preset desconocido ${p.type}/${p.id}`);
+        });
+        if (nextNode.characterProps) merged = { ...merged, ...nextNode.characterProps };
+        newCharactersState[charKey] = merged;
       }
 
-      // Apply presets if present
-      if (nextNode.presets) {
-        nextNode.presets.forEach(p => {
-          this.characterService.applyPreset(p.type, p.id);
-        });
+      // Flags
+      let flags = currentState.playerFlags;
+      const newFlags = [selectedOption?.setsFlag, nextNode.metadata?.type === 'SET_FLAG' ? nextNode.metadata.flag : undefined]
+        .filter((f): f is string => !!f && !flags.includes(f));
+      if (newFlags.length) flags = [...flags, ...newFlags];
+
+      // Finales
+      if (nextNode.metadata?.type === 'ENDING' && nextNode.metadata.ending) {
+        const name = nextNode.metadata.ending;
+        if (!this.endingsSignal().includes(name)) {
+          this.endingsSignal.update(e => [...e, name]);
+          this.storageService.save('endings', this.endingsSignal());
+        }
       }
 
       // Handle INVENTORY_ADD metadata
@@ -145,7 +225,8 @@ export class GameService {
       }
 
       this.gameStateSignal.set({
-        ...currentState,
+        ...this.gameStateSignal(),
+        playerFlags: flags,
         currentNodeId: resolvedNodeId,
         chaosLevel: newChaosLevel,
         characters: newCharactersState,
@@ -175,6 +256,16 @@ export class GameService {
       if (chaosLevel < 20) return 231;
       if (chaosLevel < 40) return 232;
       return 233;
+    }
+
+    if (node.metadata?.type === 'CHAOS_BRANCH' && node.metadata.branches?.length) {
+      const hit = node.metadata.branches.find(b => chaosLevel >= b.minChaos);
+      return hit ? hit.nodeId : node.metadata.branches[node.metadata.branches.length - 1].nodeId;
+    }
+
+    if (node.metadata?.type === 'ITEM_BRANCH' && node.metadata.item && node.metadata.branches?.length === 2) {
+      // branches[0] = tiene el ítem, branches[1] = no lo tiene
+      return this.hasItem(node.metadata.item) ? node.metadata.branches[0].nodeId : node.metadata.branches[1].nodeId;
     }
 
     if (node.metadata?.type === 'NAKED_SUGGEST') {

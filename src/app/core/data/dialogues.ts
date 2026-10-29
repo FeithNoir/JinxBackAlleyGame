@@ -211,6 +211,201 @@ const DIALOGUE_DATA: DialogueNode[] = [
         chaosChange: 30,
         nextNodeId: 5,
     },
+
+    // ===================================================================
+    // === ACTO II - EL ALMACÉN DEL QUÍMICO (expansión feat/mejoras-auditoria)
+    // Antes el nodo 5 no existía y todas las ramas caían en 9999 ("not written yet").
+    // ===================================================================
+    {
+        id: 5,
+        character: 'jinx',
+        text: "Alright, alright! Fishbones is loaded, the night is young… let's go pay that chem-baron a visit.",
+        sceneEffect: 'night',
+        presets: [{ type: 'expression', id: 'excited' }],
+        characterProps: { leftArm: 'left-3', rightArm: 'right-2' },
+        chaosChange: 5,
+        nextNodeId: 300,
+    },
+    {
+        id: 300,
+        character: 'jinx',
+        text: "There it is. Two goons at the gate, one lamp, zero brains. How do we get in, {playerName}?",
+        sceneEffect: 'night',
+        presets: [{ type: 'expression', id: 'suspicious' }],
+        hint: "Explorar es gratis: el muelle de carga suele esconder cosas útiles. Si llevas cierto disfraz en el inventario, se abre otra opción.",
+        options: [
+            { text: "Check the loading dock around the back.", nextNodeId: 310, chaosChange: 2 },
+            { text: "Use the cat outfit to distract the guards~", nextNodeId: 320, chaosChange: 10, requiresItem: 'cat-outfit', setsFlag: 'guards-distracted' },
+            { text: "Forget subtle. Fishbones, front gate. NOW.", nextNodeId: 330, chaosChange: 20, setsFlag: 'alarm' },
+        ],
+    },
+
+    // Rama A - Muelle de carga (objeto: tarjeta)
+    {
+        id: 310,
+        character: 'jinx',
+        text: "Ugh, it smells like shimmer and old socks back here… OH! A guard dropped his keycard in the puddle. Finders keepers!",
+        metadata: { type: 'INVENTORY_ADD', item: 'shimmer-keycard' },
+        presets: [{ type: 'expression', id: 'happy' }],
+        characterProps: { effects: { overlay: 'sparkles' } },
+        chaosChange: 3,
+        nextNodeId: 311,
+    },
+    {
+        id: 311,
+        character: 'jinx',
+        text: "Side door goes beep, door goes click, Jinx goes in. Easy-peasy. Stay close, ok?",
+        characterProps: { effects: {} },
+        nextNodeId: 340,
+    },
+
+    // Rama B - Distracción con el disfraz (sugerente, sin contenido gráfico)
+    {
+        id: 320,
+        character: 'jinx',
+        text: "Watch and learn. *She struts into the lamplight, tail swishing, and gives the goons a slow little twirl.* …Yep. Their jaws just hit the floor.",
+        presets: [{ type: 'outfit', id: 'cat' }, { type: 'expression', id: 'tease' }],
+        characterProps: { effects: { head: 'blush' } },
+        chaosChange: 10,
+        nextNodeId: 321,
+    },
+    {
+        id: 321,
+        character: 'jinx',
+        text: "While they're busy drooling, slip past the gate. Don't you dare enjoy the show more than they do. …Or do. I won't tell.",
+        characterProps: { effects: {} },
+        nextNodeId: 340,
+    },
+
+    // Rama C - Fishbones (alarma + bifurcación por caos)
+    {
+        id: 330,
+        character: 'jinx',
+        text: "KA-BOOOOM! Ha! Did you see that gate fly?! …Uh-oh. Is that an alarm?",
+        presets: [{ type: 'expression', id: 'excited' }],
+        characterProps: { effects: { overlay: 'action-lines' } },
+        nextNodeId: 335,
+    },
+    {
+        id: 335, // Handler: decide según el caos acumulado
+        character: 'jinx',
+        text: "PLACEHOLDER - CHAOS_BRANCH",
+        metadata: { type: 'CHAOS_BRANCH', branches: [{ minChaos: 60, nodeId: 336 }, { minChaos: 0, nodeId: 337 }] },
+    },
+    {
+        id: 336,
+        character: 'jinx',
+        text: "Sirens? That's just MUSIC! Come on, {playerName}, we run in while they're still finding their pants!",
+        presets: [{ type: 'expression', id: 'ecstatic' }],
+        characterProps: { effects: { overlay: 'biri-biri' } },
+        chaosChange: 10,
+        nextNodeId: 340,
+    },
+    {
+        id: 337,
+        character: 'jinx',
+        text: "Too many of them! Abort, abort! …Next time you let me warm up first, got it? My chaos wasn't high enough for this.",
+        presets: [{ type: 'expression', id: 'mad' }],
+        metadata: { type: 'ENDING', ending: 'Smoke and Sirens' },
+        hint: "Final temprano: sube el caos antes de volar la puerta (por encima de 60) o entra con sigilo.",
+        options: [
+            { text: "Try again from the alley.", nextNodeId: 990 },
+        ],
+    },
+
+    // === DENTRO DEL ALMACÉN ===
+    {
+        id: 340,
+        character: 'jinx',
+        text: "Crates of shimmer as far as the eye can see… and a big shiny vault in the back. Bet the good stuff's in there.",
+        presets: [{ type: 'expression', id: 'curious' }],
+        characterProps: { effects: {} },
+        hint: "La bóveda reacciona a cierta tarjeta. Si no la tienes, Jinx improvisará… a su manera.",
+        nextNodeId: 345,
+    },
+    {
+        id: 345, // Handler: ¿tenemos la tarjeta?
+        character: 'jinx',
+        text: "PLACEHOLDER - ITEM_BRANCH",
+        metadata: { type: 'ITEM_BRANCH', item: 'shimmer-keycard', branches: [{ minChaos: 0, nodeId: 341 }, { minChaos: 0, nodeId: 342 }] },
+    },
+    {
+        id: 341,
+        character: 'jinx',
+        text: "Keycard, do your thing… *beep* Ooooh, it opens! See? Sometimes I can be sneaky. Sometimes.",
+        presets: [{ type: 'expression', id: 'smirk' }],
+        nextNodeId: 350,
+    },
+    {
+        id: 342,
+        character: 'jinx',
+        text: "No key? No problem. One tiny chomper on the lock… cover your ears~",
+        presets: [{ type: 'expression', id: 'excited' }],
+        characterProps: { effects: { overlay: 'action-lines' } },
+        chaosChange: 10,
+        nextNodeId: 350,
+    },
+    {
+        id: 350,
+        character: 'jinx',
+        text: "Jackpot! Hextech gems, a pile of cogs… and the baron's little black ledger. So, partner, what's the move?",
+        presets: [{ type: 'expression', id: 'happy' }],
+        characterProps: { effects: { overlay: 'sparkles' } },
+        metadata: { type: 'INVENTORY_ADD', item: 'chem-ledger' },
+        hint: "Hay cuatro finales aquí. Uno exige mucho caos; otro, que hayas distraído a los guardias y que Jinx confíe en ti (caos 70+).",
+        options: [
+            { text: "Grab the gems and vanish.", nextNodeId: 360, chaosChange: 5 },
+            { text: "Keep the ledger. Knowledge is leverage.", nextNodeId: 380, chaosChange: -5 },
+            { text: "Light it ALL up. Fireworks over Zaun!", nextNodeId: 370, chaosChange: 20, chaosRequirement: 50 },
+            { text: "Forget the loot… meet me on the rooftop?", nextNodeId: 390, chaosChange: 10, chaosRequirement: 70, requiresFlag: 'guards-distracted' },
+        ],
+    },
+
+    // === FINALES ===
+    {
+        id: 360,
+        character: 'jinx',
+        text: "Pockets full, nobody hurt, nobody the wiser. Boring… but shiny! Same time next week, {playerName}?",
+        presets: [{ type: 'expression', id: 'happy' }],
+        characterProps: { effects: {} },
+        metadata: { type: 'ENDING', ending: 'Shiny Pockets' },
+        options: [{ text: "Play again", nextNodeId: 990 }],
+    },
+    {
+        id: 380,
+        character: 'jinx',
+        text: "The ledger, huh? Names, debts, secrets… ooh, you're devious. The baron's gonna be dancing to OUR tune now.",
+        presets: [{ type: 'expression', id: 'smirk' }],
+        characterProps: { effects: {} },
+        metadata: { type: 'ENDING', ending: 'Leverage' },
+        options: [{ text: "Play again", nextNodeId: 990 }],
+    },
+    {
+        id: 370,
+        character: 'jinx',
+        text: "Three… two… one… BOOOOM! Look at the colors, {playerName}! Pink, blue, PURPLE! Best. Night. EVER!",
+        presets: [{ type: 'expression', id: 'ecstatic' }],
+        characterProps: { effects: { overlay: 'action-lines' } },
+        metadata: { type: 'ENDING', ending: 'Fireworks Over Zaun' },
+        options: [{ text: "Play again", nextNodeId: 990 }],
+    },
+    {
+        id: 390,
+        character: 'jinx',
+        text: "The rooftop, the neon, the sirens far away… *She leans in close, grinning, and pulls you down beside her.* Shh. Nobody needs to see what happens next. 💜",
+        sceneEffect: 'night',
+        presets: [{ type: 'expression', id: 'nervous-happy' }],
+        characterProps: { effects: { head: 'blush' } },
+        metadata: { type: 'ENDING', ending: 'Rooftop Afterglow' },
+        options: [{ text: "Play again", nextNodeId: 990 }],
+    },
+    {
+        id: 990, // Reinicio controlado (GameService.newGame)
+        character: 'jinx',
+        text: "Again? Hehe, I knew you'd come back.",
+        metadata: { type: 'RESTART' },
+        nextNodeId: 100,
+    },
     {
         id: 9999,
         character: 'jinx',

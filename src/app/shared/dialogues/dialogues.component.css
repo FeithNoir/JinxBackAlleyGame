@@ -35,3 +35,9 @@
   border-right: 20px solid transparent;
   border-top: 20px solid white; /* White fill for the tail */
 }
+
+.dialogue-box { cursor: pointer; animation: bubble-in .22s ease-out; }
+.dialogue-box:focus-visible { outline: 3px solid var(--c-action); outline-offset: 3px; }
+.caret { animation: blink .8s steps(1) infinite; color: var(--c-primary); margin-left: 2px; }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes bubble-in { from { transform: translateY(6px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }

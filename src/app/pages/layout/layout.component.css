@@ -65,3 +65,15 @@ app-footer {
     z-index: 10;
   }
 }
+
+/* === Mejoras responsive === */
+.game-layout { height: 100dvh; }
+@media (max-width: 768px) {
+  .game-layout { grid-template-rows: auto minmax(0, 1fr) minmax(0, 1.25fr) auto; height: 100dvh; }
+  app-sidebar { min-height: 0; overflow-y: auto; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  app-footer { display: none; }
+  .game-layout { grid-template-rows: 48px minmax(0, 1fr) 0; grid-template-columns: minmax(260px, 42vw) 1fr; }
+  app-sidebar { min-height: 0; overflow-y: auto; }
+}

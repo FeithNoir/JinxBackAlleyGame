@@ -42,7 +42,25 @@ export class MusicService {
     constructor() {
         const destroyRef = inject(DestroyRef);
         this.audio.loop = true;
-        this.audio.volume = this.volumeSignal();
+        this.audio.preload = 'none';
+        // Persistencia de volumen / mute
+        try {
+            const saved = JSON.parse(localStorage.getItem('jinx.audio') ?? 'null');
+            if (saved) { this.volumeSignal.set(saved.volume ?? 0.5); this.isMutedSignal.set(!!saved.muted); }
+        } catch { /* ignore */ }
+        this.audio.volume = this.isMutedSignal() ? 0 : this.volumeSignal();
+        effect(() => {
+            try { localStorage.setItem('jinx.audio', JSON.stringify({ volume: this.volumeSignal(), muted: this.isMutedSignal() })); } catch { /* ignore */ }
+        });
+        // Los navegadores bloquean el autoplay: reintenta en el primer gesto del usuario
+        const unlock = () => {
+            if (this.audio.src && this.audio.paused) this.audio.play().catch(() => { /* sin audio */ });
+            window.removeEventListener('pointerdown', unlock);
+            window.removeEventListener('keydown', unlock);
+        };
+        window.addEventListener('pointerdown', unlock);
+        window.addEventListener('keydown', unlock);
+        this.audio.addEventListener('error', () => console.info(`MusicService: pista no disponible (${this.audio.src}). public/ no está versionado.`));
 
         effect(() => {
             const url = this.routeUrl();
@@ -62,7 +80,7 @@ export class MusicService {
             this.playTrack('title');
         } else if (url.includes('/arcade')) {
             this.playTrack('arcade');
-        } else if (url.includes('/history')) {
+        } else if (url.startsWith('/game')) { // antes '/history': esa ruta no existe y la música de juego nunca sonaba
             this.playTrack('main');
         }
     }
@@ -77,7 +95,7 @@ export class MusicService {
         this.currentTrackSignal.set(trackKey);
 
         // Play might be blocked by browser until user interaction
-        this.audio.play().catch(err => console.warn('Audio playback blocked:', err));
+        this.audio.play().catch(() => { /* autoplay bloqueado: se reintenta en el primer gesto */ });
     }
 
     public setVolume(val: number): void {

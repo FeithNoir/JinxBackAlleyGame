@@ -37,6 +37,9 @@
     <!-- Current Dialogue Interaction Area -->
     @if (currentNode() && !isAskingName()) {
     <div class="current-interaction">
+        @if (currentNode()?.metadata?.type === 'ENDING') {
+        <div class="ending-banner" role="status">★ ENDING: {{ currentNode()?.metadata?.ending }} ★</div>
+        }
         <app-dialogues [speaker]="currentNode()?.character || ''" [text]="currentNode()?.text || ''" (dialogueAdvance)="onDialogueAdvance()"></app-dialogues>
 
         <div class="controls-container">
@@ -49,6 +52,13 @@
             <button class="next-btn" (click)="onDialogueAdvance()">
                 NEXT ➔
             </button>
+            }
+
+            @if (currentNode()?.hint) {
+            <button class="neo-btn-sm hint-btn" (click)="showHint.set(!showHint())" [attr.aria-expanded]="showHint()">💡 HINT</button>
+            @if (showHint()) {
+            <p class="hint-text" role="note">{{ currentNode()?.hint }}</p>
+            }
             }
 
             <!-- Return to Menu (History) -->

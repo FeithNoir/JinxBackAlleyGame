@@ -1,6 +1,13 @@
 <header class="header-container">
   <div class="logo-area">
-    <img src="logo.svg" alt="Jinx's Back-alley Game" class="header-logo">
+    @if (!logoFailed()) {
+    <img src="logo.svg" alt="Jinx's Back-alley Game" class="header-logo" (error)="logoFailed.set(true)">
+    } @else {
+    <span class="text-logo">JINX'S <span>BACK-ALLEY</span></span>
+    }
   </div>
-  <button class="inventory-button" (click)="gameService.toggleInventory()">Inventory</button>
+  <button class="inventory-button" (click)="gameService.toggleInventory()" aria-label="Open inventory">
+    🎒 <span class="label">Inventory</span>
+    @if (gameService.gameState().inventory.length) {<span class="badge">{{ gameService.gameState().inventory.length }}</span>}
+  </button>
 </header>

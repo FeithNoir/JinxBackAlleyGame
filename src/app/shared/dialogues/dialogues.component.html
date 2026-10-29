@@ -1,4 +1,5 @@
-<div class="dialogue-box neo-dialogue-box" (click)="advanceDialogue()">
+<div class="dialogue-box neo-dialogue-box" (click)="advanceDialogue()" (keydown.enter)="advanceDialogue()" (keydown.space)="$event.preventDefault(); advanceDialogue()"
+  tabindex="0" role="button" [attr.aria-label]="speaker() + ': ' + text()">
   <div class="speaker-name">{{ speaker() }}</div>
-  <div class="dialogue-text">{{ text() }}</div>
+  <div class="dialogue-text" aria-hidden="true">{{ shown() }}@if (typing()) {<span class="caret">▌</span>}</div>
 </div>

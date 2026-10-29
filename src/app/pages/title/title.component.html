@@ -1,20 +1,40 @@
 <div class="title-screen" [style.backgroundImage]="sceneService.backgroundStyle()">
+  <div class="title-noise" aria-hidden="true"></div>
   <div class="logo-container">
     <h1>JINX'S</h1>
-    <h1 class="subtitle">BACK-ALLEY GAME</h1>
+    <p class="subtitle h1-like">BACK-ALLEY GAME</p>
   </div>
 
-  <div class="menu-buttons">
+  @if (!ageConfirmed()) {
+  <section class="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-title">
+    <h2 id="age-title">18+ ONLY</h2>
+    <p>This game contains suggestive and explicit content for adults. All characters are adults (18+).</p>
+    <div class="menu-buttons">
+      <button class="neo-btn primary" (click)="confirmAge()" autofocus>I'M 18 OR OLDER</button>
+      <button class="neo-btn ghost" (click)="leave()">LEAVE</button>
+    </div>
+  </section>
+  } @else {
+  <nav class="menu-buttons" aria-label="Main menu">
+    @if (game.hasSave()) {
+    <button class="neo-btn primary" (click)="continueGame()">CONTINUE</button>
+    <button class="neo-btn" (click)="startGame()">NEW STORY</button>
+    } @else {
     <button class="neo-btn primary" (click)="startGame()">STORY MODE</button>
+    }
     <button class="neo-btn accent" (click)="startArcade()">ARCADE MODE</button>
-  </div>
+    <button class="neo-btn ghost small" (click)="settings.openSettingsPanel()">SETTINGS</button>
+    @if (game.endings().length) {
+    <p class="endings-badge">Endings found: {{ game.endings().length }}/5</p>
+    }
+  </nav>
+  }
 
   <div class="patreon-footer">
     <p>Support the project:</p>
-    <a href="https://patreon.com/genericfactoryint?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink"
-      target="_blank" class="patreon-link">
+    <a href="https://patreon.com/genericfactoryint" target="_blank" rel="noopener noreferrer" class="patreon-link">
       <img src="https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white"
-        alt="Patreon">
+        alt="Support on Patreon" width="132" height="28" loading="lazy">
     </a>
   </div>
 </div>

@@ -132,3 +132,26 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 } 
+
+/* === Mejoras feat/mejoras-auditoria === */
+/* Zonas en % (antes px fijos: se desalineaban al escalar el personaje en móvil) */
+.interaction-zone { background: transparent; border: 0; padding: 0; border-radius: 18px; transition: box-shadow .2s, background-color .2s; }
+.interaction-zone.head { top: 7.8%; width: 30%; height: 18.75%; border-radius: 50%; }
+.interaction-zone.top { top: 26.6%; width: 45%; height: 28.1%; }
+.interaction-zone.bottom { top: 54.7%; width: 50%; height: 39%; }
+.interaction-zone:hover, .interaction-zone:focus-visible { background: rgba(255, 214, 0, .12); box-shadow: 0 0 0 3px var(--c-accent), 0 0 18px rgba(255,214,0,.6); outline: none; }
+:host-context(.show-hotspots) .interaction-zone { box-shadow: 0 0 0 2px dashed var(--c-accent); outline: 2px dashed var(--c-accent); outline-offset: -2px; animation: hotspot-pulse 1.6s ease-in-out infinite; }
+@keyframes hotspot-pulse { 50% { background: rgba(255,214,0,.15); } }
+
+.layer.missing { visibility: hidden; }
+.silhouette { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .55;
+  background:
+    radial-gradient(ellipse 15% 11% at 50% 16%, var(--c-primary) 98%, transparent 100%),
+    radial-gradient(ellipse 24% 22% at 50% 42%, var(--c-primary) 98%, transparent 100%),
+    radial-gradient(ellipse 20% 30% at 50% 74%, #6d28d9 98%, transparent 100%);
+  filter: drop-shadow(6px 6px 0 #000); }
+
+/* Respiración idle sutil */
+.character-composite-container { animation: idle-breathe 4s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes idle-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.012) translateY(-2px); } }
+@media (max-width: 768px) { .character-composite-container { width: clamp(180px, 55vmin, 340px); } }

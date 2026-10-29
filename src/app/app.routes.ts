@@ -1,16 +1,15 @@
 import { Routes } from '@angular/router';
 import { TitleComponent } from './pages/title/title.component';
-import { LayoutComponent } from './pages/layout/layout.component';
-import { MainComponent } from './pages/main/main.component';
 
+// La pantalla de título va en el bundle inicial; el juego y el arcade se cargan bajo demanda.
 export const routes: Routes = [
   { path: '', redirectTo: '/title', pathMatch: 'full' },
   { path: 'title', component: TitleComponent },
   {
     path: 'game',
-    component: LayoutComponent,
+    loadComponent: () => import('./pages/layout/layout.component').then(m => m.LayoutComponent),
     children: [
-      { path: '', component: MainComponent },
+      { path: '', loadComponent: () => import('./pages/main/main.component').then(m => m.MainComponent) },
       { path: 'arcade', loadComponent: () => import('./pages/arcade/arcade.component').then(m => m.ArcadeComponent) }
     ]
   },
