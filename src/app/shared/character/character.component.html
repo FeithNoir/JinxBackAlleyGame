@@ -9,95 +9,97 @@
     }
 
     <!-- Interaction Zones -->
-    <!-- Silueta de respaldo: se ve si faltan los PNG (public/ no está versionado) -->
+    <!-- Silueta de respaldo: solo se muestra mientras el cuerpo no ha cargado -->
+    @if (!baseLoaded()) {
     <div class="silhouette" aria-hidden="true"></div>
+    }
 
     <button type="button" class="interaction-zone head" (click)="onZoneClick('head')" aria-label="Interact: head"></button>
     <button type="button" class="interaction-zone top" (click)="onZoneClick('top')" aria-label="Interact: torso"></button>
     <button type="button" class="interaction-zone bottom" (click)="onZoneClick('bottom')" aria-label="Interact: legs"></button>
 
     <!-- 1. Base Body -->
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('base', 'body')" class="layer base" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('base', 'body')" class="layer base" alt="">
 
     <!-- 2. Underwear (Bottom) -->
     @if (characterProps().underwearBottom) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().underwearBottom!)" class="layer underwear-bottom"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().underwearBottom!)" class="layer underwear-bottom"
         alt="">
     }
 
     <!-- 3. Stockings -->
     @if (characterProps().stockings) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().stockings!)" class="layer stockings" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().stockings!)" class="layer stockings" alt="">
     }
 
     <!-- 4. Underwear (Top) -->
     @if (characterProps().underwearTop) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().underwearTop!)" class="layer underwear-top"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().underwearTop!)" class="layer underwear-top"
         alt="">
     }
 
     <!-- 5. Clothing (Bottom) -->
     @if (characterProps().bottom) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().bottom!)" class="layer clothes-bottom"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().bottom!)" class="layer clothes-bottom"
         alt="">
     }
 
     <!-- Fluid Effect 1 (Applied to Bottom) -->
     @if (characterProps().effects?.bottom) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.bottom!)" class="layer effect-bottom"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.bottom!)" class="layer effect-bottom"
         alt="">
     }
 
     <!-- 6. Clothing (Top) -->
     @if (characterProps().top) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().top!)" class="layer clothes-top" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().top!)" class="layer clothes-top" alt="">
     }
 
     <!-- 7. Feet -->
     @if (characterProps().feet) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().feet!)" class="layer feet" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().feet!)" class="layer feet" alt="">
     }
 
     <!-- Fluid Effect 2 (Applied to Feet) -->
     @if (characterProps().effects?.feet) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.feet!)" class="layer effect-feet"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.feet!)" class="layer effect-feet"
         alt="">
     }
 
     <!-- 8. Arms (Gestures) -->
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('arms', characterProps().leftArm, 'left')" class="layer arm-left" alt="">
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('arms', characterProps().rightArm, 'right')" class="layer arm-right" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('arms', characterProps().leftArm, 'left')" class="layer arm-left" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('arms', characterProps().rightArm, 'right')" class="layer arm-right" alt="">
 
     <!-- 9. Head Accessory -->
     @if (characterProps().head) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().head!)" class="layer head-accessory"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().head!)" class="layer head-accessory"
         alt="">
     }
 
     <!-- 10. Expressions (Eyes / Mouth) -->
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('expressions', characterProps().eyes, 'eyes')" class="layer eyes" alt="">
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('expressions', characterProps().mouth, 'mouths')" class="layer mouth" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('expressions', characterProps().eyes, 'eyes')" class="layer eyes" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('expressions', characterProps().mouth, 'mouths')" class="layer mouth" alt="">
 
     <!-- Head Effects (Blush / Heat / Mean) -->
     @if (characterProps().effects?.head) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.head!)" class="layer effect-head"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.head!)" class="layer effect-head"
         alt="">
     }
 
     <!-- Body Fluid Effect 3 -->
     @if (characterProps().effects?.body) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.body!)" class="layer effect-body"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.body!)" class="layer effect-body"
         alt="">
     }
 
     <!-- Toy Layer -->
     @if (characterProps().toy) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().toy!)" class="layer toy" alt="">
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('clothes', characterProps().toy!)" class="layer toy" alt="">
     }
 
     <!-- Overlay Effects (Parallel Lines / Biri-biri / Action Lines) -->
     @if (characterProps().effects?.overlay) {
-    <img (error)="onImgError($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.overlay!)" class="layer effect-overlay"
+    <img (error)="onImgError($event)" (load)="onImgLoad($event)" decoding="async" draggable="false" [src]="characterAssetService.getAssetUrl('effects', characterProps().effects?.overlay!)" class="layer effect-overlay"
         alt="">
     }
 </div>

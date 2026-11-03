@@ -1,4 +1,4 @@
-<div class="chat-area" [class.mobile-overlay]="isMobile()">
+<div class="chat-area" #chatScroll (scroll)="onScroll()" [class.mobile-overlay]="isMobile()">
     <!-- Full History (Desktop Only) -->
     @if (!isMobile()) {
     <div>

@@ -144,6 +144,12 @@
 @keyframes hotspot-pulse { 50% { background: rgba(255,214,0,.15); } }
 
 .layer.missing { visibility: hidden; }
+
+/* Fundido al cambiar de capa: el vestuario/expresión no salta de golpe.
+   Arranca desde 0.45 (no desde 0) para que no se vea un parpadeo del cuerpo. */
+.layer.layer-loaded { animation: layer-in .28s ease-out; }
+@keyframes layer-in { from { opacity: .45; } to { opacity: 1; } }
+
 .silhouette { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .55;
   background:
     radial-gradient(ellipse 15% 11% at 50% 16%, var(--c-primary) 98%, transparent 100%),

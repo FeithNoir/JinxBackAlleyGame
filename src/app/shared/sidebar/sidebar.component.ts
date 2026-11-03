@@ -1,4 +1,4 @@
-import { Component, viewChild, ElementRef, input, output, model, HostListener, inject, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
+import { Component, viewChild, input, output, model, HostListener, inject, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { GameService } from '@services/game.service';
@@ -30,7 +30,6 @@ export class SidebarComponent {
 
   // View Queries
   chatAreaComp = viewChild<ChatAreaComponent>('chatAreaComp');
-  chatAreaEl = viewChild<ElementRef>('chatArea');
 
   // Inputs/Outputs
   isCollapsed = model<boolean>(false);
@@ -72,12 +71,6 @@ export class SidebarComponent {
       }
     });
 
-    // Scroll to bottom when dialogue history changes
-    effect(() => {
-      const _ = this.dialogueHistory(); // track dependency
-      queueMicrotask(() => this.scrollToBottom());
-    });
-
     effect(() => {
       const url = this.navUrl();
       if (url) {
@@ -106,15 +99,6 @@ export class SidebarComponent {
     if (lastMsg?.speaker === speaker && lastMsg?.text === text) return;
 
     this.dialogueHistory.update(h => [...h, { speaker, text }]);
-  }
-
-  private scrollToBottom(): void {
-    const el = this.chatAreaEl();
-    if (el) {
-      try {
-        el.nativeElement.scrollTop = el.nativeElement.scrollHeight;
-      } catch (err) { }
-    }
   }
 
   public toggleSidebar(): void {

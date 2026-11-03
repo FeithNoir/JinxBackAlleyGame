@@ -1,4 +1,4 @@
-import { Component, input, output, inject, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, input, output, inject, ChangeDetectionStrategy, computed, signal } from '@angular/core';
 import { CharacterProps } from '@interfaces/character-props.interface';
 import { EventService } from '@services/event.service';
 import { CharacterService } from '@services/character.service';
@@ -36,10 +36,29 @@ export class CharacterComponent {
     // Computed signals
     effects = computed(() => this.characterProps().effects || {});
 
+    /** El cuerpo ya cargó: ocultamos la silueta de respaldo. */
+    baseLoaded = signal(false);
+
     /** Oculta capas cuyo PNG no existe en lugar de mostrar el icono de imagen rota. */
     onImgError(ev: Event): void {
         const img = ev.target as HTMLImageElement;
         img.classList.add('missing');
+        if (img.classList.contains('base')) this.baseLoaded.set(false);
+    }
+
+    /** Fundido suave al cargar/cambiar una capa (evita el cambio brusco de modelo). */
+    onImgLoad(ev: Event): void {
+        const img = ev.target as HTMLImageElement;
+        img.classList.remove('missing');
+        if (img.classList.contains('base')) {
+            // El cuerpo se muestra entero de golpe: si lo fundiéramos, la
+            // silueta desaparecería dejando un instante de personaje tenue.
+            this.baseLoaded.set(true);
+            return;
+        }
+        img.classList.remove('layer-loaded');
+        void img.offsetWidth; // reinicia la animación
+        img.classList.add('layer-loaded');
     }
 
     onZoneClick(zone: string): void {
