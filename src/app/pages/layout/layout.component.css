@@ -25,7 +25,10 @@ app-header {
 app-sidebar {
   grid-area: sidebar;
   height: 100%;
-  overflow: hidden;
+  /* El botón de plegado sobresale del sidebar; no debe recortarse. */
+  overflow: visible;
+  position: relative;
+  z-index: 1200;
 }
 
 .game-main-content {
@@ -62,18 +65,25 @@ app-footer {
   app-sidebar {
     height: 100%;
     position: relative;
-    z-index: 10;
+    z-index: 1200;
   }
 }
 
 /* === Mejoras responsive === */
 .game-layout { height: 100dvh; }
 @media (max-width: 768px) {
-  .game-layout { grid-template-rows: auto minmax(0, 1fr) minmax(0, 1.25fr) auto; height: 100dvh; }
-  app-sidebar { min-height: 0; overflow-y: auto; }
+  /* Damos más alto al área del personaje y menos al sidebar en móvil. */
+  .game-layout { grid-template-rows: auto minmax(0, 1.35fr) minmax(0, 1fr) auto; height: 100dvh; }
+  app-sidebar { min-height: 0; overflow: visible; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
   app-footer { display: none; }
-  .game-layout { grid-template-rows: 48px minmax(0, 1fr) 0; grid-template-columns: minmax(260px, 42vw) 1fr; }
-  app-sidebar { min-height: 0; overflow-y: auto; }
+  .game-layout {
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+    grid-template-rows: 48px minmax(0, 1fr);
+    grid-template-columns: minmax(260px, 42vw) 1fr;
+  }
+  app-sidebar { min-height: 0; overflow: visible; }
 }

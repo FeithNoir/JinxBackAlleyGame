@@ -26,7 +26,6 @@
 @media (max-width: 768px) {
   .preview-area {
     padding-bottom: 0;
-    transform: translateY(20px);
   }
 
   .arcade-screen {

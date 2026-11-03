@@ -1,15 +1,14 @@
-import { Component, OnInit, inject, computed, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CharacterService } from '@services/character.service';
 import { GameService } from '@services/game.service';
 import { EventService } from '@services/event.service';
 import { LoadingService } from '@services/loading.service';
 import { CharacterComponent } from '@shared/character/character.component';
 import { MiniGameService } from '@services/mini-game.service';
-import { MiniGameType } from '@interfaces/mini-game-type.enum';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MiniGameComponent } from '@shared/mini-game/mini-game.component';
 import { ScreenEffectsComponent } from '@shared/screen-effects/screen-effects.component';
 import { SceneService } from '@services/scene.service';
+import { SettingsService } from '@services/settings.service';
 
 @Component({
   selector: 'app-arcade',
@@ -25,8 +24,8 @@ export class ArcadeComponent implements OnInit {
   protected eventService = inject(EventService);
   private loadingService = inject(LoadingService);
   protected miniGameService = inject(MiniGameService);
-  private destroyRef = inject(DestroyRef);
   protected sceneService = inject(SceneService);
+  protected settings = inject(SettingsService);
 
   
 
@@ -40,13 +39,6 @@ export class ArcadeComponent implements OnInit {
     this.loadingService.show();
     this.characterService.setMode('arcade');
     this.loadingService.hide();
-
-    this.miniGameService.miniGameEnded$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ success, type }) => {
-        console.log(`Mini-game ${type} ended. Success: ${success}`);
-        // Here you can add logic to update game state, award items, etc.
-      });
   }
 
   onInteract(part: string): void {

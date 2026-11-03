@@ -12,7 +12,8 @@ import { CharacterAssetService } from '@services/character-asset.service';
     styleUrl: './character.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-      'class': 'app-character-enter'
+      'class': 'app-character-enter',
+      '[class.show-hotspots]': 'showHotspots()'
     }
 })
 export class CharacterComponent {
@@ -27,6 +28,8 @@ export class CharacterComponent {
     isFlashlightMode = input<boolean>(false);
     flashlightX = input<number>(0);
     flashlightY = input<number>(0);
+    /** Solo el modo arcade puede mostrar las zonas interactivas resaltadas. */
+    showHotspots = input<boolean>(false);
 
     interact = output<string>();
 

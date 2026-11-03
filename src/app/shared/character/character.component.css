@@ -1,6 +1,20 @@
+/* El host ocupa el área disponible para que el personaje pueda crecer
+   proporcionalmente sin salirse del contenedor. */
+:host {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .character-composite-container {
   position: relative;
-  width: clamp(200px, 40vmin, 400px);
+  /* Escala por altura: el ancho se deriva del aspect-ratio 400/640 y así
+     nunca desborda ni horizontal ni verticalmente. */
+  height: min(94%, 1400px);
+  width: auto;
+  max-width: 100%;
   aspect-ratio: 400 / 640;
 }
 
@@ -139,8 +153,9 @@
 .interaction-zone.head { top: 7.8%; width: 30%; height: 18.75%; border-radius: 50%; }
 .interaction-zone.top { top: 26.6%; width: 45%; height: 28.1%; }
 .interaction-zone.bottom { top: 54.7%; width: 50%; height: 39%; }
-.interaction-zone:hover, .interaction-zone:focus-visible { background: rgba(255, 214, 0, .12); box-shadow: 0 0 0 3px var(--c-accent), 0 0 18px rgba(255,214,0,.6); outline: none; }
-:host-context(.show-hotspots) .interaction-zone { box-shadow: 0 0 0 2px dashed var(--c-accent); outline: 2px dashed var(--c-accent); outline-offset: -2px; animation: hotspot-pulse 1.6s ease-in-out infinite; }
+:host.show-hotspots .interaction-zone:hover,
+:host.show-hotspots .interaction-zone:focus-visible { background: rgba(255, 214, 0, .12); box-shadow: 0 0 0 3px var(--c-accent), 0 0 18px rgba(255,214,0,.6); outline: none; }
+:host.show-hotspots .interaction-zone { box-shadow: 0 0 0 2px dashed var(--c-accent); outline: 2px dashed var(--c-accent); outline-offset: -2px; animation: hotspot-pulse 1.6s ease-in-out infinite; }
 @keyframes hotspot-pulse { 50% { background: rgba(255,214,0,.15); } }
 
 .layer.missing { visibility: hidden; }
@@ -160,4 +175,4 @@
 /* Respiración idle sutil */
 .character-composite-container { animation: idle-breathe 4s ease-in-out infinite; transform-origin: 50% 100%; }
 @keyframes idle-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.012) translateY(-2px); } }
-@media (max-width: 768px) { .character-composite-container { width: clamp(180px, 55vmin, 340px); } }
+

@@ -35,8 +35,8 @@ export class TitleComponent {
     window.location.href = 'https://www.google.com';
   }
 
-  async continueGame(): Promise<void> {
-    await this.game.continueGame();
+  continueGame(): void {
+    this.game.continueGame();
     this.router.navigate(['/game']);
   }
 

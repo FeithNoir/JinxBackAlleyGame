@@ -18,7 +18,7 @@
   </fieldset>
 
   <label class="row check"><input type="checkbox" [checked]="settings().reducedMotion" (change)="toggle('reducedMotion')"> Reduce motion &amp; flashes</label>
-  <label class="row check"><input type="checkbox" [checked]="settings().highlightHotspots" (change)="toggle('highlightHotspots')"> Highlight interactive zones</label>
+  <label class="row check"><input type="checkbox" [checked]="settings().highlightHotspots" (change)="toggle('highlightHotspots')"> Highlight interactive zones (Arcade only)</label>
   <label class="row check"><input type="checkbox" [checked]="settings().vibration" (change)="toggle('vibration')"> Device vibration</label>
 
   @if (game.endings().length) {

@@ -35,7 +35,6 @@ export class SettingsService {
       const s = this._settings();
       try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* modo privado */ }
       document.documentElement.classList.toggle('reduced-motion', s.reducedMotion);
-      document.documentElement.classList.toggle('show-hotspots', s.highlightHotspots);
     });
   }
 

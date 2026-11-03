@@ -1,6 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CharacterService } from '@services/character.service';
-import { Subject, Observable } from 'rxjs';
 import { MiniGameType } from '@interfaces/mini-game-type.enum';
 import { GAME_REACTIONS } from '@data/reactions';
 
@@ -20,8 +19,9 @@ export class MiniGameService {
     private timerSignal = signal<number>(0);
     public timer = this.timerSignal.asReadonly();
 
-    private miniGameEndedSource = new Subject<{ success: boolean, type: MiniGameType }>();
-    public miniGameEnded$: Observable<{ success: boolean, type: MiniGameType }> = this.miniGameEndedSource.asObservable();
+    /** Último resultado del mini-juego (signal en lugar de Subject/Observable). */
+    private lastResultSignal = signal<{ success: boolean; type: MiniGameType } | null>(null);
+    public lastResult = this.lastResultSignal.asReadonly();
 
     private timerInterval: any;
     private currentMiniGameType: MiniGameType | null = null;
@@ -82,7 +82,7 @@ export class MiniGameService {
         this.isActiveSignal.set(false);
 
         if (this.currentMiniGameType) {
-            this.miniGameEndedSource.next({ success, type: this.currentMiniGameType });
+            this.lastResultSignal.set({ success, type: this.currentMiniGameType });
             this.currentMiniGameType = null;
         }
 

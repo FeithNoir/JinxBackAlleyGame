@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, computed, ChangeDetectionStrategy, effect } from '@angular/core';
 import { GameService } from '@services/game.service';
 import { EventService } from '@services/event.service';
 import { LoadingService } from '@services/loading.service';
@@ -39,10 +39,18 @@ export class MainComponent implements OnInit {
     return undefined;
   });
 
+  constructor() {
+    // Oculta el loading en cuanto GameService termina de cargar (web es inmediato,
+    // Electron puede tardar un poco más).
+    effect(() => {
+      if (this.gameService.ready()) this.loadingService.hide();
+    });
+  }
+
   ngOnInit(): void {
     // Antes: loadInitialState() aquí borraba la partida guardada cada vez que se entraba.
     this.loadingService.show();
-    this.gameService.continueGame().finally(() => this.loadingService.hide());
+    this.gameService.continueGame();
   }
 
   onInteract(part: string): void {

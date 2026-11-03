@@ -54,10 +54,6 @@ export class GameService {
   private isInventoryOpenSignal = signal<boolean>(false);
   public isInventoryOpen = this.isInventoryOpenSignal.asReadonly();
 
-  constructor() {
-    this.loaded = this.loadGame();
-  }
-
   private hasSaveSignal = signal<boolean>(false);
   /** true si existe una partida guardada que se pueda continuar. */
   public hasSave = this.hasSaveSignal.asReadonly();
@@ -66,11 +62,36 @@ export class GameService {
   /** Finales desbloqueados (persisten entre partidas). */
   public endings = this.endingsSignal.asReadonly();
 
-  private loaded: Promise<void>;
+  /** true cuando el estado inicial ya se cargó (web es inmediato). */
+  private readySignal = signal<boolean>(false);
+  public ready = this.readySignal.asReadonly();
 
-  private async loadGame(): Promise<void> {
+  /** Solo se usa en Electron, donde el almacenamiento es asíncrono. */
+  private loaded?: Promise<void>;
+
+  constructor() {
+    if (this.storageService.getEnvironment() === 'electron') {
+      this.loaded = this.loadGameAsync();
+    } else {
+      this.loadGameSync();
+      this.readySignal.set(true);
+    }
+  }
+
+  private loadGameSync(): void {
+    const savedState = this.storageService.loadSync('gameState');
+    const endings = this.storageService.loadSync('endings');
+    this.applyLoadedData(savedState, endings);
+  }
+
+  private async loadGameAsync(): Promise<void> {
     const savedState = await this.storageService.load('gameState');
     const endings = await this.storageService.load('endings');
+    this.applyLoadedData(savedState, endings);
+    this.readySignal.set(true);
+  }
+
+  private applyLoadedData(savedState: any, endings: any): void {
     if (Array.isArray(endings)) this.endingsSignal.set(endings);
     if (savedState && typeof savedState.currentNodeId === 'number') {
       // Fusiona con el estado inicial para tolerar partidas antiguas sin campos nuevos
@@ -89,19 +110,21 @@ export class GameService {
     }
   }
 
-  /** Espera a que la carga inicial termine (útil para "Continuar"). */
-  public whenLoaded(): Promise<void> {
-    return this.loaded;
-  }
-
   /** Reanuda la partida guardada (o arranca de cero si no hay). */
-  public async continueGame(): Promise<void> {
-    await this.loaded;
-    const state = this.gameStateSignal();
-    this.characterService.setMode('history');
-    this.characterService.setProps(state.characters['jinx'] as any);
-    if (state.playerName === undefined && this.getCurrentNode().metadata?.type === 'NAME_REQUEST') {
-      this.isAskingNameSignal.set(true);
+  public continueGame(): void {
+    const apply = () => {
+      const state = this.gameStateSignal();
+      this.characterService.setMode('history');
+      this.characterService.setProps(state.characters['jinx'] as any);
+      if (state.playerName === undefined && this.getCurrentNode().metadata?.type === 'NAME_REQUEST') {
+        this.isAskingNameSignal.set(true);
+      }
+    };
+
+    if (this.readySignal()) {
+      apply();
+    } else {
+      void this.loaded?.then(apply);
     }
   }
 
@@ -120,13 +143,31 @@ export class GameService {
     return this.gameStateSignal().playerFlags.includes(flag);
   }
 
-  public async saveGame(): Promise<boolean> {
-    const success = await this.storageService.save('gameState', this.gameStateSignal());
-    if (success) this.hasSaveSignal.set(true);
-    if (!success) {
+  public saveGame(): void {
+    const state = this.gameStateSignal();
+
+    if (this.storageService.getEnvironment() === 'electron') {
+      void this.storageService.save('gameState', state).then(success => {
+        if (success) this.hasSaveSignal.set(true);
+        else console.warn('GameService: Failed to save game state');
+      });
+      return;
+    }
+
+    if (this.storageService.saveSync('gameState', state)) {
+      this.hasSaveSignal.set(true);
+    } else {
       console.warn('GameService: Failed to save game state');
     }
-    return success;
+  }
+
+  private saveEndings(): void {
+    const data = this.endingsSignal();
+    if (this.storageService.getEnvironment() === 'electron') {
+      void this.storageService.save('endings', data);
+    } else {
+      this.storageService.saveSync('endings', data);
+    }
   }
 
   public loadInitialState(): void {
@@ -215,7 +256,7 @@ export class GameService {
         const name = nextNode.metadata.ending;
         if (!this.endingsSignal().includes(name)) {
           this.endingsSignal.update(e => [...e, name]);
-          this.storageService.save('endings', this.endingsSignal());
+          this.saveEndings();
         }
       }
 
@@ -338,12 +379,12 @@ export class GameService {
 
   public interactWith(part: string): void {
     const currentState = this.gameStateSignal();
-    const chaos = currentState.chaosLevel;
+    const isArcade = this.characterService.getMode() === 'arcade';
+    // En arcade manda el slider de caos; en historia, el caos de la partida.
+    const chaos = isArcade ? this.characterService.getArcadeChaosLevel() : currentState.chaosLevel;
 
-    let mood = '';
-    if (chaos <= 30) mood = 'annoyed';
-    else if (chaos <= 70) mood = 'nervous';
-    else mood = 'happy';
+    const mood: 'annoyed' | 'nervous' | 'happy' =
+      chaos < 30 ? 'annoyed' : chaos < 65 ? 'nervous' : 'happy';
 
     // Find interaction text (can be externalized later)
     const text = GAME_REACTIONS.interaction[part]?.[mood] || '...';
@@ -351,17 +392,35 @@ export class GameService {
     // Show in speech bubble
     this.characterService.showReaction(text);
 
-    // Trigger mini-game if chaos is high (> 60)
-    if (this.characterService.getMode() === 'history' && chaos > 60) {
-      if (part === 'top' || part === 'bottom') {
-        this.miniGameService.start(MiniGameType.Clicker, 10);
-      }
+    const preset = mood === 'annoyed' ? 'mad' : mood === 'nervous' ? 'nervous' : 'happy';
+    const presetProps = getPresetProps('expression', preset);
+
+    let effectiveChaos = chaos;
+    if (isArcade) {
+      // En arcade el usuario controla el caos manualmente.
+      this.characterService.applyPreset('expression', preset);
+    } else {
+      // En historia, interactuar sube un poco el caos para que la respuesta
+      // evolucione (antes siempre se quedaba en "annoyed").
+      const delta = part === 'head' ? 4 : part === 'top' ? 7 : 10;
+      effectiveChaos = Math.min(100, chaos + delta);
+      this.gameStateSignal.update(state => ({
+        ...state,
+        chaosLevel: effectiveChaos,
+        characters: {
+          ...state.characters,
+          jinx: { ...state.characters['jinx'], ...(presetProps ?? {}) },
+        },
+      }));
+      // Mantén CharacterService sincronizado con el estado de la partida.
+      this.characterService.setProps(this.gameStateSignal().characters['jinx'] as any);
+      this.saveGame();
     }
 
-    // Apply expression change based on mood
-    if (mood === 'annoyed') this.characterService.applyPreset('expression', 'mad');
-    if (mood === 'nervous') this.characterService.applyPreset('expression', 'nervous');
-    if (mood === 'happy') this.characterService.applyPreset('expression', 'happy');
+    // Trigger mini-game if chaos is high (> 60)
+    if (!isArcade && effectiveChaos > 60 && (part === 'top' || part === 'bottom')) {
+      this.miniGameService.start(MiniGameType.Clicker, 10);
+    }
 
     // Trigger effects
     this.eventService.vibrate(200);

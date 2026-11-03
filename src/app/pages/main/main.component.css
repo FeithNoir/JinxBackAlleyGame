@@ -37,6 +37,5 @@
 @media (max-width: 768px) {
   .character-area {
     padding-bottom: 0;
-    transform: translateY(30px);
   }
 }

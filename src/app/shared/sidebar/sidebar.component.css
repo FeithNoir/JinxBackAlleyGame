@@ -6,9 +6,10 @@
   background-color: var(--c-dark);
   border-right: var(--border-thick);
   position: relative;
-  z-index: 90;
-  overflow-y: auto;
-  overflow-x: hidden;
+  z-index: 1200;
+  /* El scroll vive en .sidebar-content para que el botón de plegado, que
+     sobresale por la derecha, no quede recortado. */
+  overflow: visible;
 }
 
 .sidebar-container.collapsed {
@@ -31,7 +32,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 2px 2px 0px #000;
-  z-index: 101;
+  z-index: 1300;
   transition: transform 0.2s;
 }
 
@@ -46,6 +47,8 @@
   height: 100%;
   min-height: 0;
   padding: 0; /* Padding handled by sub-components */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .spacer {
@@ -53,22 +56,22 @@
 }
 
 /* Custom Neobrutalist Scrollbar (Available for child components) */
-.sidebar-container::-webkit-scrollbar {
+.sidebar-content::-webkit-scrollbar {
   width: 12px;
 }
 
-.sidebar-container::-webkit-scrollbar-track {
+.sidebar-content::-webkit-scrollbar-track {
   background: #111;
   border-left: 2px solid #000;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb {
+.sidebar-content::-webkit-scrollbar-thumb {
   background: var(--c-primary);
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb:hover {
+.sidebar-content::-webkit-scrollbar-thumb:hover {
   background: var(--c-accent);
 }
 

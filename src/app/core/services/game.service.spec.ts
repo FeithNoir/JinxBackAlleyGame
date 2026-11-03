@@ -8,7 +8,6 @@ describe('GameService', () => {
     localStorage.clear();
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
     svc = TestBed.inject(GameService);
-    await svc.whenLoaded();
     svc.newGame();
   });
 
@@ -35,9 +34,9 @@ describe('GameService', () => {
     expect(svc.endings()).toContain('Smoke and Sirens');
   });
 
-  it('guarda en localStorage', async () => {
+  it('guarda en localStorage', () => {
     svc.selectOption(1);
-    await svc.saveGame();
+    svc.saveGame();
     expect(JSON.parse(localStorage.getItem('gameState')!).currentNodeId).toBe(1);
   });
 
